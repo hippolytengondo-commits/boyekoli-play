@@ -90,3 +90,9 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Cockpit (`src/avion.js`) : procédure de départ (porte, ceinture, batterie, frein, démarreur maintenu), manche tactile, manette des gaz, palonniers, volets, freins, instruments (vitesse, altitude, cap, vario, horizon artificiel), vues cockpit/extérieure, son du moteur. Échec (temps écoulé, accident, sortie de piste) → retour à l'aéroport. On peut couper le moteur et quitter l'avion au parking.
 - À tester sur téléphone : prise en main du manche, difficulté de l'atterrissage, durée des chronos (à ajuster dans `MISSIONS`), vue cockpit.
 - Limites : le vol se joue dans une scène dédiée (piste et campagne) et non dans la grande carte de la ville ; modèle d'avion simple ; pas de météo.
+
+## BOYEKOLI FLIGHT SIMULATOR (01/11/2026)
+- Cockpit refondu (`src/avion.js`) : 9 leçons éducatives (cockpit, moteur, accélération, décollage, altitude, virages, Kinshasa, fleuve Congo, atterrissage), vol complet chronométré (examen du brevet), puis missions de carrière. Textes pédagogiques (ailes, moteur, portance, altitude, aéroport, contrôleurs) au début des leçons et en vol.
+- Paysage RDC : Kinshasa (tours, stade, avenues), fleuve Congo, Brazzaville, collines et montagnes avec collisions ; 4 caméras ; pause ; carburant fictif ; mode tactile (joystick) et mode ordinateur (clavier, souris, molette) ; graphismes économiques.
+- Choix techniques : le projet n'utilise ni React ni Rapier ; la physique simplifiée et les modèles 3D sont écrits en Three.js pur (pas de fichiers GLB).
+- À tester sur téléphone : fluidité (activer « Graphismes économiques » en pause), prise en main, difficulté des leçons 5 à 9.

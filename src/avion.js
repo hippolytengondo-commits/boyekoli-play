@@ -371,7 +371,7 @@ export function lancerAvion(el,opt){
     const f=S.v*dt;S.x+=Math.sin(S.psi)*f*Math.cos(S.pitch);S.z-=Math.cos(S.psi)*f*Math.cos(S.pitch);
     if(S.sol)S.y=0;
     if(!S.fin){
-      if(S.y<alt(S.x,S.z)+1){S.v=0;echec('Collision avec une montagne.');return}
+      {const hm=alt(S.x,S.z);if(hm>2&&S.y<hm+1){S.v=0;echec('Collision avec une montagne.');return}}
       for(const b of boites){if(Math.abs(S.x-b.x)<b.hw+3&&Math.abs(S.z-b.z)<b.hw+3&&S.y<b.h){S.v=0;echec('Collision avec un bâtiment de la ville.');return}}
       if(Math.hypot(S.x,S.z)>7000){echec('Tu t’es trop éloigné de l’aéroport.');return}
     }
