@@ -73,7 +73,7 @@ export function creerMoteur(el,opt){
   function majPnj(dt){Object.values(pnjs).forEach(p=>{p.g.userData.update(dt,{speed:0,talk:p.talk>0,cam:cam.position});if(p.talk>0)p.talk-=dt;else p.g.rotation.y+=((p.base)-p.g.rotation.y)*Math.min(1,dt*2)})}
   // plus proche élément interactif
   const dist=(x,z,a,b)=>Math.hypot(x-a,z-b);
-  function proche(){
+  function calcProche(){
     let best=null,bd=2.6;
     Object.values(pnjs).forEach(p=>{const d=dist(joueur.x,joueur.z,p.def.x,p.def.z);if(d<bd){bd=d;best={kind:'pnj',id:p.def.id,def:p.def,d}}});
     Object.values(objs).forEach(ob=>{const e=ob.def;if(!ob.etat.revele||ob.etat.ramasse)return;if(!(e.indice||e.panneau||e.ferme||e.cible||e.ex))return;const d=dist(joueur.x,joueur.z,e.x,e.z)-Math.max(e.w,e.d)*.3;if(d<bd){bd=d;best={kind:'obj',id:e.id,def:e,d}}});
@@ -106,7 +106,7 @@ export function creerMoteur(el,opt){
       joueur.obj.position.set(joueur.x,0,joueur.z);joueur.obj.rotation.y+=(((joueur.ry-joueur.obj.rotation.y+Math.PI*3)%(Math.PI*2))-Math.PI)*Math.min(1,dt*10);
       joueur.obj.userData.update(dt,{speed:joueur.v,cam:cam.position});
       majPnj(dt);
-      const p=proche();const k=p?p.kind+p.id:'';if(k!==derniere){derniere=k;pr=p;o.onProche(p)}else pr=p;
+      const p=calcProche();const k=p?p.kind+p.id:'';if(k!==derniere){derniere=k;pr=p;o.onProche(p)}else pr=p;
       Object.values(pnjs).forEach(q=>{q.lab.visible=dist(joueur.x,joueur.z,q.def.x,q.def.z)<6.5});
     }
     // caméra : vue 3/4 en hauteur
@@ -114,7 +114,7 @@ export function creerMoteur(el,opt){
     r.render(sc,cam);raf=requestAnimationFrame(boucle)}
   raf=requestAnimationFrame(boucle);
   const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?62:48;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
-  return {setLook,charger,joy,proche:()=>pr,scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
+  return {setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
     objs:()=>objs,pnjs:()=>pnjs,def:()=>def,
     stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.dispose()}catch(e){}el.innerHTML=''}};
 }
