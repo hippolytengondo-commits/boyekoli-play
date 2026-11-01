@@ -348,10 +348,11 @@ function construireVille(){
   }
   G.parkings=qr.parkings||[];
   // bâtiments repères : universités, police, santé, bibliothèque, auto-école, concession
+  let spotAgence=null;
   {
     const rp=construireReperes(w,AMEN.AM().rep);
     rp.portes.forEach(r=>{
-      if(r.id==='agence'){SCENES.ville.spots.push({x:r.px,z:r.pz,r:2.8,label:'🕵️ Agence de détectives : entrer',run:()=>DETEC.actions.detOuvrir()});return}
+      if(r.id==='agence'){spotAgence={x:r.px,z:r.pz,r:2.8,label:'🕵️ Agence de détectives : entrer',run:()=>DETEC.actions.detOuvrir()};return}
       const retour={x:r.px+(r.ry?0:0),z:r.pz+(r.ry?-1.6:1.6),phi:r.ry?-Math.PI/2:Math.PI/2};
       if(r.stage){
         const i=STAGES.findIndex(s=>s.id===r.stage),st=STAGES[i];
@@ -364,6 +365,7 @@ function construireVille(){
     });
   }
   SCENES.ville.spots=qr.spots;
+  if(spotAgence)SCENES.ville.spots.push(spotAgence);
   // gare, contre le mur ouest, juste à côté de la maison du joueur (celle de la maman) : le train mène aux aventures
   {const og=AMEN.AM().gare||{x:-30.8,z:0};const gp=construireGare(w.group,w.colliders,w.boxes,og.x,og.z);
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
