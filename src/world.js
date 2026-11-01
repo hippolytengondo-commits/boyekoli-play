@@ -43,9 +43,14 @@ function clouds(g){
   return out;
 }
 
+let ARBRES_OV={};export const setArbresOverrides=o=>{ARBRES_OV=o||{}};
+export const cleArbre=(x,z)=>Math.round(x*2)/2+'_'+Math.round(z*2)/2;
 export function tree(g,x,z,s,mango,cols,colliders,pal){
+  const key=cleArbre(x,z),ov=mango?undefined:ARBRES_OV[key];
+  if(ov===null)return new THREE.Group();            // arbre supprimé par le joueur
+  const ox=x,oz=z;if(ov){x=ov.x;z=ov.z}
   const t=pal?palm(Math.floor(Math.abs(x*7+z*3))+2):leafyTree({kind:mango?'mango':'leafy',seed:Math.floor(Math.abs(x*13+z*7))+3,fruits:!!mango,trunk:3.0+((s*7)%1)*1.4});
-  t.position.set(x,0,z);t.scale.setScalar(pal?1:s);t.userData.vegetal=true;g.add(t);
+  t.position.set(x,0,z);t.scale.setScalar(pal?1:s);t.userData.vegetal=true;if(!mango)t.userData.edit={type:'arbre',key:key,ox:ox,oz:oz};g.add(t);
   if(colliders)colliders.push({x:x,z:z,r:(pal?.35:.6)*(pal?1:s)});
   return t;
 }

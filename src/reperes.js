@@ -131,11 +131,11 @@ export const REPERES=[
   {id:'autoecole',x:8.2,z:9.6,ry:Math.PI,interieur:'autoecole',nom:'l’Auto-école',coul:'#1f5f9e'}
 ];
 
-export function construireReperes(w){
+export function construireReperes(w,ov){
   const g=new THREE.Group();w.group.add(g);
   const portes=[];
-  REPERES.forEach(r=>{
-    const b=new THREE.Group();b.position.set(r.x,0,r.z);b.rotation.y=r.ry;g.add(b);
+  REPERES.map(r0=>Object.assign({},r0,(ov&&ov[r0.id])||{})).forEach(r=>{
+    const b=new THREE.Group();b.position.set(r.x,0,r.z);b.rotation.y=r.ry;g.add(b);b.userData.edit={type:'rep',id:r.id,nom:r.nom,w:r.w||W,d:r.d||D};
     MODELES[r.id==='police'?'police':r.id==='univ'?'univ':r.id==='sante'?'sante':r.id==='biblio'?'biblio':r.id](b);
     const cs=Math.cos(r.ry),sn=Math.sin(r.ry);
     // emprise (le véhicule garé devant reste traversable)
@@ -149,7 +149,7 @@ export function construireReperes(w){
 // ---------- Station-service : auvent, deux pompes et une boutique. On y arrive en véhicule, on descend, on fait le plein.
 // (x, z) : centre des pompes ; la boutique est derrière (côté +z local). Retourne les positions des pompes.
 export function construireStation(parent,cols,bxs,x,z,nom){
-  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);g.userData.edit={type:'station',id:'st_'+nom,nom:'la station '+nom,w:13,d:16,dz:2};
   box(g,13,.12,10,M('#8d8d8d',.95),0,.06,1.2);                                   // dalle
   box(g,13,.05,.35,M('#f1c40f'),0,.14,-3.7);                                       // ligne d'entrée
   // auvent
@@ -177,8 +177,8 @@ export function construireStation(parent,cols,bxs,x,z,nom){
 }
 
 // ---------- Gare : un train, un quai et un petit bâtiment. On y prend le train pour partir à l'aventure.
-export function construireGare(parent,cols,bxs,x,z){
-  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=Math.PI/2;parent.add(g);   // la voie longe le mur ouest du village
+export function construireGare(parent,cols,bxs,x,z,ry){
+  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry===undefined?Math.PI/2:ry;parent.add(g);g.userData.edit={type:'gare',id:'gare',nom:'la Gare',w:12,d:8};   // la voie longe le mur ouest du village
   box(g,12,.08,1.8,M('#5a5a5a',.95),0,.04,-1.8);                                  // ballast
   [-.7,.7].forEach(dz=>box(g,12,.06,.08,M('#8a8a8a',.4),0,.1,-1.8+dz));           // rails
   for(let i=-5;i<=5;i++)box(g,.18,.05,1.7,M('#5a3a22'),i*1.05,.07,-1.8);            // traverses

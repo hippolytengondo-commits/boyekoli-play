@@ -75,7 +75,7 @@ export function routeVoies(g,x1,z1,x2,z2,voies,opt){
   const o=Object.assign({trottoirs:true},opt||{});
   const hor=Math.abs(x2-x1)>=Math.abs(z2-z1),len=hor?Math.abs(x2-x1):Math.abs(z2-z1),W=largeurRoute(voies);
   const cx=(x1+x2)/2,cz=(z1+z2)/2;
-  const grp=new THREE.Group();grp.position.set(cx,0,cz);if(hor)grp.rotation.y=Math.PI/2;g.add(grp);   // axe local : z
+  const grp=new THREE.Group();grp.position.set(cx,0,cz);if(hor)grp.rotation.y=Math.PI/2;g.add(grp);if(o.edit)grp.userData.edit=o.edit;   // axe local : z
   const flat=(w,d,mat,x,y,z)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat);m.rotation.x=-Math.PI/2;m.position.set(x,y,z);m.receiveShadow=true;grp.add(m);return m};
   flat(W,len,asphalte(),0,.034,0);
   const blanc=new THREE.MeshBasicMaterial({color:'#f2f2f2',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5}),jaune=new THREE.MeshBasicMaterial({color:'#f1c40f',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5});

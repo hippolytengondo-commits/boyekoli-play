@@ -88,6 +88,7 @@ export function creerReseau(D){
     const dp=dispo();
     let h='<h3>📐 Aménagement du territoire</h3><p style="font-size:12px">🧑‍💼 <b>Architecte Lukusa</b> : « Pour élargir une route, il faut parfois déplacer un arbre ou un bâtiment. Choisis bien : chaque déménagement coûte des pièces. »</p>';
     if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
+    h+='<button class="p" onclick="closeDialog();amDebut()">🏗 Mode aménagement : tout déplacer dans le village (bâtiments, gare, stations, arbres, routes)</button>';
     h+=`<p class="row"><span>Mes pièces</span><b>${dp.pieces} 🪙</b></p><p class="row"><span>Mon bitume</span><b>${dp.bitume} 🛣️</b></p>`;
     let svg='<svg viewBox="48 -20 72 94" style="width:100%;background:#7aa857;border-radius:8px"><rect x="48" y="-20" width="72" height="94" fill="#7aa857"/>';
     routesActives().forEach(({s,c})=>{const r=corridor(s,c.pos,c.voies),w=largeurRoute(c.voies);svg+=`<rect x="${r.x0+.7}" y="${r.z0+.7}" width="${r.x1-r.x0-1.4}" height="${r.z1-r.z0-1.4}" fill="#3b3c40"/>`});
