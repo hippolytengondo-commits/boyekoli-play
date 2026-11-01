@@ -128,7 +128,7 @@ export function makeHuman(look){
   const longD=bottom==='long',skirt=bottom==='skirt',trousers=bottom==='trousers';
 
   const root=new THREE.Group();
-  const body=new THREE.Group();root.add(body);
+  const body=new THREE.Group();body.scale.set(1.1,.92,1.1);root.add(body);
 
   const hips=jnt(0,.95,0);body.add(hips);
   const pelvis=ball(.16,trousers?trouserM:(longD?topM:(skirt?topM:trouserM)),1.22,.62,.86);pelvis.position.y=.02;hips.add(pelvis);
@@ -159,15 +159,15 @@ export function makeHuman(look){
   // joues (fard léger)
   if(L.blush>.05){[-1,1].forEach(s=>{const c=ball(.03,M('#d4607a',.9,0,{transparent:true,opacity:.3*L.blush*2}),1,.8,.3);c.position.set(s*.05,.095,.088);headJ.add(c)})}
   // yeux
-  const eyeR=.0175*(.85+L.eyeS*.5)*1.32;
+  const eyeR=.0175*(.85+L.eyeS*.5)*1.6;
   const eyeWhite=M('#f7f3ec',.35),iris=M(L.eyeC,.25),pupil=M('#050302',.2),glint=new THREE.MeshBasicMaterial({color:0xffffff});
   const eyes=[];
   [-1,1].forEach(s=>{
     const ex=s*.040,ey=.146;
     const w=ball(eyeR,eyeWhite,1.25,.9,.65);w.position.set(ex,ey,.087);headJ.add(w);
-    const ir=ball(eyeR*.62,iris,1,1,.5);ir.position.set(ex,ey,.087+eyeR*.5);headJ.add(ir);
+    const ir=ball(eyeR*.72,iris,1,1,.5);ir.position.set(ex,ey,.087+eyeR*.5);headJ.add(ir);
     const pu=ball(eyeR*.32,pupil,1,1,.4);pu.position.set(ex,ey,.087+eyeR*.62);headJ.add(pu);
-    const gl=ball(eyeR*.16,glint,1,1,1,8);gl.position.set(ex+s*.0035,ey+.004,.087+eyeR*.8);headJ.add(gl);
+    const gl=ball(eyeR*.24,glint,1,1,1,8);gl.position.set(ex+s*.0035,ey+.004,.087+eyeR*.8);headJ.add(gl);
     eyes.push(w,ir,pu);
     // paupières
     const lid=new THREE.Mesh(new THREE.SphereGeometry(eyeR*1.28,16,8,0,Math.PI*2,0,Math.PI*.3),skinDark);
@@ -180,13 +180,13 @@ export function makeHuman(look){
     if(L.brow===2){const b2=br.clone();b2.position.x=ex+s*.014;b2.position.y=.172;b2.rotation.z=s*.12;headJ.add(b2)}
   });
   // nez
-  const nz=.8+L.nose*.7;
+  const nz=(.8+L.nose*.7)*.55;
   const nb=new THREE.Mesh(new THREE.BoxGeometry(.016*nz,.04,.012),skinM);nb.position.set(0,.128,.1);headJ.add(nb);
   const tip=ball(.0165*nz,skinM,1,.9,1);tip.position.set(0,.103,.107);headJ.add(tip);
   [-1,1].forEach(s=>{const wg=ball(.011*nz,skinM,1,.9,.9);wg.position.set(s*.015*nz,.1,.1);headJ.add(wg);
     const ns=ball(.004,M('#1a0f0a',.5),1,1,1,8);ns.position.set(s*.008*nz,.094,.113);headJ.add(ns)});
   // lèvres
-  const lw=.026+.012*L.lips,lt=.0045+.0045*L.lips;
+  const lw=.02+.008*L.lips,lt=.0035+.003*L.lips;
   const lipM=M(L.lipC,.3);
   const up=ball(1,lipM,lw,lt,.009,14);up.position.set(0,.0745,.1);headJ.add(up);
   const lo=ball(1,lipM,lw*.92,lt*1.35,.01,14);lo.position.set(0,.0635,.099);headJ.add(lo);
