@@ -39,7 +39,8 @@ export function creerMoteur(el,opt){
     // objets
     d.objets.forEach(ob=>{
       const g=new THREE.Group();g.position.set(ob.x,0,ob.z);monde.add(g);g.userData.id=ob.id;
-      if(ob.plaque){box(ob.w,ob.h,ob.d,ob.c,0,ob.h/2+.2,0,g)}
+      if(ob.parts){ob.parts.forEach(q=>{let m;if(q.t==='cyl')m=new THREE.Mesh(new THREE.CylinderGeometry(q.r,q.r2===undefined?q.r:q.r2,q.h,q.seg||14),new THREE.MeshStandardMaterial({color:q.c,roughness:q.rough===undefined?.6:q.rough,transparent:!!q.op,opacity:q.op||1}));else if(q.t==='sph')m=new THREE.Mesh(new THREE.SphereGeometry(q.r,14,10),new THREE.MeshStandardMaterial({color:q.c,roughness:.5,transparent:!!q.op,opacity:q.op||1}));else m=new THREE.Mesh(new THREE.BoxGeometry(q.w,q.h,q.d),new THREE.MeshStandardMaterial({color:q.c,roughness:.7,transparent:!!q.op,opacity:q.op||1}));m.position.set(q.x||0,q.y||0,q.z||0);m.castShadow=!o.low;g.add(m)})}
+      else if(ob.plaque){box(ob.w,ob.h,ob.d,ob.c,0,ob.h/2+.2,0,g)}
       else if(ob.id==='masque'){const m=box(.55,.7,.2,'#b5602a',0,.9,0,g);box(.15,.15,.08,'#222',-.12,.95,.12,g);box(.15,.15,.08,'#222',.12,.95,.12,g);box(.2,.08,.1,'#f1c40f',0,.7,.12,g);box(.3,.3,.3,'#7a4a26',0,.35,0,g)}
       else if(ob.id==='voiture'){box(ob.w,.5,ob.d,ob.c,0,.45,0,g);box(ob.w*.55,.45,ob.d*.9,ob.c,-ob.w*.05,.95,0,g);box(ob.w*.5,.3,ob.d*.92,'#9fd3f5',-ob.w*.05,.98,0,g);[-1,1].forEach(s=>[-1,1].forEach(t=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.2,12),mat('#222'));w.rotation.x=Math.PI/2;w.position.set(s*ob.w*.32,.28,t*ob.d*.5);g.add(w)}));box(.2,.12,.5,'#ff3b3b',0,1.25,0,g)}
       else if(ob.id==='vitrine'){box(ob.w,.5,ob.d,'#5a4a3a',0,.25,0,g);const v=new THREE.Mesh(new THREE.BoxGeometry(ob.w*.95,ob.h-.5,ob.d*.95),new THREE.MeshStandardMaterial({color:0x9fc5e8,transparent:true,opacity:.35,roughness:.1}));v.position.set(0,.5+(ob.h-.5)/2,0);g.add(v)}

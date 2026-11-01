@@ -122,3 +122,12 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Progression : compte dans « Agence de détectives (0/2) » du pôle des métiers (`done['met:d1'|'met:d2']`), étoiles, pièces (15 + 5 par étoile à la première réussite), certificat de détective débutant (conservé dans `adv.det`).
 - À faire / limites : modèles 3D procéduraux (pas de GLB) ; photos stockées en miniatures dans la sauvegarde ; pas encore de chargement progressif ni d'effets sonores dédiés ; tests manuels sur smartphone à faire ; relecture des textes par un enseignant.
 - Mode aménagement : on peut maintenant faire glisser l'objet choisi avec le doigt. La maison familiale n'est pas encore déplaçable (porte et intérieur liés au code du village).
+
+## File d'attente des grands jeux demandés (01/11/2026, à réaliser dans cet ordre)
+1. 🔬 BOYEKOLI SCIENCE LAB (laboratoire scientifique 3D : chimie, biologie, physique) → rubrique « Laboratoire scientifique (0/3) ».
+2. 🏥 BOYEKOLI MEDICAL CENTER (hôpital virtuel : « Ma première journée à l'hôpital », « À la découverte des métiers de l'hôpital », ambulance, corps humain) → « Centre hospitalier (0/2) ». Sécurité pédagogique : simulation, pas de diagnostic réel.
+3. 🏠 BOYEKOLI DESIGN STUDIO (éditeur 3D de maisons et décoration, mode libre et missions) → « Atelier de décoration (0/2) ».
+4. 👗 BOYEKOLI FASHION STUDIO (création de vêtements, coiffures, couture, photo, défilé) → « Atelier mode et coiffure (0/1) » (à fusionner avec le jeu de mode existant).
+5. 🌆 BOYEKOLI SMART CITY (simulation urbaine, à mélanger avec la ville et le mode aménagement existants) → « Ville intelligente (0/1) ».
+6. 🚀 BOYEKOLI SPACE EXPLORER (fusées, pilotage, missions, planètes, station, observatoire) → « Exploration spatiale (0/1) ».
+Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `adv`, pièces/étoiles/badges existants, tests mobile, ne pas modifier les autres activités. Les modèles GLB ne sont pas disponibles : modèles procéduraux.
