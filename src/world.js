@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as T from './textures.js';
 import {leafyTree,palm,grassField,bush} from './nature.js';
 
-export const std=(c,r,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:r===undefined?.85:r},o||{}));
+export const std=(c,r,o)=>{const m=new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:r===undefined?.85:r},o||{}));if(!(o&&o.map))m.color.offsetHSL(0,.07,.015);return m};   // couleurs un peu plus vives (style dessin animé)
 export function box(g,w,h,d,m,x,y,z,ry){
   const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
   b.position.set(x,y,z);if(ry)b.rotation.y=ry;b.castShadow=true;b.receiveShadow=true;g.add(b);return b;

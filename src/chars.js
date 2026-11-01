@@ -208,7 +208,7 @@ export function makeHuman(look){
     const c=document.createElement('canvas');c.width=64;c.height=128;const g=c.getContext('2d');g.fillStyle='rgb(128,128,255)';g.fillRect(0,0,64,128);
     for(let i=0;i<90;i++){const x=Math.random()*64;const gr=g.createLinearGradient(x-2,0,x+2,0);gr.addColorStop(0,'rgba(80,128,255,.8)');gr.addColorStop(.5,'rgba(180,128,255,.8)');gr.addColorStop(1,'rgba(80,128,255,.0)');g.fillStyle=gr;g.fillRect(x-2,0,4,128)}
     const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(6,1);return t})();
-  hairM.normalMap=strand;hairM.normalScale=new THREE.Vector2(.8,.8);hairM.roughness=.55;
+  hairM.normalMap=strand;hairM.normalScale=new THREE.Vector2(.8,.8);hairM.roughness=.4;
   const scalp=(scale,tilt)=>{
     const sx=(.098+.02*L.faceW)*scale,sy=.128*scale,sz=.113*scale;
     const tg=new THREE.SphereGeometry(1,32,16,0,Math.PI*2,0,Math.PI*.40);
@@ -222,7 +222,7 @@ export function makeHuman(look){
     back.scale.set(sx*1.01,sy*1.01,sz*1.01);back.position.y=.125;back.rotation.y=Math.PI;back.castShadow=true;headJ.add(back);
     return top;
   };
-  if(hs==='courtes'||hs==='gris'){scalp(1.06)}
+  if(hs==='courtes'||hs==='gris'){scalp(1.12)}
   else if(hs==='rase'){scalp(1.0)}
   else if(hs==='tresses'){
     scalp(1.07);
@@ -290,8 +290,8 @@ export function makeHuman(look){
     const eb=ball(.043,longSleeve?topM:skinM,1,1,1,12);el.add(eb);
     const fa=taper(.042,.031,.26,longSleeve?topM:skinM);el.add(fa);
     const hand=new THREE.Group();hand.position.y=-.27;el.add(hand);
-    const palm=ball(1,skinM,.036,.058,.02,12);palm.position.y=-.05;hand.add(palm);
-    const fing=ball(1,skinM,.034,.045,.016,10);fing.position.y=-.1;hand.add(fing);
+    const palm=ball(1,skinM,.046,.06,.03,12);palm.position.y=-.05;hand.add(palm);
+    const fing=ball(1,skinM,.04,.042,.024,10);fing.position.y=-.1;hand.add(fing);
     const th=ball(1,skinM,.015,.035,.015,8);th.position.set(side*-.03,-.045,.012);th.rotation.z=side*.5;hand.add(th);
     sh.rotation.z=side*.07;
     arms.push({sh,el});
