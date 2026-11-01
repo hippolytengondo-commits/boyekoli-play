@@ -26,7 +26,7 @@ export function creerMetiers(D){
   function vueHub(d){
     let h='<h3>🏙 Pôle des métiers</h3><p style="font-size:13px">Découvre les métiers, apprends en t’amusant et gagne des pièces. Chaque guide t’accompagne.</p>'+msg(d);
     MODULES.forEach(m=>{h+=`<button onclick="metOuvrir('${m.id}')">${m.ico} ${esc(m.nom)} <small>(${nbFaits(m)}/${m.dossiers.length})</small></button>`});
-    h+='<button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="metBoutique()">🏪 Ma boutique</button>';
+    h+='<button class="p" onclick="simAeroport()">✈️ Aéroport et simulateur de vol</button><button class="p" onclick="simMusique()">🎶 Studio de musique (instruments et création)</button><button class="p" onclick="simMode()">👗 Salon de mode (créer des tenues)</button><button class="p" onclick="simDeco()">🏠 Atelier de décoration (plans de pièces)</button><button onclick="simProfil()">🌟 Mon profil de talents</button><button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="metBoutique()">🏪 Ma boutique</button>';
     return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
   }
   function vueModule(d){
@@ -74,7 +74,7 @@ export function creerMetiers(D){
       A().pieces-=c.cout;f.parc[i]={c:k,t:Date.now(),arr:0};save();refreshHud();SFX.coin();d.msg='Tu as semé : '+c.ico+' '+c.nom+'. '+c.txt;parler(c.txt);renderDialog()},
     metArroser:i=>{const d=G.dialog,p=ferme().parc[i];if(!p||p.arr>=3)return;p.arr++;save();SFX.ok&&SFX.ok();d.msg='💧 Tu arroses : la plante pousse plus vite !';renderDialog()},
     metRecolter:i=>{const d=G.dialog,f=ferme(),p=f.parc[i];if(!p||restant(p)>0)return;const c=CULTURES[p.c];
-      f.stock[p.c]=Math.min(CAP*4,(f.stock[p.c]||0)+c.rendement);f.parc[i]=null;A().xp+=3;save();refreshHud();SFX.bravo();d.msg='Récolte : '+c.rendement+' '+c.ico+' '+c.nom+' ajoutés à ta réserve !';renderDialog()},
+      f.stock[p.c]=Math.min(CAP*4,(f.stock[p.c]||0)+c.rendement);f.parc[i]=null;f.nbR=(f.nbR||0)+1;A().xp+=3;save();refreshHud();SFX.bravo();d.msg='Récolte : '+c.rendement+' '+c.ico+' '+c.nom+' ajoutés à ta réserve !';renderDialog()},
     metAcheter:k=>{const d=G.dialog,f=ferme(),e=ELEVAGE[k];
       if(f[k]>=CAP){d.msg='Ton enclos est plein pour cet animal.';SFX.ko();renderDialog();return}
       if(A().pieces<e.prix){d.msg='Il te manque '+(e.prix-A().pieces)+' pièces.';SFX.ko();renderDialog();return}
@@ -91,6 +91,7 @@ export function creerMetiers(D){
       d.vente=null;save();refreshHud();renderDialog()}
   };
   return {
+    modules:()=>MODULES,
     html:d=>d.vue==='module'?vueModule(d):d.vue==='ferme'?vueFerme(d):d.vue==='boutique'?vueBoutique(d):vueHub(d),
     bouton:()=>'<button onclick="metHub()">🏙 Pôle des métiers</button>',
     spots(dim){

@@ -72,3 +72,8 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Dossiers de quiz (6 modules, 13 dossiers) : agence de détectives, laboratoire scientifique, centre hospitalier (éducatif), atelier de décoration, atelier mode et coiffure, ville intelligente, studio de musique et danse, école de pilotage (bases). Contenu dans `src/contenu/metiers.js`, 9 personnages-guides.
 - Ferme : 4 parcelles (maïs, manioc, légumes ; arrosage qui accélère), poules et chèvres (œufs, lait), boutique avec rendu de monnaie.
 - Limites connues : la décoration, la mode et la musique sont des quiz et non des éditeurs 3D ; à enrichir plus tard. Relecture des textes par un enseignant et, pour l'hôpital, par un professionnel de santé. Test sur téléphone du niveau 3 à faire.
+
+## Simulateurs de métiers (01/11/2026)
+- Aéroport dans le village (extrémité est) : terminal, tour, avions garés ; simulateur de vol (`src/avion.js`) ; studio de musique avec séquenceur ; salon de mode ; atelier de décoration ; profil de talents (`src/simulateurs.js`).
+- À tester sur téléphone : boutons du simulateur de vol, son du studio, lisibilité du salon de mode et du plan de décoration. Les avions garés sont des modèles simples.
+- Pistes d'évolution : plus d'instruments et de rythmes, plus de pièces de mode, meubles en 3D dans la maison.

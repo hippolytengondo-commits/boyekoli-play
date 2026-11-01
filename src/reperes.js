@@ -205,3 +205,33 @@ export function construireGare(parent,cols,bxs,x,z){
   [-.5,4.5].forEach(dx=>cyl(g,.1,.1,2.6,M('#555'),dx,1.5,.6,8));box(g,6,.15,2.2,M('#c0392b'),2,2.85,1.3);
   return {x:x+1.2,z:z-2};
 }
+
+// ---------- Aéroport : terminal, tour de contrôle, piste de roulage et avions garés (à l'extrémité est du village)
+export function construireAeroport(parent,cols,bxs,x,z){
+  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  box(g,11,.1,17,M('#5b5b60',.95),0,.05,0);                                         // aire de stationnement
+  for(let i=0;i<8;i++)box(g,.25,.02,1.4,M('#f4f4f4'),0,.11,-7+i*2);                 // axe de roulage
+  // terminal
+  box(g,10,4.6,4.4,M('#eef1f5'),0,2.3,-6);box(g,10.4,.4,4.8,M('#1f5f9e'),0,4.8,-6);
+  box(g,8.6,2.2,.1,new THREE.MeshStandardMaterial({color:0x6fb7e6,transparent:true,opacity:.55,roughness:.1}),0,2.1,-3.75);
+  box(g,3,.2,1.6,M('#ffffff'),0,3.6,-3.2);
+  // tour de contrôle
+  cyl(g,.7,.9,9,M('#d9dde3'),-4.2,4.5,-8.2,10);cyl(g,1.5,1,1.6,new THREE.MeshStandardMaterial({color:0x4aa0d8,transparent:true,opacity:.7}),-4.2,9.7,-8.2,10);cyl(g,1.7,1.7,.25,M('#c0392b'),-4.2,10.6,-8.2,10);
+  // avions garés
+  const avion=(px,pz,ry,c,echelle)=>{const a=new THREE.Group();a.position.set(px,0,pz);a.rotation.y=ry;a.scale.setScalar(echelle);g.add(a);
+    const f=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,6.2,12),M('#f6f6f6'));f.rotation.x=Math.PI/2;f.position.y=1.5;a.add(f);
+    const nez=new THREE.Mesh(new THREE.SphereGeometry(.55,12,8),M('#f6f6f6'));nez.position.set(0,1.5,3.1);a.add(nez);
+    const q=new THREE.Mesh(new THREE.ConeGeometry(.55,1.6,12),M('#f6f6f6'));q.rotation.x=-Math.PI/2;q.position.set(0,1.6,-3.9);a.add(q);
+    box(a,6.8,.14,1.3,M('#e8e8ec'),0,1.2,.3);box(a,2.3,.1,.8,M('#e8e8ec'),0,1.7,-3.5);box(a,.1,1.2,.9,M(c),0,2.2,-3.5);
+    box(a,6.2,.02,.5,M(c),0,1.28,.3);box(a,1,.35,.05,M('#2b4a6b'),0,1.8,2.7);
+    [[0,3],[-.9,.5],[.9,.5]].forEach(([wx,wz])=>{cyl(a,.12,.12,1,M('#333'),wx,.5,wz,6);cyl(a,.28,.28,.25,M('#222'),wx,.28,wz,10)});
+    return a};
+  avion(-1,3,Math.PI/2*0.15,'#c0392b',1);avion(1.5,10,-Math.PI/2*0.15,'#1f5f9e',.8);
+  // manche à air
+  cyl(g,.06,.06,3.4,M('#888'),4.6,1.7,6,6);const mg=new THREE.Mesh(new THREE.ConeGeometry(.3,1.5,8,1,true),new THREE.MeshStandardMaterial({color:'#ff7a1a',side:THREE.DoubleSide}));mg.rotation.z=Math.PI/2;mg.position.set(5.3,3.3,6);g.add(mg);
+  // enseigne
+  const pl=new THREE.Mesh(new THREE.PlaneGeometry(6,1.2),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'✈ AÉROPORT BOYEKOLI',s:80,y:.5}],1024,200,'#1f5f9e','#ffffff'),side:THREE.DoubleSide}));
+  pl.position.set(0,6.2,-3.5);g.add(pl);
+  bxs.push({x0:x-5,x1:x+5,z0:z-8.2,z1:z-3.8});bxs.push({x0:x-4,x1:x+2.5,z0:z+1,z1:z+5});bxs.push({x0:x-1,x1:x+4,z0:z+8,z1:z+12});
+  return {x:x,z:z-1};
+}

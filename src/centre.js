@@ -75,6 +75,7 @@ export function creerCentre(D){
         L.push({x:bt.monter.x,z:bt.monter.z,r:1.6,label:'🔼 Escalator : monter à l’étage · boutiques',run:()=>changerEtage(+1)});
       }else if(niv===3){
         metiers(dim).forEach(sp=>{sp.z=-1.2;sp.r=3.2;L.push(sp)});
+        [[3,'🏠 Atelier de décoration','simDeco'],[4,'👗 Salon de mode','simMode'],[6,'🎶 Studio de musique','simMusique'],[7,'✈️ Aéroport · simulateur de vol','simAeroport'],[8,'🌾 Ferme','metFerme']].forEach(([i,t,f])=>L.push({x:-10+i*2.5,z:-D2/2+2.2,r:1.5,label:t,run:()=>window[f]()}));
         L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre',run:()=>changerEtage(-1)});
       }else{
         L.push({x:0,z:-D2/2+3,r:2.6,label:'🛍 Boutique de Maman Béa : meubles, mangues, vente',run:()=>{openShop();}});

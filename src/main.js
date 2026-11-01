@@ -35,9 +35,10 @@ const NB_NIVEAUX_MUSEE=NIVEAUX_MUSEE.length;
 import {creerAventures} from './aventures.js';
 import {creerCentre} from './centre.js';
 import {creerMetiers} from './metiers.js';
+import {creerSimulateurs} from './simulateurs.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
-import {construireReperes,construireStation,construireGare} from './reperes.js';
+import {construireReperes,construireStation,construireGare,construireAeroport} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
 import {buildChambre,buildCuisine,buildEtage} from './maisonplus.js';
 
@@ -359,6 +360,8 @@ function construireVille(){
   // gare, contre le mur ouest, juste à côté de la maison du joueur (celle de la maman) : le train mène aux aventures
   {const gp=construireGare(w.group,w.colliders,w.boxes,-30.8,0);
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
+  {const ap=construireAeroport(w.group,w.colliders,w.boxes,52.5,-3);
+   SCENES.ville.spots.push({x:ap.x-2,z:ap.z+3,r:4.2,label:'✈️ Aéroport : simulateur de vol',run:()=>SIM.actions.simAeroport()})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);
@@ -663,7 +666,7 @@ function renderDialog(){
   else if(d.kind==='rayon'||d.kind==='caisse'||d.kind==='prov')h=SUP.html(d);
   else if(d.kind==='matos'||d.kind==='troc')h=CC.html(d);
   else if(d.kind==='animal')h=ANI.html(d);
-  else if(d.kind==='metiers')h=MET.html(d);
+  else if(d.kind==='metiers')h=SIM.html(d)||MET.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
   else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin'||d.kind==='effort')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
@@ -1107,7 +1110,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+MET.bouton()+EN.boutons()
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+MET.bouton()+SIM.bouton()+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1571,6 +1574,7 @@ const MUSEE=creerMusee({G,esc,save,gain,SFX,toast:t=>toast(t),openBox:d=>openBox
 const ANI=creerAnimaux({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,gain,parler:parlerFr,scene,refreshHud});
 const CC=creerCentre({G,esc,metiers:dim=>MET.spots(dim),animalerie:()=>ANI.actions.aniAnimalerie(),openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,openShop:()=>openShop(),boutiqueMode:()=>{closeDialog();openCreator('play')},changerEtage:changerEtageMusee});
 const MET=creerMetiers({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,quiz3D:lancerQuiz3D});
+const SIM=creerSimulateurs({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),renderDialog:()=>renderDialog(),quiz3D:lancerQuiz3D,toast:t=>toast(t),modules:()=>MET.modules()});
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{
@@ -2557,7 +2561,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;
