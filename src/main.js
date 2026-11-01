@@ -235,6 +235,7 @@ const SCENES={
      SCENES.interieur.spots.push({x:-W2/2+2.7,z:-D2/2+3.5,r:1.9,label:'Accueil : s’inscrire à l’auto-école',run:()=>openBox({kind:'insc',msg:'',etape:'accueil',prix:FRAIS_AE})},
        {x:W2/2-2.6,z:-D2/2+3.3,r:1.9,label:'Moniteur : leçons de conduite',run:()=>{if(G.adv.inscrit)openBox({kind:'ae'});else{toast('Inscris-toi d’abord à l’accueil.');SFX.ko()}}})}
    G.x=0;G.z=w.dim.D/2-2.2;return w},interior:true,doors:[],spots:[]},
+ aventure:{build:()=>AV.monde(),interior:false,get doors(){return AV.portes()},get spots(){return AV.spots()}},
  conduite:{build:()=>{const w=buildConduite(AE[G.cond.m],G.cond.veh,makeHuman);G.cond.car=w.car;return w},interior:false,doors:[],spots:[]},
  chambre:{build:()=>buildChambre(G.adv.maison),interior:true,doors:[{x:0,z:2.0,r:1.5,to:'maison',label:'Retourner au salon',tx:3.2,tz:1.2,phi:Math.PI}]},
  cuisine:{build:()=>buildCuisine(G.adv.maison),interior:true,doors:[{x:0,z:2.0,r:1.5,to:'maison',label:'Retourner au salon',tx:-3.2,tz:1.2,phi:0}]},
@@ -644,7 +645,7 @@ function renderDialog(){
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='rayon'||d.kind==='caisse'||d.kind==='prov')h=SUP.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
-  else if(d.kind==='avent')h=AV.html(d);
+  else if(d.kind==='avent'||d.kind==='recit'||d.kind==='avfin')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
@@ -1530,8 +1531,8 @@ function appliquerSave(s){
 const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w},PROGRAMME,CONTENU,missionCle,startMission:(a,b,c,o)=>startMission(a,b,c,o),getSave,applySave:appliquerSave,aProgression});
 // collections, surprise du jour et événement du jour
 const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
-const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
 const parlerFr=(t,force)=>{if(force){const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w}else speak(t,'ilunga')};
+const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),closeDialog:()=>closeDialog(),goTo:d=>goTo(d),parler:parlerFr,toast:t=>toast(t)});
 // quiz dans la salle de réponses (les réponses flottent, comme dans les missions scolaires) ; q : {q,c:[choix],a:index,exp}
 function lancerQuiz3D(o){
   // la réponse attendue est le TEXTE de la bonne réponse (comme dans les missions scolaires) ; intro : tableau de phrases

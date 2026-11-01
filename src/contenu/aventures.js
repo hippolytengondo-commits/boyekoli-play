@@ -1,7 +1,7 @@
 // Aventures scénarisées : un objectif, un parcours, des indices, des défis et une récompense. Contenu modifiable sans toucher au programme.
 // Chaque chapitre : lieu, scène racontée, question. Une bonne réponse révèle un indice ; l'aventure terminée offre un souvenir de collection.
 export const AVENTURES=[
- {id:'tresor',ico:'💎',titre:'À la recherche du trésor congolais',guide:'Mbuta Kasongo',
+ {id:'tresor',decor:'savane',ico:'💎',titre:'À la recherche du trésor congolais',guide:'Mbuta Kasongo',
   intro:'Le vieux Mbuta Kasongo t’a confié les morceaux d’une carte ancienne. Elle mène à un trésor caché quelque part en RDC. Pour retrouver chaque morceau, il faut voyager de province en province et résoudre les énigmes. Prêt, explorateur ?',
   souvenir:{id:'av_coffre',ico:'🪙',nom:'Le coffre du trésor',txt:'Tu as retrouvé le trésor congolais : le vrai trésor, c’est tout ce que tu as appris en voyageant.'},
   chapitres:[
@@ -10,7 +10,7 @@ export const AVENTURES=[
   {lieu:'Goma · Nord-Kivu',scene:'À Goma, au bord du lac Kivu, un guide montre un grand volcan fumant : « Le troisième morceau est caché à ses pieds. Mais d’abord, dis-moi son nom ! »',q:'Quel volcan domine la ville de Goma ?',o:['Le Nyiragongo','Le Kilimandjaro','Le mont Cameroun','Le Vésuve'],a:0,e:'Le Nyiragongo est un volcan des Virunga, près de Goma.',indice:'Troisième morceau trouvé : un dessin de montagne.'},
   {lieu:'Lubumbashi · Haut-Katanga',scene:'Au Katanga, un mineur t’explique que la région est célèbre pour un métal rouge-orangé qui conduit très bien l’électricité : « Nomme-le et je te donne le quatrième morceau. »',q:'Quel métal rouge-orangé est très présent au Katanga et sert à fabriquer des fils électriques ?',o:['Le cuivre','Le plomb','L’aluminium','Le fer blanc'],a:0,e:'Le cuivre est extrait au Katanga et sert à fabriquer des fils électriques.',indice:'Quatrième morceau trouvé : une étoile jaune.'},
   {lieu:'Kinshasa · la capitale',scene:'Les quatre morceaux s’assemblent : l’étoile jaune, la montagne, la flèche, la croix… Ils pointent vers un musée de Kinshasa. Sur le coffre, une date est gravée : celle où le pays est devenu libre.',q:'Quel événement a eu lieu le 30 juin 1960 ?',o:['L’indépendance du Congo','La création du parc des Virunga','L’invention de la rumba','La construction du pont Maréchal'],a:0,e:'Le 30 juin 1960, le Congo est devenu indépendant.',indice:'Le coffre s’ouvre !'}]},
- {id:'foret',ico:'🌳',titre:'Sauvons la forêt',guide:'Maman Zawadi',
+ {id:'foret',decor:'foret',ico:'🌳',titre:'Sauvons la forêt',guide:'Maman Zawadi',
   intro:'La grande forêt du bassin du Congo est en danger. Maman Zawadi, gardienne de la forêt, a besoin de ton aide : il faut comprendre ce qui l’abîme, découvrir ceux qui y vivent et agir pour la protéger.',
   souvenir:{id:'av_graine',ico:'🌱',nom:'La graine de la forêt',txt:'Tu as aidé à sauver la forêt. Plante, protège, et partage ce que tu sais !'},
   chapitres:[
@@ -19,7 +19,7 @@ export const AVENTURES=[
   {lieu:'Sous la canopée',scene:'Maman Zawadi lève les yeux vers les cimes : « La forêt est un grand poumon pour notre planète. Sais-tu pourquoi ? »',q:'Que font les arbres pour le climat ?',o:['Ils absorbent du dioxyde de carbone et rejettent de l’oxygène','Ils fabriquent du plastique','Ils chauffent l’air','Ils produisent de la fumée'],a:0,e:'Les arbres absorbent du dioxyde de carbone et rejettent de l’oxygène : c’est la photosynthèse.',indice:'Rôle des arbres compris : ils nous aident à respirer.'},
   {lieu:'Village de lisière',scene:'Dans un village, des enfants demandent comment réparer ce qui a été abîmé. Maman Zawadi sort de petits plants d’arbres.',q:'Que peut-on faire pour aider la forêt à se reconstituer ?',o:['Replanter des arbres','Brûler les herbes','Jeter des déchets','Couper plus vite'],a:0,e:'Replanter des arbres aide la forêt à repousser.',indice:'Solution trouvée : replanter.'},
   {lieu:'Place du village',scene:'Pour finir, tous les habitants se réunissent. Maman Zawadi demande : « Qu’est-ce que chacun peut faire, chaque jour, pour protéger la forêt ? »',q:'Quelle habitude protège la forêt ?',o:['Ne pas gaspiller le bois et le papier, et replanter','Laisser un feu allumé','Chasser tous les animaux','Abandonner ses déchets en forêt'],a:0,e:'Économiser le bois et le papier et replanter sont de petits gestes qui protègent la forêt.',indice:'La forêt est sauvée grâce à vous !'}]},
- {id:'virunga',ico:'🦍',titre:'Expédition au Virunga',guide:'Ranger Baraka',
+ {id:'virunga',decor:'volcans',ico:'🦍',titre:'Expédition au Virunga',guide:'Ranger Baraka',
   intro:'Le ranger Baraka t’emmène dans le parc national des Virunga, le plus ancien parc d’Afrique, pour découvrir ses volcans, ses lacs et ses gorilles. Ouvre grands tes yeux et ton cahier !',
   souvenir:{id:'av_plume',ico:'🪶',nom:'La plume du ranger',txt:'Tu as terminé l’expédition au Virunga. Les rangers protègent ce trésor de la nature.'},
   chapitres:[
