@@ -109,7 +109,7 @@ export function makeHuman(look){
   const L=normLook(look);
   const out=OUTFITS[L.outfit]||OUTFITS.uniforme;
   const female=L.s==='f';
-  const fk=L.faceUrl?'u':L.faceKey,fi=(L.faceUrl&&FACES['_user'])||FACES[L.faceKey||''];
+  const fk=null,fi=null;   // plus de photo plaquée : visages modélisés en 3D
   const face=fi?{rect:fi,cy:.5,kx:1.12,ky:1.08,y0:-.2}:null;
   if(face&&fi.skin)L.skin=fi.skin;
   const sk=new THREE.Color(L.skin);
@@ -142,7 +142,7 @@ export function makeHuman(look){
   // cou et tête
   const neckJ=jnt(0,.6,0);spine.add(neckJ);
   const neck=caps(.045,.06,skinM);neck.position.y=.04;neckJ.add(neck);
-  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.32);neckJ.add(headJ);
+  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.4);neckJ.add(headJ);
   let headM=skinM;
   if(face){
     headM=new THREE.MeshStandardMaterial({color:sk,map:faceTexture(L.faceKey,L.faceUrl),roughness:.62,emissive:sk.clone().multiplyScalar(.05)});
