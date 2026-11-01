@@ -35,7 +35,7 @@ export function creerAmenager(D){
     const mf=A().maison||{},S=[
       {x0:-27-(mf.cuisine?4.4:0)-1,x1:-17+(mf.chambre?4.4:0)+1,z0:-12.5,z1:-5.5},   // maison familiale
       {x0:28,x1:56,z0:-16,z1:-6},{x0:26,x1:44,z0:-8,z1:5},                          // école et sa cour
-      {x0:-33.5,x1:27,z0:-2.9,z1:2.9},{x0:-11.8,x1:-2.2,z0:-14.8,z1:14.8},         // rue principale et liaison
+      {x0:-24,x1:27,z0:-2.9,z1:2.9},{x0:-11.8,x1:-2.2,z0:-14.8,z1:14.8},         // rue principale et liaison
       {x0:36,x1:114,z0:-14,z1:14},{x0:114,x1:146,z0:-10,z1:12},{x0:58,x1:116,z0:12,z1:64}   // route, site de l'aéroport et zone d'aménagement de l'Est (gérée par le bureau)
     ];
     if(A().rond)S.push({x0:-16.4,x1:2.4,z0:-9.4,z1:9.4});
@@ -50,6 +50,7 @@ export function creerAmenager(D){
     for(const q of autres(o)){
       if(ud.type==='route'){if(['rep','gare','station'].includes(q.u.type)&&inter(r,q.r))return {ok:false,raison:'un bâtiment gêne : '+(q.u.nom||'bâtiment')}}
       else if(q.u.type==='route'){if(['rep','gare','station'].includes(ud.type)&&inter(r,q.r))return {ok:false,raison:'une route passe ici'}}
+      else if((q.u.type==='arbre'||q.u.type==='plante')&&['rep','gare','station'].includes(ud.type)){/* les arbres sous le nouveau bâtiment seront replantés ailleurs ou supprimés à la validation */}
       else if(inter(r,q.r,ud.type==='arbre'||ud.type==='plante'?.5:0))return {ok:false,raison:'emplacement occupé : '+(q.u.nom||'un autre objet')}}
     return {ok:true}}
   // ---------- interface
@@ -136,6 +137,7 @@ export function creerAmenager(D){
     else if(u.type==='route'){const i=m.routes.findIndex(q=>q.id===u.id);if(i>=0)m.routes[i]=Object.assign({},sel.cfg);
       // les arbres qui se trouvent sur la route sont déplacés : ils sont supprimés (replantables)
       const r=rectDe(o);autres(o).forEach(q=>{if((q.u.type==='arbre')&&inter(r,q.r)){m.arbres[q.u.key]=null}if(q.u.type==='plante'&&inter(r,q.r))m.plantes[q.u.idx]=null})}
+    if(['rep','gare','station'].includes(u.type)){const r=rectDe(o);autres(o).forEach(q=>{if(q.u.type==='arbre'&&inter(r,q.r))m.arbres[q.u.key]=null;if(q.u.type==='plante'&&inter(r,q.r))m.plantes[q.u.idx]=null})}
     A().pieces-=c.pieces;stock().bitume=(stock().bitume||0)-c.bitume;
     m.plantes=m.plantes.filter(Boolean);
     save();refreshHud();SFX.win&&SFX.win();toast('Aménagement enregistré'+(c.pieces?' (−'+c.pieces+' 🪙)':'')+'.');
