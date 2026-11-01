@@ -214,7 +214,7 @@ export function construireAeroport(parent,cols,bxs,X0,Z0){
   const plat=(x,z,w,d,mat,y)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat||asph);m.rotation.x=-Math.PI/2;m.position.set(x,y||.05,z);parent.add(m);return m};
   // route bitumée depuis l'est du village jusqu'à l'aéroport : 1+1 voies, puis 2+2, 3+3 et 4+4 à l'approche du terminal
   const xr1=X0-16;
-  [[36,52,1],[52,80,2],[80,100,3],[100,xr1,4]].forEach(([xa,xb,v])=>routeVoies(parent,xa,Z0,xb,Z0,v));
+  [[36,52,1]].forEach(([xa,xb,v])=>routeVoies(parent,xa,Z0,xb,Z0,v));   // les tronçons suivants (2+2, 2+2, 4+4) sont gérés par reseau.js (modifiables)
   plat(X0-14,Z0,8,8);
   // panneaux de direction : au bout de la rue du village et à l'entrée du parking
   const pan=(x,z,txt)=>{cyl(parent,.07,.09,3,M('#555'),x,1.5,z,8);const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:txt,s:60,y:.5}],512,176,'#1f5f9e','#ffffff'),side:THREE.DoubleSide}));pl.position.set(x,3.1,z);parent.add(pl);cols.push({x,z,r:.4})};

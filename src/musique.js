@@ -9,6 +9,8 @@ export function creerMusique(D){
   const A=()=>G.adv;
   const MUS=()=>{const a=A();if(!a.mus)a.mus={};const m=a.mus;['cours','jeux','instr','st','badges','vu'].forEach(k=>{if(!m[k])m[k]={}});if(!m.compos)m.compos=[];return m};
   let ov=null,ctx=null,syn=null,studio=null,V={ong:'instr'},hook=null,lecteur=null,rafV=0,visu=[],cer=[],cerOn=false,tOuv=0;
+  let popH=null,escH=null;
+  function quitter(depuisRetour){if(popH){window.removeEventListener('popstate',popH);popH=null}if(escH){window.removeEventListener('keydown',escH);escH=null}const aEnt=!!ov;fermerCadre();if(aEnt)closeDialog()}
   let draft=null,ecoute=false;const vues={};
   const $=id=>ov&&ov.querySelector('#'+id);
   const rot=(q,k)=>{const n=q.c.length,r=k%n,c=q.c.map((_,i)=>q.c[(i+r)%n]);return {q:q.q,c,a:c.indexOf(q.c[q.a]),exp:q.exp}};
@@ -32,7 +34,10 @@ export function creerMusique(D){
     <div id="mustabs" style="display:flex;gap:3px;padding:3px 6px;background:#241a3c;overflow-x:auto"></div>
     <div id="muspan" style="flex:1;overflow:auto;padding:8px 10px;background:#1a1230"></div>`;
     document.body.appendChild(ov);
-    ov.querySelector('#musx').onclick=()=>{fermerCadre();closeDialog()};
+    ov.querySelector('#musx').onclick=()=>quitter();
+    try{history.pushState({mus:1},'')}catch(e){}
+    popH=()=>{if(ov)quitter(true)};window.addEventListener('popstate',popH);
+    escH=e=>{if(e.key==='Escape'&&ov&&!document.getElementById('cerem'))quitter()};window.addEventListener('keydown',escH);
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     studio=creerStudio3D($('mus3d'),{low,onPick:id=>fiche(id)});
     $('muszones').innerHTML=ZONES.map(z=>`<button data-z="${z.id}" onclick="musZone('${z.id}')" style="flex:0 0 auto;padding:6px 10px;border-radius:14px;border:2px solid ${z.coul};background:#1a1230;color:#fff;font-size:12px;font-weight:600">${z.ico} ${z.nom}</button>`).join('');
@@ -47,7 +52,7 @@ export function creerMusique(D){
     ov.remove();ov=null;cerOn=false}
   function dessineOnglets(){
     const T=[['instr','🎸 Instruments'],['cours','📚 Cours'],['jeux','🎮 Jeux'],['compo','🎛 Composer'],['concert','🎭 Concert'],['profil','🏅 Mon espace']];
-    $('mustabs').innerHTML=T.map(t=>`<button onclick="musOng('${t[0]}')" style="flex:0 0 auto;padding:7px 10px;border-radius:10px;border:0;background:${V.ong===t[0]?'#ffd54f':'#3a2d5c'};color:${V.ong===t[0]?'#222':'#fff'};font-size:13px;font-weight:700">${t[1]}</button>`).join('')}
+    $('mustabs').innerHTML='<button onclick="musQuitter()" style="flex:0 0 auto;padding:7px 10px;border-radius:10px;border:0;background:#b23a3a;color:#fff;font-size:13px;font-weight:700">🚪 Sortir</button>'+T.map(t=>`<button onclick="musOng('${t[0]}')" style="flex:0 0 auto;padding:7px 10px;border-radius:10px;border:0;background:${V.ong===t[0]?'#ffd54f':'#3a2d5c'};color:${V.ong===t[0]?'#222':'#fff'};font-size:13px;font-weight:700">${t[1]}</button>`).join('')}
   function rendre(){
     const p=$('muspan');if(!p)return;
     const f=Object.assign({instr:vueInstr,cours:vueCours,profil:vueProfil},vues)[V.ong];
@@ -198,6 +203,8 @@ export function creerMusique(D){
     musQuizSuite:()=>{const st=V.cst;if(st.qi+1<st.qs.length){st.qi++;st.rep=undefined;rendre();return}
       st.ph='res';const m=MUS();if(st.bon>=2){const stars=st.bon===3?3:2,prev=m.cours[st.c.id];if(!prev){A().pieces+=5;A().xp+=8;st.gain=5;refreshHud()}m.cours[st.c.id]={stars:Math.max(stars,prev?prev.stars:0)};save();SFX.win&&SFX.win();verifBadges()}rendre()},
     musCerFin:go=>{const w=document.getElementById('cerem');if(w)w.remove();if(go){V={ong:'profil'};dessineOnglets();rendre()}if(cer.length)setTimeout(cerSuite,300);else cerOn=false},
+    musQuitter:()=>quitter(),
+    musRetourSalle:()=>{stopLecture();hook=null;V={ong:'instr'};dessineOnglets();rendre();if(studio)studio.zone('salle')},
     musOuvrir:o=>ouvrir(o||'instr')
   };
   window.__mus=()=>({V,MUS:MUS(),draft,verif:verifBadges});
