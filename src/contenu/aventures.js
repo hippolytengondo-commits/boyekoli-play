@@ -5,7 +5,7 @@ const L=(...a)=>a.map(([q,t])=>({q,t}));
 export const AVENTURES=[
  {id:'tresor',decor:'savane',ico:'💎',titre:'À la recherche du trésor congolais',guide:'mbuta',rayon:56,depart:{x:0,z:12},
   intro:'Une carte ancienne a été déchirée en quatre morceaux. Ils sont cachés dans la savane et près de la rivière. Parle aux habitants, ramasse les pièces dorées qui flottent et fouille la nature pour retrouver le trésor !',
-  objet:'morceaux de la carte',pieces:14,
+  objet:'morceaux de la carte',item:'carte',complet:'Les quatre morceaux de la carte sont réunis !',pieces:14,
   riviere:{z0:-30,z1:-22,gue:[9,21]},
   souvenir:{id:'av_coffre',ico:'🪙',nom:'Le coffre du trésor',txt:'Tu as retrouvé le trésor congolais : le vrai trésor, c’est tout ce que tu as appris en voyageant.'},
   pnj:[
@@ -31,7 +31,7 @@ export const AVENTURES=[
    {id:'c4',type:'pierre',x:34,z:-46,label:'Soulever la grosse pierre',titre:'Sous la grosse pierre',txt:'Tu soulèves la pierre à deux mains : dessous, le quatrième morceau de la carte !'}]},
  {id:'foret',decor:'foret',ico:'🌳',titre:'Sauvons la forêt',guide:'zawadi',rayon:52,depart:{x:0,z:12},
   intro:'La grande forêt est en danger : des arbres ont été coupés sans être replantés. Rencontre ceux qui y vivent, ramasse les pièces dorées et retrouve les graines rares cachées dans la forêt pour la replanter !',
-  objet:'graines rares',pieces:14,riviere:{z0:-28,z1:-23,gue:[-4,8]},
+  objet:'graines rares',item:'graine',complet:'Les quatre graines rares sont retrouvées !',pieces:14,riviere:{z0:-28,z1:-23,gue:[-4,8]},
   souvenir:{id:'av_graine',ico:'🌱',nom:'La graine de la forêt',txt:'Tu as aidé à sauver la forêt. Plante, protège, et partage ce que tu sais !'},
   pnj:[
    {id:'zawadi',nom:'Maman Zawadi',x:7,z:4,ry:Math.PI*.8,look:{s:'f',h:.97,skin:'#6b4028',c:'#2e7d32',k:'pagne',co:'tresses'},
@@ -53,7 +53,7 @@ export const AVENTURES=[
    {id:'c4',type:'pierre',x:-8,z:-40,label:'Soulever la pierre',titre:'Sous la pierre',txt:'Sous la pierre, au frais : une quatrième graine rare !'}]},
  {id:'virunga',decor:'volcans',ico:'🦍',titre:'Expédition au Virunga',guide:'baraka',rayon:56,depart:{x:0,z:12},
   intro:'Le parc national des Virunga abrite des volcans, un grand lac et des gorilles. Rencontre les gens du parc, ramasse les pièces dorées et retrouve les quatre objets laissés par les rangers pour découvrir où vit la famille de gorilles !',
-  objet:'objets des rangers',pieces:14,
+  objet:'objets des rangers',item:'plume',complet:'Les quatre objets des rangers sont retrouvés !',pieces:14,
   souvenir:{id:'av_plume',ico:'🪶',nom:'La plume du ranger',txt:'Tu as terminé l’expédition au Virunga. Les rangers protègent ce trésor de la nature.'},
   media:'img/musee/gorille.jpg',
   pnj:[

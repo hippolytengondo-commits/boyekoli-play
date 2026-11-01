@@ -116,19 +116,7 @@ export function buildVille(opts){
   const mg=tree(g,-9,4,1.55,true,['#2f7d44','#3f9a53','#276b3a'],colliders);
   dyn.mangoTree={x:-9,z:4,obj:mg};
 
-  // marché de Maman Béa
-  const sx=3,sz=-6.4;
-  [[-2.2,-1.1],[2.2,-1.1],[-2.2,1.1],[2.2,1.1]].forEach(p=>cyl(g,.06,.06,2.5,std('#6b4226'),sx+p[0],1.25,sz+p[1],8));
-  const aw=box(g,5.2,.1,3.4,new THREE.MeshStandardMaterial({map:T.stripeTexture(),roughness:.9}),sx,2.62,sz-.1);aw.rotation.x=.12;
-  box(g,4.6,.9,.9,new THREE.MeshStandardMaterial({map:T.woodTexture('#a87445'),roughness:.9}),sx,.45,sz+.9);
-  const fr=[['#e68a00',-1.6],['#c0392b',-.8],['#6bbf3a',0],['#e0a526',.8],['#e68a00',1.6]];
-  fr.forEach((f,i)=>{for(let j=0;j<5;j++){const s=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),std(f[0],.5));s.position.set(sx+f[1]+(j%2)*.14,1.02+(j>2?.2:0),sz+.9+((j%3)-1)*.18);s.castShadow=true;g.add(s)}});
-  box(g,.9,.5,.7,std('#8a5a32'),sx-1.8,.25,sz-.7);box(g,.9,.5,.7,std('#8a5a32'),sx+1.9,.25,sz-.5);
-  boxes.push({x0:sx-2.4,x1:sx+2.4,z0:sz+.35,z1:sz+1.5});
-  box(g,.12,.9,.12,std('#555'),sx,2.8,sz+1.6);
-  // panneau MARCHÉ
-  const mb=new THREE.Mesh(new THREE.PlaneGeometry(2.2,.55),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'MARCHÉ',s:90,c:'#c0392b'}],256,64,'#fff8ef','#c0392b','#c0392b')}));
-  mb.position.set(sx,2.2,sz+1.72);g.add(mb);
+  // (l'ancien étal de Maman Béa a laissé la place au grand centre commercial, voir reperes.js)
 
   // panneau publicitaire
   const bx=14,bz=-7;
@@ -217,7 +205,7 @@ export function buildVille(opts){
     if(Math.abs(z)<2.0&&x<27)return true;
     if(x>-27-(mf.cuisine?4.4:0)&&x<-17+(mf.chambre?4.4:0)&&z>-11.7&&z<-6.3)return true;            // maison
     if(x>26&&x<44&&z>-8&&z<5)return true;                     // cour de l'école
-    if(x>0&&x<7&&z>-8&&z<-3)return true;                      // marché
+    if(x>-5.5&&x<11.5&&z>-14.5&&z<-5.5)return true;           // centre commercial
     if(x>0&&x<8&&z>-5.5&&z<1.5)return true;
     return false;
   }});

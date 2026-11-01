@@ -125,7 +125,7 @@ export const NPC={
   look:{s:'h',h:1.04,skin:'#4f3020',c:'#2c3e50',k:'uniforme',co:'courtes',cravate:true},
   intro:['Tu as bien travaillé.','Deux dernières questions pour finir la mission.'],
   outro:'Mission accomplie ! Tu gagnes 20 pièces et du tissu wax pour ta maison.'},
- bea:{sc:'ville',x:3,z:-6.6,ry:0,name:'Maman Béa',short:'Maman Béa',role:'Marchande',kind:'shop',
+ bea:{sc:'galerie',x:3,z:-6.6,ry:0,name:'Maman Béa',short:'Maman Béa',role:'Marchande',kind:'shop',
   look:{s:'f',h:.97,skin:'#744630',c:'#c0392b',k:'pagne',co:'nattes'}},
  mama:{sc:'maison',x:1.0,z:-2.2,ry:0,name:'Maman',short:'Maman',role:'À la maison',kind:'talk',
   look:{s:'f',h:.97,skin:'#6b4028',c:'#d35400',k:'pagne',co:'tresses'}}

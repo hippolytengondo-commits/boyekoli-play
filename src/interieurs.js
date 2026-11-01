@@ -16,8 +16,8 @@ const dalle=c=>std(c||'#d9dcd9',.6);
 
 // dimensions (largeur, profondeur, hauteur) selon le type et le niveau
 export const TAILLE=(t,n)=>{
-  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],supermarche:[20,12,4],musee:[18,11,4.4],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
-  const f=(t==='musee'||t==='supermarche')?1:1+.12*(n-1);return [base[0]*f,base[1]*f,base[2]];
+  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],supermarche:[20,12,4],musee:[18,11,4.4],centre:[24,14,4.6],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
+  const f=(t==='musee'||t==='supermarche'||t==='centre')?1:1+.12*(n-1);return [base[0]*f,base[1]*f,base[2]];
 };
 
 function lit(g,boxes,x,z,col,ry){
@@ -47,6 +47,17 @@ function escalator(g,B,W,D){
   B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
   tableau(g,ex,2.3,D/2-.05,1.7,.5,[{t:'⬆ MONTER',s:44,y:.5}],'#1f7a4d');
   tableau(g,ex,2.3,D/2-6.9,1.7,.5,[{t:'⬇ DESCENDRE',s:36,y:.5}],'#c0392b');
+}
+// ---- étals de matériaux de construction (centre commercial) ----
+function etalMateriau(g,k,x,z){
+  const y0=.92;
+  if(k==='brique'){for(let r=0;r<3;r++)for(let i=0;i<5-r;i++)box(g,.5,.22,.26,std('#b5472f',.9),x-1+r*.25+i*.52,y0+.11+r*.23,z)}
+  else if(k==='bois'){for(let r=0;r<4;r++)box(g,2.2,.14,.5,wood('#a9753f'),x,y0+.08+r*.16,z+(r%2?.08:-.06))}
+  else if(k==='sable'){const c=new THREE.Mesh(new THREE.ConeGeometry(.9,.8,18),std('#d9bf7a',1));c.position.set(x,y0+.4,z);g.add(c)}
+  else if(k==='ciment'){for(let i=0;i<3;i++){const p=produit('sac',{a:'CIMENT',b:'#bdbdbd'});p.position.set(x-.8+i*.8,y0,z);p.scale.setScalar(1.7);g.add(p)}}
+  else if(k==='fer'){for(let i=0;i<7;i++){const c=cyl(g,.04,.04,2.3,std('#3b3b3b',.5),x+(i-3)*.08,y0+.1+(i%3)*.08,z,6);c.rotation.z=Math.PI/2}}
+  else if(k==='bitume'){for(let i=0;i<3;i++)cyl(g,.32,.32,.7,std('#1b1b1b',.6),x-.8+i*.8,y0+.35,z,14)}
+  else if(k==='cuivre'){for(let i=0;i<3;i++){const t=new THREE.Mesh(new THREE.TorusGeometry(.3,.1,8,16),std('#c9732b',.35));t.rotation.x=Math.PI/2;t.position.set(x-.8+i*.8,y0+.12,z);g.add(t)}}
 }
 // ---- rayons garnis de produits en 3D ----
 const NOMS_SAC={'Farine de maïs (5 kg)':['FARINE','#f5efe3'],'Riz (2 kg)':['RIZ','#fff8e0'],'Sucre (1 kg)':['SUCRE','#ffffff'],'Haricots (1 kg)':['HARICOTS','#e6d2b0']};
@@ -138,6 +149,32 @@ const DECOR={
     escalator(g,B,W,D);
     [[-8.6,3.4],[-7.9,3.4],[-7.2,3.4]].forEach(([x,z])=>{box(g,.6,.5,.9,std('#9aa3ad'),x,.55,z);box(g,.6,.04,.9,std('#c8ced4'),x,.9,z)});
   },
+  centre(g,B,W,D,n){
+    if((n||1)===1){
+      // rez-de-chaussée : quincaillerie (7 étals de matériaux) et bourse d'échange
+      const LIST=[['brique','BRIQUES'],['bois','BOIS'],['sable','SABLE'],['ciment','CIMENT'],['fer','FER'],['bitume','BITUME'],['cuivre','CUIVRE']];
+      LIST.forEach(([k,nom],i)=>{const x=-9.9+i*3.3,z=-D/2+1.4;
+        box(g,2.8,.9,1.2,wood('#3d4a5a'),x,.45,z);B.push({x0:x-1.4,x1:x+1.4,z0:z-.6,z1:z+.6});
+        etalMateriau(g,k,x,z);
+        tableau(g,x,3.2,-D/2+.05,2.7,.7,[{t:nom,s:46,y:.5}],'#1f5f9e')});
+      tableau(g,0,3.95,-D/2+.05,9,.6,[{t:'QUINCAILLERIE · MATÉRIAUX DE CONSTRUCTION',s:34,y:.5}],'#222');
+      // bourse d'échange
+      box(g,5.4,1.0,1.3,wood('#3d4a5a'),-6,.5,3.2);B.push({x0:-8.7,x1:-3.3,z0:2.5,z1:3.9});
+      box(g,.6,.45,.05,std('#1b1b1b'),-6,1.3,3.2);
+      tableau(g,-6,2.4,D/2-.05,5,.8,[{t:'🔁 BOURSE D’ÉCHANGE',s:44,y:.5}],'#1f7a4d');
+      for(let i=0;i<4;i++)box(g,.4,.4,.4,std(['#c0392b','#e0a526','#2e86de','#27ae60'][i],.6),-8+i*1.3,1.2,3.2);
+    }else{
+      // étage : boutiques de Maman Béa et atelier mode
+      box(g,5,1,1.2,wood('#a87445'),0,.5,-D/2+1.4);B.push({x0:-2.5,x1:2.5,z0:-D/2+.8,z1:-D/2+2});
+      for(let i=0;i<7;i++){const f=produit(['mangue','banane','ananas','tomate','orange','avocat','oignon'][i]);f.position.set(-2+i*.66,1,-D/2+1.4);f.scale.setScalar(1.3);g.add(f)}
+      tableau(g,0,2.6,-D/2+.05,5,.8,[{t:'🛍 BOUTIQUE DE MAMAN BÉA',s:36,y:.5}],'#c0392b');
+      [[-4.2,-D/2+1.6,'#8e5a2b'],[4.2,-D/2+1.6,'#2e6da4']].forEach(([x,z,c])=>{box(g,2.4,.5,1.4,std(c,.8),x,.25,z);box(g,2.4,.8,.3,std(c,.8),x,.8,z-.55);B.push({x0:x-1.3,x1:x+1.3,z0:z-.8,z1:z+.8})});   // meubles d'exposition
+      for(let i=0;i<3;i++){const x=-9.5+i*1.6,z=-D/2+1.8;cyl(g,.04,.04,1.5,std('#444'),x,.75,z,6);const t=cyl(g,.28,.34,.9,std(['#c0392b','#e0a526','#2e86de'][i],.8),x,1.2,z,12);const h=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),std('#6b4028',.7));h.position.set(x,1.85,z);g.add(h);B.push({x0:x-.4,x1:x+.4,z0:z-.4,z1:z+.4})}
+      tableau(g,-8.5,2.6,-D/2+.05,4,.8,[{t:'👗 ATELIER MODE',s:44,y:.5}],'#8e44ad');
+    }
+    escalator(g,B,W,D);
+    if((n||1)===1)tableau(g,0,3.6,D/2-.05,6,.7,[{t:'BIENVENUE · NIVEAU 0',s:36,y:.5}],'#1d4f91');
+  },
   autoecole(g,B,W,D,n){
     // accueil : comptoir d'inscription à gauche, salle de cours à droite
     box(g,2.6,1.05,.8,wood('#3d4a5a'),-W/2+2.7,.52,-D/2+2.2);B.push({x0:-W/2+1.4,x1:-W/2+4,z0:-D/2+1.8,z1:-D/2+2.6});
@@ -215,8 +252,8 @@ const H3=n=>3.6;
 export function buildInterieur(t,n){
   const [W,D,H]=TAILLE(t,n);
   const g=new THREE.Group(),colliders=[],boxes=[];
-  const murs={case:'#d8b78a',maison:'#efe3c8',villa:'#f4efe4',ecole:'#f1e7cf',sante:'#eef3f3',culture:'#f0d9a8',autoecole:'#f6efc9',concession:'#ece7da',supermarche:'#f2f2ea',musee:'#efe6d2',police:'#d6dde8',pompiers:'#e8d4cf',sport:'#e6e6e6'}[t];
-  room(g,W,D,H,paint(murs),(t==='sante'||t==='pompiers'||t==='police'||t==='autoecole'||t==='supermarche')?dalle(t==='pompiers'?'#b9b9b9':'#d9e3e3'):sol(t==='case'?'#a8855a':'#a8744a'));
+  const murs={case:'#d8b78a',maison:'#efe3c8',villa:'#f4efe4',ecole:'#f1e7cf',sante:'#eef3f3',culture:'#f0d9a8',autoecole:'#f6efc9',concession:'#ece7da',supermarche:'#f2f2ea',musee:'#efe6d2',centre:'#eef1f4',police:'#d6dde8',pompiers:'#e8d4cf',sport:'#e6e6e6'}[t];
+  room(g,W,D,H,paint(murs),(t==='sante'||t==='pompiers'||t==='police'||t==='autoecole'||t==='supermarche'||t==='centre')?dalle(t==='pompiers'?'#b9b9b9':'#d9e3e3'):sol(t==='case'?'#a8855a':'#a8744a'));
   g.children.forEach(c=>{if(c.geometry&&c.geometry.type==='PlaneGeometry'&&c.rotation.x===-Math.PI/2&&c.material.map){c.material=c.material.clone();c.material.map=c.material.map.clone();c.material.map.repeat.set(W/2,D/2);c.material.map.needsUpdate=true}});
   fenetres(g,W,H,D,Math.max(1,Math.round(D/2.4)));
   DECOR[t](g,boxes,W,D,n);

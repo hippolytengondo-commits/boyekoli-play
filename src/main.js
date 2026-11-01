@@ -33,6 +33,7 @@ import {creerMusee} from './musee.js';
 import {NIVEAUX as NIVEAUX_MUSEE} from './contenu/musee.js';
 const NB_NIVEAUX_MUSEE=NIVEAUX_MUSEE.length;
 import {creerAventures} from './aventures.js';
+import {creerCentre} from './centre.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation,construireGare} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
@@ -228,10 +229,11 @@ const SCENES={
    {x:42,z:-5.3,r:2.6,to:'classe',label:'Entrer dans l’école',ok:()=>doorOpen(),closed:'Porte fermée',tx:0,tz:2.6,phi:-Math.PI/2}]},
  maison:{build:()=>construireMaison(),interior:true,doors:[{x:0,z:2.5,r:1.9,to:'ville',label:'Sortir',tx:-22,tz:-3.9,phi:Math.PI/2}],
    spots:[{x:-1.6,z:-2.2,r:1.9,label:'Miroir : changer mon look',run:()=>openCreator('play')},{x:-1.0,z:-.6,r:1.9,label:'Plans : construire ma maison',run:()=>openMaison()}]},
- interieur:{build:()=>{const w=buildInterieur(G.int.t,G.int.n),r=G.int.ret;SCENES.interieur.doors=((G.int.t==='musee'||G.int.t==='supermarche')&&G.int.n>1)?[]:[{x:0,z:w.dim.D/2-.9,r:1.6,to:'ville',label:'Sortir',tx:r.x,tz:r.z,phi:r.phi}];
+ interieur:{build:()=>{const w=buildInterieur(G.int.t,G.int.n),r=G.int.ret;SCENES.interieur.doors=((G.int.t==='musee'||G.int.t==='supermarche'||G.int.t==='centre')&&G.int.n>1)?[]:[{x:0,z:w.dim.D/2-.9,r:1.6,to:'ville',label:'Sortir',tx:r.x,tz:r.z,phi:r.phi}];
    SCENES.interieur.spots=G.int.k>=0?[{x:w.dim.W/2-1.4,z:w.dim.D/2-1.3,r:1.6,label:'Gérer ou améliorer cette construction',run:()=>openBox({kind:'terrain',k:G.int.k,msg:'',retInt:true})}]:[];
    if(G.int.t==='concession')SCENES.interieur.spots.push({x:w.dim.W/2-2.6,z:-w.dim.D/2+3.2,r:2,label:'Vendeur : acheter une moto ou une voiture',run:()=>openBox({kind:'conc',msg:''})});
    if(G.int.t==='supermarche')SUP.spots(w.dim).forEach(sp=>SCENES.interieur.spots.push(sp));
+   if(G.int.t==='centre')CC.spots(w.dim,G.int.n||1).forEach(sp=>SCENES.interieur.spots.push(sp));
    if(G.int.t==='musee')MUSEE.spots(w.dim).forEach(sp=>SCENES.interieur.spots.push(sp));
    if(G.int.t==='autoecole'){const W2=w.dim.W,D2=w.dim.D;
      SCENES.interieur.spots.push({x:-W2/2+2.7,z:-D2/2+3.5,r:1.9,label:'Accueil : s’inscrire à l’auto-école',run:()=>openBox({kind:'insc',msg:'',etape:'accueil',prix:FRAIS_AE})},
@@ -422,6 +424,11 @@ function occupants(){
     const {W:Wd,D:Dd}=W.dim;
     return (G.int.n>1?[]:[{id:'guide',x:2.5,z:Dd/2-3,ry:Math.PI,look:{s:'f',h:.97,skin:'#6b4028',c:'#8c5a2b',k:'pagne',co:'tresses'}},
       ]).concat([{id:'visiteur0',x:-1.5,z:2.4,ry:Math.PI,look:{s:'h',h:.95,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}}]).map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
+  }
+  if(I.t==='centre'){
+    const mk=(id,x,z,ry,l)=>Object.assign({id,x,z,ry,sc:'interieur',name:'',short:'',look:l});
+    if((I.n||1)>1)return [mk('bea',0,-W.dim.D/2+.5,0,Object.assign({},NPC.bea.look))].concat([mk('cl1',-3,0,Math.PI,{s:'h',h:1,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'})]);
+    return [mk('v1',-9.9+3.3,-W.dim.D/2+.2,0,{s:'h',h:1,skin:'#5a3319',c:'#1f5f9e',k:'uniforme',co:'courtes'}),mk('v2',-6,4.3,Math.PI,{s:'f',h:.97,skin:'#6b4028',c:'#1f7a4d',k:'uniforme',co:'tresses'}),mk('cl1',2,1,Math.PI/2,{s:'f',h:.95,skin:'#5a3319',c:'#e0a526',k:'pagne',co:'tresses'}),mk('cl2',-1,-1,0,{s:'h',h:1,skin:'#7a4a2e',c:'#c0392b',k:'uniforme',co:'courtes'})];
   }
   if(I.t==='supermarche'){
     const {W:Wd,D:Dd}=W.dim;
@@ -651,8 +658,9 @@ function renderDialog(){
   else if(d.kind==='pompe')h=htmlPompe(d);
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='rayon'||d.kind==='caisse'||d.kind==='prov')h=SUP.html(d);
+  else if(d.kind==='matos'||d.kind==='troc')h=CC.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
-  else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin')h=AV.html(d);
+  else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin'||d.kind==='effort')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
@@ -1539,7 +1547,7 @@ const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.vo
 // collections, surprise du jour et événement du jour
 const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
 const parlerFr=(t,force)=>{if(force){const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w}else speak(t,'ilunga')};
-const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),closeDialog:()=>closeDialog(),goTo:d=>goTo(d),parler:parlerFr,toast:t=>toast(t)});
+const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),closeDialog:()=>closeDialog(),goTo:d=>goTo(d),parler:parlerFr,toast:t=>toast(t),monde:()=>W});
 // quiz dans la salle de réponses (les réponses flottent, comme dans les missions scolaires) ; q : {q,c:[choix],a:index,exp}
 function lancerQuiz3D(o){
   // la réponse attendue est le TEXTE de la bonne réponse (comme dans les missions scolaires) ; intro : tableau de phrases
@@ -1552,8 +1560,9 @@ function lancerQuiz3D(o){
   // pas de texte lettre par lettre : on lit l'introduction à voix haute et on entre directement dans la salle de réponses
   if(m3d){parlerFr(o.intro);G.dialog.i=1;lancerMission3D(G.dialog)}
 }
-function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(G.int.t==='supermarche'?3:NB_NIVEAUX_MUSEE,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
+function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(G.int.t==='supermarche'?3:G.int.t==='centre'?2:NB_NIVEAUX_MUSEE,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
 const MUSEE=creerMusee({G,esc,save,gain,SFX,toast:t=>toast(t),openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,changerEtage:changerEtageMusee});
+const CC=creerCentre({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,openShop:()=>openShop(),boutiqueMode:()=>{closeDialog();openCreator('play')},changerEtage:changerEtageMusee});
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{
@@ -2540,7 +2549,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

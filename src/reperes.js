@@ -76,6 +76,22 @@ export const MODELES={
     box(g,.12,2.4,.12,M('#555'),4.2,1.2,D/2+4.4);box(g,1.1,1.1,.08,M('#c0392b'),4.2,2.7,D/2+4.4);
     enseigneToit(g,H,'AUTO-ÉCOLE','Permis · Conduite · Sécurité','#1f5f9e','🚦');
   },
+  centre(g){
+    // grand centre commercial moderne : façade vitrée, ossature blanche, enseigne lumineuse, trois niveaux
+    const BW=16,BD=7.5,H=12.5;
+    box(g,BW,H,BD,M('#e9eef2'),0,H/2,0);
+    const vitre=new THREE.MeshStandardMaterial({color:0x6fb7e6,transparent:true,opacity:.55,roughness:.08,metalness:.35});
+    [1.6,5.1,8.6].forEach(y=>{const v=new THREE.Mesh(new THREE.PlaneGeometry(BW-1.2,2.6),vitre);v.position.set(0,y+1.3,BD/2+.06);g.add(v);
+      for(let i=-6;i<=6;i++)box(g,.1,2.6,.1,M('#ffffff'),i*1.2,y+1.3,BD/2+.09)});
+    [3.4,6.9,10.4].forEach(y=>box(g,BW+.4,.3,BD+.4,M('#ffffff'),0,y,0));
+    box(g,BW+.6,.6,BD+.6,M('#1f5f9e'),0,H+.3,0);
+    box(g,5.2,3.4,.3,M('#1f5f9e'),0,1.7,BD/2+.9);box(g,4.6,2.8,.12,vitre,0,1.5,BD/2+.9);                  // entrée vitrée
+    box(g,6.4,.25,2.4,M('#ffffff'),0,3.4,BD/2+1.2);                                                          // auvent
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(13,2.2),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🛒 CENTRE COMMERCIAL',s:92,y:.36},{t:'Matériaux · Bourse d’échange · Boutiques',s:46,y:.78,b:false,c:'#ffe9a8'}],1536,260,'#1f5f9e','#ffffff'),emissive:0x112244,emissiveIntensity:.35,roughness:.5}));
+    pl.position.set(0,H+1.9,BD/2-.4);g.add(pl);
+    [-5.5,5.5].forEach(x=>box(g,.25,1.6,.25,M('#333'),x,H+.85,BD/2-.45));
+    [-7,-3.5,3.5,7].forEach(x=>{box(g,2.4,.12,1.4,M('#9aa3ad',.5),x,.06,BD/2+3.6);box(g,.1,1.5,.1,M('#555'),x,.8,BD/2+3.6)});   // bancs et lampes
+  },
   musee(g){
     const H=24;box(g,W,H,D,M('#e9dcc0'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#8c5a2b'),0,H+.25,0);
     [3,6,9,12,15,18,21].forEach(y=>box(g,W+.2,.18,D+.2,M('#b8956a'),0,y,0));          // plateaux des étages
@@ -107,6 +123,7 @@ export const MODELES={
 
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
+  {id:'centre',x:3,z:-10.2,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},
   {id:'supermarche',x:-24,z:30,ry:0,interieur:'supermarche',nom:'le Supermarché',coul:'#1f7a4d'},
   {id:'musee',x:28,z:31,ry:0,interieur:'musee',nom:'le Musée du Congo',coul:'#8c5a2b'},
@@ -121,8 +138,8 @@ export function construireReperes(w){
     MODELES[r.id==='police'?'police':r.id==='univ'?'univ':r.id==='sante'?'sante':r.id==='biblio'?'biblio':r.id](b);
     const cs=Math.cos(r.ry),sn=Math.sin(r.ry);
     // emprise (le véhicule garé devant reste traversable)
-    w.boxes.push({x0:r.x-W/2,x1:r.x+W/2,z0:r.z-D/2,z1:r.z+D/2});
-    const dz=D/2+1.4;
+    const bw=r.w||W,bd=r.d||D;w.boxes.push({x0:r.x-bw/2,x1:r.x+bw/2,z0:r.z-bd/2,z1:r.z+bd/2});
+    const dz=bd/2+1.4;
     portes.push(Object.assign({},r,{px:r.x+dz*sn,pz:r.z+dz*cs}));
   });
   return {portes};

@@ -57,24 +57,55 @@ export function buildAventure(av,etat){
   // départ : petit cairn
   const dx=av.depart.x,dz=av.depart.z+3;
   [[0,0,.55],[.5,.1,.4],[-.4,.15,.35]].forEach(([x,z,s])=>{const p=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),std('#9a9384',1));p.position.set(dx+x,s*.7,dz+z);g.add(p)});
-  // cachettes
-  const lueurs=[];
+  // cachettes : chaque cachette a un coffre ou un récipient qui s'ouvre et montre l'objet cherché
+  const lueurs=[],anims={},puffs=[];
+  const modeleItem=()=>{
+    const k=new THREE.Group();
+    if(av.item==='graine'){const gm=new THREE.Mesh(new THREE.SphereGeometry(.16,14,10),new THREE.MeshStandardMaterial({color:'#6fd16f',emissive:'#2e9e3a',emissiveIntensity:.9}));gm.scale.set(.8,1.3,.8);k.add(gm);const f=new THREE.Mesh(new THREE.ConeGeometry(.1,.3,6),new THREE.MeshStandardMaterial({color:'#3b8a2e',emissive:'#1f6a1f',emissiveIntensity:.6}));f.position.y=.28;k.add(f)}
+    else if(av.item==='plume'){const pl=new THREE.Mesh(new THREE.ConeGeometry(.1,.7,8),new THREE.MeshStandardMaterial({color:'#18b3a0',emissive:'#0a7d70',emissiveIntensity:.8}));pl.rotation.z=.4;k.add(pl);const t=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.35,6),std('#e8e0c8'));t.position.set(-.1,-.38,0);t.rotation.z=.4;k.add(t)}
+    else{const cv=document.createElement('canvas');cv.width=128;cv.height=96;const x=cv.getContext('2d');x.fillStyle='#f1dfb0';x.fillRect(0,0,128,96);x.strokeStyle='#8a5a2b';x.lineWidth=4;x.strokeRect(4,4,120,88);x.strokeStyle='#c0392b';x.lineWidth=7;x.beginPath();x.moveTo(40,28);x.lineTo(88,68);x.moveTo(88,28);x.lineTo(40,68);x.stroke();
+      const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(.75,.56),new THREE.MeshStandardMaterial({map:tx,emissive:'#b8860b',emissiveMap:tx,emissiveIntensity:.5,side:THREE.DoubleSide}));k.add(m)}
+    const halo=new THREE.Mesh(new THREE.SphereGeometry(.55,14,10),new THREE.MeshBasicMaterial({color:0xffe27a,transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false}));k.add(halo);
+    return k;
+  };
+  const mkCoffre=(parent,x,y,z)=>{const k=new THREE.Group();k.position.set(x,y,z);parent.add(k);box(k,.9,.5,.6,brun('#7a4a26'),0,.25,0);box(k,.92,.04,.62,std('#e0a526',.4),0,.5,0);
+    const lid=new THREE.Group();lid.position.set(0,.5,-.3);k.add(lid);box(lid,.95,.18,.65,std('#e0a526',.4),0,.09,.3);return {k,lid}};
   av.cachettes.forEach(c=>{
     const gr=new THREE.Group();gr.position.set(c.x,0,c.z);g.add(gr);
-    const coffre=()=>{const k=new THREE.Group();box(k,.9,.5,.6,brun('#7a4a26'),0,.25,0);box(k,.95,.18,.65,std('#e0a526',.4),0,.58,0);return k};
-    if(c.type==='buisson'){const k=coffre();k.position.set(0,0,-.4);gr.add(k);[[0,1.1,1.5],[-1.1,.9,.6],[1.1,.9,.7]].forEach(([x,s,z])=>{const b=bush(c.x*3+x*7,s*1.4);b.position.set(x,0,z);gr.add(b)});colliders.push({x:c.x,z:c.z+1,r:1.2})}
-    else if(c.type==='arbre'){const t=leafyTree({kind:'leafy',seed:c.x+9,fruits:false,trunk:4.2});t.scale.setScalar(1.7);gr.add(t);const m=new THREE.Mesh(new THREE.SphereGeometry(.9,12,8),std('#6b4a2a',1));m.scale.set(1.3,.25,1);m.position.set(1.3,.1,1.2);gr.add(m);colliders.push({x:c.x,z:c.z,r:1.4})}
-    else if(c.type==='tronc'){const t=new THREE.Mesh(new THREE.CylinderGeometry(.65,.7,3.4,14),brun('#5a3a22'));t.rotation.z=Math.PI/2;t.position.set(0,.65,0);gr.add(t);const tr=new THREE.Mesh(new THREE.CircleGeometry(.5,14),std('#1b120a',1));tr.rotation.y=Math.PI/2;tr.position.set(1.72,.65,0);gr.add(tr);colliders.push({x:c.x,z:c.z,r:1.7})}
-    else {[[0,0,.9],[.9,.5,.6],[-.8,.4,.65],[.2,-.8,.55]].forEach(([x,z,s])=>{const p=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),std('#8a8274',1));p.position.set(x,s*.7,z);gr.add(p)});colliders.push({x:c.x,z:c.z,r:1.4})}
+    const an={c,lid:null,chest:null,glisse:[],trou:null,item:modeleItem(),t:c.id&&etat.trouve(c.id)?2:-1,riseY:0,baseY:.9,tItem:0};
+    if(c.type==='buisson'){const k=mkCoffre(gr,0,0,-.4);an.lid=k.lid;an.chest=k.k;[[0,1.1,1.5,0],[-1.1,.9,.6,-1],[1.1,.9,.7,1]].forEach(([x,s,z,dir])=>{const b=bush(c.x*3+x*7,s*1.4);b.position.set(x,0,z);gr.add(b);an.glisse.push({o:b,x0:x,z0:z,dx:dir*2.6||2.6,dz:2.2})});colliders.push({x:c.x,z:c.z+1,r:1.2});an.baseY=.9}
+    else if(c.type==='arbre'){const t=leafyTree({kind:'leafy',seed:c.x+9,fruits:false,trunk:4.2});t.scale.setScalar(1.7);gr.add(t);
+      const m=new THREE.Mesh(new THREE.SphereGeometry(.9,12,8),std('#6b4a2a',1));m.scale.set(1.3,.25,1);m.position.set(1.3,.1,1.2);gr.add(m);an.glisse.push({o:m,x0:1.3,z0:1.2,dx:.8,dz:.9,sc:true});
+      const trou=new THREE.Mesh(new THREE.CircleGeometry(.75,16),std('#1b120a',1));trou.rotation.x=-Math.PI/2;trou.position.set(1.3,.05,1.2);trou.scale.setScalar(.01);gr.add(trou);an.trou=trou;
+      const k=mkCoffre(gr,1.3,-.7,1.2);an.lid=k.lid;an.chest=k.k;an.riseY=.7;colliders.push({x:c.x,z:c.z,r:1.4});an.baseY=.9;an.dx=1.3;an.dz=1.2}
+    else if(c.type==='tronc'){const t=new THREE.Mesh(new THREE.CylinderGeometry(.65,.7,3.4,14),brun('#5a3a22'));t.rotation.z=Math.PI/2;t.position.set(0,.65,0);gr.add(t);const tr=new THREE.Mesh(new THREE.CircleGeometry(.5,14),std('#1b120a',1));tr.rotation.y=Math.PI/2;tr.position.set(1.72,.65,0);gr.add(tr);colliders.push({x:c.x,z:c.z,r:1.7});an.dx=1.9;an.baseY=.7}
+    else{const k=mkCoffre(gr,0,0,0);an.lid=k.lid;an.chest=k.k;[[0,0,.9],[.9,.5,.6],[-.8,.4,.65],[.2,-.8,.55]].forEach(([x,z,s],i)=>{const p=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),std('#8a8274',1));p.position.set(x,s*.7+(i===0?.5:0),z);gr.add(p);const l=Math.hypot(x,z)||1;an.glisse.push({o:p,x0:x,z0:z,dx:(x||1)/l*2.4,dz:(z||.6)/l*2.4,y0:p.position.y})});colliders.push({x:c.x,z:c.z,r:1.4});an.baseY=.9}
+    an.item.visible=false;an.item.position.set(an.dx||0,an.baseY,an.dz||0);gr.add(an.item);
     const e=new THREE.Group();for(let i=0;i<3;i++){const s=new THREE.Mesh(new THREE.OctahedronGeometry(.1,0),new THREE.MeshBasicMaterial({color:0xffe27a}));s.userData.p=i*2.1;e.add(s)}
-    e.position.set(c.x,1.4,c.z);g.add(e);lueurs.push({e,c});
+    e.position.set(c.x,1.4,c.z);g.add(e);lueurs.push({e,c});anims[c.id]=an;
   });
+  const appliquer=(an,k)=>{
+    const e=1-Math.pow(1-Math.min(1,k),3);
+    an.glisse.forEach(s=>{if(s.sc){s.o.position.x=s.x0+s.dx*e;s.o.position.z=s.z0+s.dz*e;s.o.scale.set(1.3*(1-.6*e),.25,1*(1-.6*e))}else{s.o.position.x=s.x0+s.dx*e;s.o.position.z=s.z0+s.dz*e}});
+    if(an.trou)an.trou.scale.setScalar(.01+e);
+    if(an.chest)an.chest.position.y=-an.riseY*(1-e);
+    if(an.lid)an.lid.rotation.x=-1.95*Math.max(0,Math.min(1,(k-.35)/.65));
+  };
+  Object.values(anims).forEach(an=>{if(an.t>=2)appliquer(an,1)});
   // pièces dorées flottantes
   const pieces=pointsPieces(av).map(([x,z],i)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.09,18),or);m.rotation.x=Math.PI/2;
     const gp=new THREE.Group();gp.add(m);gp.position.set(x,1.3,z);g.add(gp);return {gp,x,z,i}});
   return {group:g,colliders,boxes,dyn:{},exit:{x:av.depart.x,z:av.depart.z+3},bounds:{x0:-B,x1:B,z0:-B-6,z1:B-4},sky:{elev:av.decor==='volcans'?24:38},fog:.0042,
+    puff(x,z,n){for(let i=0;i<(n||8);i++){const m=new THREE.Mesh(new THREE.BoxGeometry(.13,.13,.13),std(i%2?'#6b4a2a':'#8a6a3a',1));m.position.set(x+(Math.random()-.5)*1.2,.3,z+(Math.random()-.5)*1.2);g.add(m);puffs.push({m,vx:(Math.random()-.5)*2.4,vy:2.4+Math.random()*2.6,vz:(Math.random()-.5)*2.4,life:.8})}},
+    reveler(id){const an=anims[id];if(an&&an.t<0){an.t=0;an.tItem=0}},
     update(dt,t){
       const p=etat.pos();
+      for(let i=puffs.length-1;i>=0;i--){const q=puffs[i];q.life-=dt;q.vy-=9*dt;q.m.position.x+=q.vx*dt;q.m.position.y+=q.vy*dt;q.m.position.z+=q.vz*dt;q.m.rotation.x+=dt*5;if(q.life<=0||q.m.position.y<0){g.remove(q.m);puffs.splice(i,1)}}
+      Object.values(anims).forEach(an=>{
+        if(an.t>=0&&an.t<2){an.t+=dt/1.7;appliquer(an,an.t);
+          an.item.visible=an.t>.3;if(an.item.visible){const k=Math.min(1,(an.t-.3)/.7);an.item.scale.setScalar(.2+.9*k);an.item.position.y=an.baseY+1.1*k+Math.sin(t*3)*.06;an.item.rotation.y=t*2.2}}
+        if(an.t>=2&&an.item.visible){an.tItem+=dt;if(an.tItem>5)an.item.visible=false;else{an.item.position.y=an.baseY+1.1+Math.sin(t*3)*.08;an.item.rotation.y=t*2.2}}
+      });
       pieces.forEach(c=>{
         if(etat.prise(c.i)){c.gp.visible=false;return}
         c.gp.rotation.y=t*2.4+c.i;c.gp.position.y=1.3+Math.sin(t*2+c.i)*.18;

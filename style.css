@@ -339,3 +339,6 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-
 #pedales button small{display:block;font-size:10px;font-weight:600;margin-top:2px}
 #pacc{background:#2a9d5c}#pfrein{background:#c0392b}
 #pedales button.on{filter:brightness(1.25);transform:scale(.96)}
+
+.conf{position:fixed;top:-40px;z-index:12;pointer-events:none;animation-name:confTomb;animation-timing-function:linear;animation-fill-mode:forwards}
+@keyframes confTomb{to{transform:translateY(112vh) rotate(420deg)}}

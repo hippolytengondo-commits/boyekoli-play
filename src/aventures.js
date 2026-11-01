@@ -4,7 +4,8 @@ import {AVENTURES} from './contenu/aventures.js';
 import {buildAventure} from './aventure3d.js';
 
 export function creerAventures(D){
-  const {G,esc,save,gain,SFX,renderDialog,openBox,closeDialog,goTo,parler,toast}=D;
+  const {G,esc,save,gain,SFX,renderDialog,openBox,closeDialog,goTo,parler,toast,monde}=D;
+  const EFFORT={arbre:{n:8,bouton:'⛏ Creuser !',titre:'Creuser sous le grand arbre',sous:'Tape plusieurs fois sur le bouton pour creuser la terre.'},pierre:{n:6,bouton:'💪 Pousser !',titre:'Déplacer la grosse pierre',sous:'Tape plusieurs fois pour faire rouler la pierre.'},buisson:{n:5,bouton:'🌿 Écarter !',titre:'Écarter les branches',sous:'Tape plusieurs fois pour écarter les branches épineuses.'},tronc:{n:4,bouton:'✋ Fouiller !',titre:'Fouiller le tronc creux',sous:'Tape plusieurs fois pour atteindre le fond du tronc.'}};
   const st=id=>{const a=G.adv;if(!a.avent)a.avent={};if(!a.coll)a.coll={};if(!a.avent[id])a.avent[id]={fini:false};const s=a.avent[id];if(!s.parle)s.parle={};if(!s.trouves)s.trouves={};if(!s.pris)s.pris={};return s};
   const find=id=>AVENTURES.find(x=>x.id===id);
   const courant=()=>find(G.av&&G.av.id);
@@ -47,9 +48,16 @@ export function creerAventures(D){
   }
   function html(d){
     if(d.kind==='conv')return vueConv(d);
+    if(d.kind==='effort'){
+      const a=find(d.aid),c=a.cachettes.find(x=>x.id===d.cid),E=EFFORT[c.type]||EFFORT.arbre,pc=Math.round(100*d.k/E.n);
+      return `<h3>${esc(E.titre)}</h3><p style="font-size:13px">${esc(E.sous)}</p><div style="height:16px;border-radius:8px;background:#ddd;overflow:hidden;margin:10px 0"><div style="height:100%;width:${pc}%;background:#e0a526"></div></div><button class="p" style="font-size:22px;padding:18px" onclick="avEffort()">${E.bouton}</button><button class="s" onclick="closeDialog()">Laisser tomber</button>`;
+    }
     if(d.kind==='trouv'){
       const a=find(d.aid),c=a.cachettes.find(x=>x.id===d.cid);
-      return `<h3>🔎 ${esc(c.titre)}</h3><p>${esc(c.txt)}</p><p style="text-align:center"><b>${nbTrouves(a)} sur ${a.cachettes.length} ${esc(a.objet)}</b> · +2 🪙</p><button class="p" onclick="avOk()">${tout(a)?'Retourner voir '+esc(guide(a).nom)+' ▶':'Continuer l’exploration ▶'}</button>`;
+      let conf='';
+      if(d.celebre){const E=['🎉','🎊','🥳','👏','✨','🏆','🌟','🎈'];for(let i=0;i<30;i++)conf+=`<span class="conf" style="left:${(i*37)%100}%;animation-duration:${2.6+(i%5)*.5}s;animation-delay:${(i%8)*.25}s;font-size:${22+(i%4)*6}px">${E[i%E.length]}</span>`}
+      const fete=d.celebre?`<div style="text-align:center;font-size:34px;margin:4px 0">🎉🥳👏🏆</div><p style="text-align:center;background:#fff4d6;border-radius:12px;padding:8px"><b>${esc(a.complet)}</b><br>Récompense : <b>+10 🪙 · +10 savoir</b></p>`:'';
+      return conf+`<h3>🔎 ${esc(c.titre)}</h3>${fete}<p>${esc(c.txt)}</p><p style="text-align:center"><b>${nbTrouves(a)} sur ${a.cachettes.length} ${esc(a.objet)}</b> · +2 🪙</p><button class="p" onclick="avOk()">${tout(a)?'Retourner voir '+esc(guide(a).nom)+' ▶':'Continuer l’exploration ▶'}</button>`;
     }
     if(d.kind==='avfin'){
       const a=find(d.aid),o=a.souvenir;
@@ -83,8 +91,14 @@ export function creerAventures(D){
     d.vu.push(d.file.shift());openBox(d);parler(d.vu[0].t);
   }
   function fouiller(a,c){
-    st(a.id).trouves[c.id]=true;gain(2,3,3);save();SFX.bravo();
-    openBox({kind:'trouv',aid:a.id,cid:c.id});parler(c.txt);
+    const E=EFFORT[c.type]||EFFORT.arbre;
+    openBox({kind:'effort',aid:a.id,cid:c.id,k:0});parler(E.sous);
+  }
+  function ouvrirTrouvaille(a,c){
+    const s=st(a.id),celebre=tout(a)&&!s.carteOk;
+    if(celebre){s.carteOk=true;gain(10,10,10);save();SFX.felicitations()}else SFX.bravo();
+    openBox({kind:'trouv',aid:a.id,cid:c.id,celebre:celebre});
+    parler(celebre?a.complet+' '+c.txt:c.txt);
   }
   function entrer(id){
     closeDialog();
@@ -95,7 +109,7 @@ export function creerAventures(D){
     toast('Explore librement ! Parle aux habitants et regarde les lueurs dorées.');
   }
   return {
-    html:d=>(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin')?html(d):null,
+    html:d=>(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin'||d.kind==='effort')?html(d):null,
     monde:()=>buildAventure(courant()||AVENTURES[0],etat),
     spots,portes,journal,
     pnj:()=>{const a=courant();return a?a.pnj.map(p=>({id:'av_'+p.id,sc:'aventure',x:p.x,z:p.z,ry:p.ry||0,name:p.nom,short:p.nom,look:p.look})):[]},
@@ -116,6 +130,15 @@ export function creerAventures(D){
         closeDialog();
       },
       avOk:()=>closeDialog(),
+      avEffort:()=>{
+        const d=G.dialog,a=find(d.aid),c=a.cachettes.find(x=>x.id===d.cid),E=EFFORT[c.type]||EFFORT.arbre,w=monde();
+        d.k++;SFX.step();if(w&&w.puff)w.puff(c.x,c.z,5);
+        if(d.k<E.n){renderDialog();return}
+        // le coffre s'ouvre dans le monde 3D, puis la trouvaille s'affiche
+        st(a.id).trouves[c.id]=true;gain(2,3,3);save();closeDialog();
+        if(w&&w.reveler)w.reveler(c.id);SFX.coin();toast('✨ '+c.titre+' : ça s’ouvre !');
+        setTimeout(()=>{if(G.sc==='aventure'&&!G.dialog)ouvrirTrouvaille(a,c)},2300);
+      },
       avQuitter:()=>{closeDialog();const p=portes()[0];if(p)goTo(p)}
     }
   };
