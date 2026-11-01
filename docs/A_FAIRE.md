@@ -155,3 +155,8 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - Quartier des métiers, à l'ouest du village (x -47, façades à l'est, aire de stationnement devant chaque porte) : Science Lab (z -12), Fashion Studio (z -24), Design Studio (z 12), Hôpital (z 26), Agence de détectives (z 0). Les points d'action (rayon 4,4 m) fonctionnent à pied ET au volant (`nearby()` utilise la position du véhicule).
 - Déjà accessibles avant : Studio de musique, Aéroport (simulateur de vol), Gare.
 - À faire pour les jeux suivants : Smart City (hôtel de ville, p.ex. x -47 z -36) et Space Explorer (cité de l'espace, p.ex. x -47 z 40) : ajouter un modèle dans `MODELES` (reperes.js), une entrée REPERES et une entrée dans l'objet `ACCES` de main.js.
+
+## Voix, bulles et sorties (retour utilisateur)
+- `src/parole.js` (instance unique `PAR`, créée dans main.js et passée aux jeux) : bulles de dialogue « dessin animé » au-dessus du personnage avec voix (voix différente selon le personnage), boutons « Réécouter » et « Quitter », bouton 🔊/🔇 dans la barre du haut, bouton « ⬅ Retour » flottant, toujours à portée du pouce.
+- Appliqué : agence de détectives, Science Lab, Medical Center (dont les réponses des patients, lues à voix haute), Design Studio, Fashion Studio (quiz). Les barres du haut de tous les écrans plein format (z-index 9000, y compris musique) sont descendues sous la zone heure/batterie.
+- Non converti : les dialogues du jeu principal (PNJ, quiz, vendeur, auto-école…) restent dans la boîte de dialogue habituelle ; ceux du quiz/info/boutique sont déjà lus à voix haute. À faire : bulles au-dessus des PNJ du village.

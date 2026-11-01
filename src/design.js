@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import {COULEURS_MUR,COULEURS_TOIT,TEXTURES_MUR,SOLS,TOITS,STYLES,CATALOGUE,CATS,NOTIONS,MISSIONS} from './design/data.js';
 
 export function creerDesign(D){
-  const {G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
+  const {PAR,G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
   const DS=()=>{const a=A();if(!a.deco2)a.deco2={proj:[],cur:null,photos:[],done:{},stars:{},cert:null,badges:{}};const d=a.deco2;['done','stars','badges'].forEach(k=>{if(!d[k])d[k]={}});if(!d.proj)d.proj=[];if(!d.photos)d.photos=[];return d};
   let ov=null,pop=null,kb=null,R=null,sc=null,cam=null,raf=0,P=null,tab='maison',cur=null,sel=-1,mode='poser',opT='porte',vue='ext',tmp=0,idle=0;
@@ -229,7 +229,7 @@ export function creerDesign(D){
     <div id="ds3d" style="flex:1;position:relative;min-height:0"><div id="dsmsg" style="position:absolute;left:8px;right:8px;top:6px;background:rgba(10,24,30,.9);padding:6px 9px;border-radius:10px;font-size:13px;display:none;z-index:3"></div><div id="dspad" style="position:absolute;right:8px;bottom:8px;z-index:3"></div><div id="dsvues" style="position:absolute;left:6px;top:6px;z-index:2"></div></div>
     <div id="dstabs" style="display:flex;overflow-x:auto;background:#0f1822;flex:0 0 auto"></div><div id="dssheet" style="height:37vh;overflow:auto;padding:7px 9px;background:#1d2a3a;flex:0 0 auto"></div>
     <div id="dsover" style="position:absolute;inset:0;background:rgba(10,18,26,.97);display:none;flex-direction:column;padding:10px;overflow:auto;z-index:6"></div>`;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov);PAR.equiper(ov,{retour:'dsRetour()',coin:true,cible:'#ds3d'});
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     R=new THREE.WebGLRenderer({antialias:!low});R.setPixelRatio(Math.min(devicePixelRatio||1,low?1:1.5));$('ds3d').appendChild(R.domElement);R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%';
     sc=new THREE.Scene();cam=new THREE.PerspectiveCamera(55,1,.1,300);hemi=new THREE.HemisphereLight('#ffffff','#556677',1.5);sc.add(hemi);sun=new THREE.DirectionalLight('#fff4dd',1.4);sun.position.set(12,20,10);sc.add(sun);
@@ -246,7 +246,7 @@ export function creerDesign(D){
     if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',taillerCanvas);window.removeEventListener('keydown',kb);window.removeEventListener('keyup',kb);kb=null;
     if(P)save();try{R.dispose()}catch(e){}ov.remove();ov=null;R=null;sc=null;P=null;gWorld=gMeu=gWalls=roof=null;ptrs.clear();keys={};drag=null}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
-  function over(h){const o=$('dsover');o.style.display='flex';o.innerHTML=h}
+  function over(h){const o=$('dsover');o.style.display='flex';o.style.paddingBottom='84px';o.innerHTML=h}
   function fermerOver(){const o=$('dsover');if(o){o.style.display='none';o.innerHTML=''}}
   const TABS=[['maison','🏠 Maison'],['pieces','🚪 Pièces'],['ouvertures','🪟 Ouvertures'],['meubles','🛋 Meubles'],['couleurs','🎨 Style'],['vues','🎥 Vues'],['mission','🎯 Mission']];
   function rendTabs(){$('dstabs').innerHTML=TABS.map(t=>`<button onclick="dsTab('${t[0]}')" style="flex:0 0 auto;padding:9px 11px;border:0;border-bottom:3px solid ${tab===t[0]?'#ffd54f':'transparent'};background:none;color:${tab===t[0]?'#ffd54f':'#cfd8e3'};font-size:13px;font-weight:600">${t[1]}</button>`).join('')}
@@ -341,7 +341,7 @@ export function creerDesign(D){
     cm:c=>{P.cm=c;construire();sauve();rend()},ct:c=>{P.ct=c;construire();sauve();rend()},tm:t=>{P.tm=t;construire();sauve();rend()},
     jour:v=>{P.jour=!!v;appliqueJour();sauve();rend();majPad()}};
   const actions={
-    dsOuvrir:id=>ouvrir(id),dsQuitter:()=>quitter(),dsTab:t=>setTab(t),dsDo:(n,a,b,c,d)=>{if(P&&H[n])H[n](a,b,c,d)},
+    dsRetour:()=>{const o=$('dsover');if(o&&o.style.display==='flex')fermerOver();else quitter()},dsOuvrir:id=>ouvrir(id),dsQuitter:()=>quitter(),dsTab:t=>setTab(t),dsDo:(n,a,b,c,d)=>{if(P&&H[n])H[n](a,b,c,d)},
     dsVue:v=>{vue=v;majVue();majPad();rend()},dsJour:()=>H.jour(P.jour?0:1),dsKey:(k,v)=>{keys[k]=!!v},
     dsProjets:()=>projets(),dsOuvrirP:id=>charge(id),dsFermerOver:()=>fermerOver(),
     dsSuppP:id=>{if(confirmDel!==id){confirmDel=id;projets();return}const d=DS();d.proj=d.proj.filter(p=>p.id!==id);confirmDel=-1;save();if(d.cur===id){d.cur=null;P=null;if(d.proj.length)charge(d.proj[0].id);else projets(true)}else projets()},

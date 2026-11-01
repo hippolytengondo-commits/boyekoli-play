@@ -6,7 +6,7 @@ import {creerViewer,M3,corps3d} from './science/vue3d.js';
 import {HOPITAL,COUR,DIAL,CAS,SERVICES,INSTRUMENTS,AMBULANCE_EQUIP,PREMIERS_SECOURS,TRANSPORT,FICHES,LOOKS_PRO} from './hopital/data.js';
 
 export function creerHopital(D){
-  const {G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
+  const {PAR,G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
   const MED=()=>{const a=A();if(!a.med)a.med={cas:{},svc:{},pts:0,look:{s:'f',skin:3,hair:'tresses',outfit:'uniforme',c:'#ffffff',acc:[]},pro:'medecin',cert:null,badges:{}};const m=a.med;['cas','svc','badges'].forEach(k=>{if(!m[k])m[k]={}});if(!m.look)m.look={s:'f',skin:3,hair:'tresses',outfit:'uniforme',c:'#ffffff',acc:[]};return m};
   let ov=null,mot=null,pr=null,panneau=false,tOuv=0,viewer=null,kb=null,popH=null,lieu='hopital',C=null,timers=[],audio=null;
@@ -25,7 +25,7 @@ export function creerHopital(D){
     <div id="med3d" style="flex:1;position:relative;min-height:0"></div><div id="medhud" style="position:absolute;left:0;right:0;bottom:0;height:170px;pointer-events:none"></div>
     <div id="medmsg" style="position:absolute;left:8px;right:8px;top:50px;background:rgba(10,24,30,.9);padding:6px 9px;border-radius:10px;font-size:13px;display:none"></div>
     <div id="medpan" style="position:absolute;inset:0;background:rgba(8,20,26,.97);display:none;flex-direction:column;padding:10px;overflow:auto;z-index:5"></div>`;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov);PAR.equiper(ov,{retour:'medRetour()'});
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     mot=creerMoteur($('med3d'),{low,look:lookPro(),onProche:p=>{pr=p;majBouton()}});
     charger('hopital');hud();try{history.pushState({med:1},'')}catch(e){}popH=()=>{if(ov)quitter()};window.addEventListener('popstate',popH);
@@ -47,8 +47,8 @@ export function creerHopital(D){
     ['pointerup','pointercancel','lostpointercapture'].forEach(n=>jb.addEventListener(n,e=>{if(e.pointerId===id){id=null;mot.joy.x=mot.joy.y=0;jk.style.left='44px';jk.style.top='44px'}}));
     kb=e=>{if(!ov||panneau)return;const k=e.key.toLowerCase();if(k==='e')interagir();else if(k==='f')examiner();else if(k==='escape')quitter()};window.addEventListener('keydown',kb)}
   function majBouton(){const b=$('bint');if(!b)return;if(!pr){b.innerHTML='✋ Interagir';return}let t=pr.kind==='pnj'?'💬 Parler à '+pr.def.nom.split(',')[0]:pr.kind==='sortie'?pr.def.label:(pr.def.label||'✋ '+pr.def.nom);b.innerHTML=t.length>34?t.slice(0,33)+'…':t}
-  function panel(h,sans){panneau=true;mot&&mot.fige(true);const p=$('medpan');p.style.display='flex';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','medFermerP()','#7b2d26')+'</div>')}
-  function fermerP(){stopTout();C=null;panneau=false;const p=$('medpan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
+  function panel(h,sans){PAR.cacher();panneau=true;mot&&mot.fige(true);const p=$('medpan');p.style.display='flex';p.style.paddingBottom='84px';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','medFermerP()','#7b2d26')+'</div>')}
+  function fermerP(){PAR.cacher();stopTout();C=null;panneau=false;const p=$('medpan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
   const carte=(t)=>`<div style="background:#1b3440;border-radius:12px;padding:9px;margin:6px 0;font-size:13px">${t}</div>`;
   const feedback=(ok,t)=>`<p style="font-size:13px;margin:6px 0">${ok?'✅ <b>Bien !</b> ':'❌ <b>Pas tout à fait.</b> '}${esc(t||'')}</p>`;
   // ---------- interactions
@@ -59,8 +59,9 @@ export function creerHopital(D){
     if(p.kind==='pnj'){dialoguer(p.def);return}
     const e=p.def;if(e.panneau){ouvrirPanneau(e.panneau);return}msg(e.ex||e.nom,4500)}
   function examiner(){if(!mot||panneau)return;const p=mot.proche();if(!p){msg('🔍 Rien de particulier ici.',2200);return}if(p.kind==='pnj'){msg(p.def.nom+' : '+p.def.role+'.',2500);return}msg('🔍 '+(p.def.ex||p.def.nom),5000)}
-  function dialoguer(p){const d=DIAL[p.dial];if(!d)return;mot.parler(p.id,6);noeud(d,'n0')}
-  function noeud(d,nid){const n=d[nid];if(!n){fermerP();return}dialG=d;panel(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:30px">🗣</span><b>${esc(d.nom)}</b></div><div style="background:#1b3440;border-radius:12px;padding:10px;margin:8px 0;font-size:15px;line-height:1.4">${esc(n.t)}</div>`+n.c.map(([l,nx])=>btn('➤ '+esc(l),`medRep('${nx||''}')`)).join(''),true)}
+  function dialoguer(p){const d=DIAL[p.dial];if(!d)return;mot.parler(p.id,6);dialP=p;noeud(d,'n0')}
+  let dialP=null;
+  function noeud(d,nid){const n=d[nid];if(!n){fermerP();return}dialG=d;PAR.afficher(ov,{nom:d.nom,texte:n.t,voice:PAR.voixDe(dialP),ancre:dialP&&mot.ecran(dialP.id),choix:n.c.map(([l,nx])=>[l,`medRep('${nx||''}')`]),retour:'medRetour()'});panneau=true;mot&&mot.fige(true);const pp=$('medpan');if(pp){pp.style.display='none';pp.innerHTML=''}}
   function ouvrirPanneau(n){
     if(n==='entree'){charger('hopital');return}
     if(n==='instruments')return instruments();if(n==='ascenseur')return ascenseur();if(n==='dossiers')return dossiers();if(n==='anatomie')return anatomie();if(n==='masques')return hygiene();if(n==='ambulance')return ambulance();
@@ -117,7 +118,7 @@ export function creerHopital(D){
   function casEtape(){
     const c=CAS.find(x=>x.id===C.id),e=C.et;let h=`<div style="display:flex;align-items:center"><b style="flex:1">🩺 ${esc(c.nom)} · ${esc(c.motif)}</b>${btn('✖','medFermerP()','#7b2d26','padding:5px 9px;margin:0')}</div><p style="font-size:11px;opacity:.8;margin:2px 0">Patient fictif · simulation éducative</p>`;
     if(e==='dossier'){h+=carte('<b>📋 Dossier médical (fictif)</b><br>'+esc(c.dossier))+carte('🧼 D’abord, on se lave les mains avant de recevoir un patient.')+btn('Commencer la consultation ▶','medCasNext()','#2e7d32')}
-    else if(e==='questions'){h+=`<p style="font-size:13px"><b>Pose des questions simples</b> (${C.nq}/4 questions maximum). Il faut en poser au moins 3 utiles.</p>`+c.questions.map((q,i)=>`<button ${C.q[i]!==undefined||C.nq>=4?'disabled':''} onclick="medCasQ(${i})" style="display:block;width:100%;text-align:left;padding:9px;margin:3px 0;border-radius:10px;border:2px solid #fff3;background:${C.q[i]!==undefined?'#2a4a58':'#1b3440'};color:#fff;font-size:13px">${esc(q[0])}</button>${C.q[i]!==undefined?'<div style="background:#16303a;border-radius:8px;padding:6px;margin:0 0 4px 12px;font-size:13px">💬 '+esc(q[1])+'</div>':''}`).join('')+(C.utiles>=3?btn('Identifier les symptômes ▶','medCasNext()','#2e7d32'):'')}
+    else if(e==='questions'){h+=`<p style="font-size:13px"><b>Pose des questions simples</b> (${C.nq}/4 questions maximum). Il faut en poser au moins 3 utiles.</p>`+c.questions.map((q,i)=>`<button ${C.q[i]!==undefined||C.nq>=4?'disabled':''} onclick="medCasQ(${i})" style="display:block;width:100%;text-align:left;padding:9px;margin:3px 0;border-radius:10px;border:2px solid #fff3;background:${C.q[i]!==undefined?'#2a4a58':'#1b3440'};color:#fff;font-size:13px">${esc(q[0])}</button>${C.q[i]!==undefined?'<div style="background:#fff;color:#111;border:2px solid #111;border-radius:16px;padding:7px 11px;margin:2px 0 8px 14px;font-size:14px;font-weight:600;position:relative">💬 '+esc(q[1])+'</div>':''}`).join('')+(C.utiles>=3?btn('Identifier les symptômes ▶','medCasNext()','#2e7d32'):'')}
     else if(e==='symptomes'){h+='<p style="font-size:13px"><b>Quels symptômes présente le patient ?</b> Coche ceux que tu as relevés :</p>'+c.symptomes.map((s,i)=>`<label style="display:block;padding:8px;margin:3px 0;background:#1b3440;border-radius:10px;font-size:14px"><input type="checkbox" ${C.sym[s]?'checked':''} onchange="medCasSym('${s.replace(/'/g,"\\'")}')"> ${esc(s)}</label>`).join('')+btn('Valider ▶','medCasSymOk()','#2e7d32')+(C.msg?carte(C.msg):'')}
     else if(e==='mesures'){const done=Object.keys(C.mes).length;h+=`<p style="font-size:13px"><b>Mesure et examine.</b> Utilise les 4 instruments puis le stéthoscope (${done}/5).</p>`+btn('🌡 Température','medCasMes(\'temp\')')+btn('🩸 Tension (simulée)','medCasMes(\'tension\')')+btn('🫁 Oxymètre / pouls','medCasMes(\'pouls\')')+btn('🩺 Stéthoscope','medCasMes(\'stetho\')')+btn('👄 Regarder la gorge','medCasMes(\'gorge\')')+Object.keys(C.mes).map(k=>carte(C.mes[k])).join('')+(done>=5?btn('Choisir un examen ▶','medCasNext()','#2e7d32'):'')}
     else if(e==='exam'){h+='<p style="font-size:13px"><b>Quel examen complémentaire est approprié ?</b> (Parfois, aucun n’est nécessaire.)</p>'+c.exam.choix.map(([l,v])=>btn(esc(l),`medCasEx('${v}')`)).join('')+(C.msg?carte(C.msg):'')}
@@ -137,7 +138,7 @@ export function creerHopital(D){
   function service(id){
     const s=SERVICES[id],m=MED();C={t:'svc',id,i:0,err:0,sel:{}};
     let h=`<h3 style="margin:2px 0">${s.ico} ${esc(s.nom)}</h3>${carte('<b>Le métier :</b> '+esc(s.role))}<p style="font-size:12px;opacity:.85">Activité pédagogique (simulée)${m.svc[id]?' · ✅ déjà réussie':''}</p>`;
-    h+=btn('▶ Faire l’activité','medSvcGo()','#2e7d32','font-size:15px');panel(h)}
+    h+=btn('▶ Faire l’activité','medSvcGo()','#2e7d32','font-size:15px');panel(h);PAR.dire(s.role,'bea')}
   function svcRender(){
     const s=SERVICES[C.id];let h=`<div style="display:flex;align-items:center"><b style="flex:1">${s.ico} ${esc(s.nom)}</b>${btn('✖','medFermerP()','#7b2d26','padding:5px 9px;margin:0')}</div>`;
     if(C.id==='labo'||C.id==='pediatrie'){const q=s.items[C.i];if(!q){return svcFin()}h+=`<p style="font-size:14px"><b>${esc(q.q)}</b></p>`+q.c.map((x,i)=>`<button ${C.rep!==undefined&&C.rep===q.a?'disabled':''} onclick="medSvcQ(${i})" style="display:block;width:100%;text-align:left;padding:10px;margin:4px 0;border-radius:10px;border:2px solid #fff3;background:${C.rep===undefined?'#1b3440':(i===q.a?'#2e7d32':i===C.rep?'#b23a3a':'#1b3440')};color:#fff;font-size:14px">${esc(x)}</button>`).join('')+(C.rep!==undefined?(C.rep===q.a?feedback(true,q.exp)+btn('Suivant ▶','medSvcSuite()','#2e7d32'):feedback(false,'Réfléchis encore.')+btn('Réessayer','medSvcRetry()','#2c7fb8')):'')}
@@ -156,14 +157,14 @@ export function creerHopital(D){
   // ---------- actions
   const actions={
     medOuvrir:()=>ouvrir(),medQuitter:()=>quitter(),medFermerP:()=>fermerP(),medInteragir:()=>interagir(),medExaminer:()=>examiner(),medDossiers:()=>dossiers(),medAscenseur:()=>ascenseur(),
-    medRep:nx=>{if(nx==='__cas'){choisirCas();return}if(!nx){fermerP();return}noeud(dialG,nx)},
+    medRetour:()=>{if(panneau)fermerP();else quitter()},medRep:nx=>{if(nx==='__cas'){choisirCas();return}if(!nx){fermerP();return}noeud(dialG,nx)},
     medAller:i=>{fermerP();if(lieu!=='hopital')charger('hopital');mot.placer(ROOMS[i][1],ROOMS[i][2]);msg('📍 '+ROOMS[i][0],2500)},
-    medInstr:k=>{const e=$('instrinfo');if(!e)return;if(k==='stetho')battements(72,6);e.innerHTML=carte('<b>'+esc(INSTRUMENTS.find(i=>i[0]===k)[2])+' :</b> '+esc(INFO[k]))},
+    medInstr:k=>{const e=$('instrinfo');if(!e)return;if(k==='stetho')battements(72,6);e.innerHTML=carte('<b>'+esc(INSTRUMENTS.find(i=>i[0]===k)[2])+' :</b> '+esc(INFO[k]));if(k!=='stetho')PAR.dire(INFO[k],'bea')},
     medHyg:k=>{if(k===C.i){C.i++;SFX.ok&&SFX.ok()}else{SFX.ko&&SFX.ko()}hygRender()},
     medZoom:d=>{if(viewer)viewer.zoom(d*.8)},medAmb:t=>ambulance(t),medTrajet:()=>trajet(),
     medCas:()=>choisirCas(),medCasGo:id=>{C={t:'cas',id,et:'dossier',q:{},nq:0,utiles:0,sym:{},mes:{},err:0,msg:''};casEtape();parler('Un patient fictif arrive.')},
     medCasNext:()=>{const o=['dossier','questions','symptomes','mesures','exam','rapport','conduite'],i=o.indexOf(C.et);C.msg='';C.et=o[i+1];casEtape()},
-    medCasQ:i=>{const c=CAS.find(x=>x.id===C.id);C.q[i]=1;C.nq++;if(c.questions[i][2])C.utiles++;casEtape()},
+    medCasQ:i=>{const c=CAS.find(x=>x.id===C.id);C.q[i]=1;C.nq++;if(c.questions[i][2])C.utiles++;casEtape();const m=c.nom.match(/(\d+) ans/),vp=m&&+m[1]<14?'junior':'bea';PAR.dire(c.questions[i][0],'ilunga',()=>PAR.dire(c.questions[i][1],vp))},
     medCasSym:s=>{C.sym[s]=!C.sym[s]},
     medCasSymOk:()=>{const c=CAS.find(x=>x.id===C.id),sel=Object.keys(C.sym).filter(k=>C.sym[k]),ok=sel.length===c.bons.length&&c.bons.every(b=>sel.includes(b));if(ok){SFX.ok&&SFX.ok();C.et='mesures';C.msg='';casEtape()}else{C.err++;SFX.ko&&SFX.ko();C.msg='❌ Relis ce que dit le patient et ce que tu as demandé : ne garde que les signes réellement présents.';casEtape()}},
     medCasMes:k=>{const c=CAS.find(x=>x.id===C.id);let t='';if(k==='temp')t='🌡 Température : '+c.mesures.temp;else if(k==='tension')t='🩸 Tension (simulée) : '+c.mesures.tension;else if(k==='pouls')t='🫁 Oxymètre : '+c.mesures.oxy+' · pouls : '+c.mesures.pouls;else if(k==='stetho'){t='🩺 Stéthoscope : '+c.coeur+' '+c.poumons;battements(parseInt(c.mesures.pouls)||80,6)}else t='👄 Gorge : '+c.gorge;C.mes[k]=t;SFX.coin&&SFX.coin();casEtape()},

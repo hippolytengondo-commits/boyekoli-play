@@ -87,6 +87,7 @@ export function creerMoteur(el,opt){
   function parler(id,s){const p=pnjs[id];if(!p)return;p.talk=s||3;p.g.rotation.y=Math.atan2(joueur.x-p.def.x,joueur.z-p.def.z)}
   function revelerTout(ids){ids.forEach(id=>{const ob=objs[id];if(ob){ob.etat.revele=true;ob.g.visible=true}})}
   function setLook(l){o.look=l;if(!joueur.obj)return;sc.remove(joueur.obj);joueur.obj=makeHuman(Object.assign({h:1},l));joueur.obj.scale.multiplyScalar(.95);sc.add(joueur.obj);box(.46,.05,.46,'#3a2a1a',0,1.78,0,joueur.obj);box(.28,.14,.28,'#3a2a1a',0,1.86,0,joueur.obj)}
+  function ecran(id){const p=pnjs[id];if(!p)return null;const v=new THREE.Vector3(p.def.x,2.35,p.def.z).project(cam),b=r.domElement.getBoundingClientRect();return {x:b.left+(v.x+1)/2*b.width,y:b.top+(1-v.y)/2*b.height}}
   function etat(){return {x:joueur.x,z:joueur.z,ry:joueur.ry}}
   function placer(x,z){joueur.x=x;joueur.z=z}
   function photo(){
@@ -115,7 +116,7 @@ export function creerMoteur(el,opt){
     r.render(sc,cam);raf=requestAnimationFrame(boucle)}
   raf=requestAnimationFrame(boucle);
   const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?66:50;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
-  return {setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
+  return {ecran,setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
     objs:()=>objs,pnjs:()=>pnjs,def:()=>def,
     stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.dispose()}catch(e){}el.innerHTML=''}};
 }

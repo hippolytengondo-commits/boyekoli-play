@@ -3,7 +3,7 @@ import {creerMoteur} from './detective/moteur.js';
 import {AGENCE,CAS,COURS,DIAL_AGENCE,COULEURS_MANTEAU,COIFFURES} from './detective/data.js';
 
 export function creerDetective(D){
-  const {G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
+  const {PAR,G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
   const DET=()=>{const a=A();if(!a.det)a.det={look:{s:'f',skin:3,hair:'courtes',outfit:'polo',c:'#7a5a3a'},cas:{},cert:null};const d=a.det;if(!d.cas)d.cas={};if(!d.look)d.look={s:'f',skin:3,hair:'courtes',outfit:'polo',c:'#7a5a3a'};return d};
   const CAS_ST=id=>{const d=DET();if(!d.cas[id])d.cas[id]={indices:{},temos:{},liens:{},analyses:{},photos:[],fini:false,stars:0,essais:0,trouve:false,ouvertes:{}};const c=d.cas[id];['indices','temos','liens','analyses','ouvertes'].forEach(k=>{if(!c[k])c[k]={}});if(!c.photos)c.photos=[];return c};
@@ -23,7 +23,7 @@ export function creerDetective(D){
     <div id="dethud" style="position:absolute;left:0;right:0;bottom:0;height:170px;pointer-events:none"></div>
     <div id="detmsg" style="position:absolute;left:8px;right:8px;top:50px;background:rgba(15,20,30,.85);padding:6px 9px;border-radius:10px;font-size:13px;display:none"></div>
     <div id="detpan" style="position:absolute;inset:0;background:rgba(10,14,22,.93);display:none;flex-direction:column;padding:10px;overflow:auto;z-index:5"></div>`;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov);PAR.equiper(ov,{retour:'detRetour()'});
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     mot=creerMoteur($('det3d'),{low,look:DET().look,onProche:p=>{pr=p;majBoutons()}});
     construireHud();
@@ -63,8 +63,8 @@ export function creerDetective(D){
     else{const e=pr.def;t=e.label||('✋ '+e.nom)}
     b.innerHTML=t.length>34?t.slice(0,33)+'…':t}
   function msg(t,ms){const m=$('detmsg');if(!m)return;m.textContent=t;m.style.display='block';clearTimeout(msg.t);msg.t=setTimeout(()=>{if(m)m.style.display='none'},ms||3500)}
-  function panel(h,sans){panneau=true;mot&&mot.fige(true);const p=$('detpan');p.style.display='flex';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','detFermerP()','#7b2d26')+'</div>')}
-  function fermerP(){panneau=null;const p=$('detpan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
+  function panel(h,sans){PAR.cacher();panneau=true;mot&&mot.fige(true);const p=$('detpan');p.style.display='flex';p.style.paddingBottom='84px';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','detFermerP()','#7b2d26')+'</div>')}
+  function fermerP(){PAR.cacher();panneau=null;const p=$('detpan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
   // ---------- scènes
   function chargerAgence(){lieu='agence';cas=null;mot.charger(AGENCE);$('dettit').textContent='🕵️ Agence de détectives';pr=null;majBoutons()}
   function partir(id){
@@ -116,7 +116,7 @@ export function creerDetective(D){
     const n=dial[nid];if(!n){fermerP();return}
     if(n.temo&&cas){const c=CAS_ST(cas);if(!c.temos[n.temo.id]){c.temos[n.temo.id]={txt:n.temo.txt,qui:dial.nom};save();msg('📝 Témoignage noté dans ton carnet',2500)}}
     dial.__p=p;dialG=dial;
-    panel(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:30px">🗣</span><b style="font-size:15px">${esc(dial.nom)}</b></div><div style="background:#243049;border-radius:12px;padding:10px;margin:8px 0;font-size:15px;line-height:1.4">${esc(n.t)}</div>`+n.c.map(([l,nx])=>btn('➤ '+esc(l),`detRep('${nid}','${nx||''}')`)).join(''),true)}
+    PAR.afficher(ov,{nom:dial.nom,texte:n.t,voice:PAR.voixDe(p),ancre:p&&mot.ecran(p.id),choix:n.c.map(([l,nx])=>[l,`detRep('${nid}','${nx||''}')`]),retour:'detRetour()'});panneau=true;mot&&mot.fige(true);const pp=$('detpan');if(pp){pp.style.display='none';pp.innerHTML=''}}
   let dialG=null;
   // ---------- panneaux de l'agence
   function panneauAgence(nom){
@@ -240,7 +240,7 @@ export function creerDetective(D){
     detQuitter:()=>quitter(),
     detFermerP:()=>fermerP(),
     detInteragir:()=>interagir(),detExaminer:()=>examiner(),detPhoto:()=>photographier(),detInv:()=>inventaire(),detCarnet:()=>carnet(),
-    detRep:(nid,nx)=>{if(!nx){fermerP();return}ouvrirNoeud(dialG,nx,dialG.__p)},
+    detRetour:()=>{if(panneau)fermerP();else quitter()},detRep:(nid,nx)=>{if(!nx){fermerP();return}ouvrirNoeud(dialG,nx,dialG.__p)},
     detDossiers:()=>dossiers(),detPartir:id=>{fermerP();partir(id)},detAgence:()=>{fermerP();chargerAgence()},
     detSelT:k=>{const i=selT.indexOf(k);if(i>=0)selT.splice(i,1);else{if(selT.length>=2)selT.shift();selT.push(k)}tableauCas()},detRelier:()=>relier(),detTableauCas:()=>{selT=[];tableauCas()},
     detLabo:()=>labo(),detAnalyse:(c,i)=>analyse(c,i),detLoupe:(c,i,v)=>analyse(c,i,{zoom:+v,msg:''}),detChoixAn:(c,i,k)=>choixAnalyse(c,i,k),

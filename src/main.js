@@ -40,6 +40,7 @@ import {creerMusique} from './musique.js';
 import {creerReseau} from './reseau.js';
 import {creerAmenager} from './amenager.js';
 import {creerDetective} from './detective.js';
+import {creerParole} from './parole.js';
 import {creerScience} from './science.js';
 import {creerHopital} from './hopital.js';
 import {creerDesign} from './design.js';
@@ -146,14 +147,14 @@ function pickVoice(g){
 }
 let lastSpoken=null;
 function cleanText(t){return String(t).replace(/×/g,' fois ').replace(/÷/g,' divisé par ').replace(/−/g,' moins ').replace(/\+/g,' plus ').replace(/=/g,' égale ').replace(/[·★☆🪙🥭⭐✔🔒👗🔊]/g,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim()}
-function speak(text,id){
+function speak(text,id,fin){
   lastSpoken={text:text,id:id};
-  if(!TTS||!G.voice)return;
+  if(!TTS||!G.voice){if(fin)setTimeout(fin,50);return}
   try{
     speechSynthesis.cancel();
     const v=VOICE[id]||VOICE._,u=new SpeechSynthesisUtterance(cleanText(text));
     u.lang='fr-FR';u.pitch=v.pitch;u.rate=v.rate;const vo=pickVoice(v.g);if(vo)u.voice=vo;
-    u.onstart=()=>MUS.baisser(true);u.onend=u.onerror=()=>MUS.baisser(false);
+    u.onstart=()=>MUS.baisser(true);u.onend=u.onerror=()=>{MUS.baisser(false);if(fin)fin()};
     speechSynthesis.speak(u);
   }catch(e){}
 }
@@ -1602,12 +1603,15 @@ const MUSIC=creerMusique({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>o
 const MUSACT=creerJeuxMusique(MUSIC,{G,esc,SFX,save,refreshHud,parler:parlerFr,toast:t=>toast(t)});
 const RES=creerReseau({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,toast:t=>toast(t)});
 const AMEN=creerAmenager({G,esc,SFX,save,refreshHud,parler:parlerFr,toast:t=>toast(t),getW:()=>W,getCamera:()=>camera,getCanvas:()=>cv,rebuild:()=>{if(G.sc==='ville')buildScene()},fermerMenu:()=>closeDialog()});AMEN.bindCanvas();window.__AMEN=AMEN;
-const DETEC=creerDetective({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});
+const PAR=creerParole({G,esc,save,stop:()=>stopSpeech(),voix:(t,id,force,fin)=>{if(force){const w=G.voice;G.voice=true;speak(t,id||'ilunga',fin);G.voice=w}else speak(t,id||'ilunga',fin)}});
+// barres du haut des écrans plein format : on les descend sous la zone de l'heure et de la batterie des téléphones
+try{new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1&&n.style&&n.style.zIndex==='9000'&&n.firstElementChild&&!n.querySelector('#sortieRapide'))n.firstElementChild.style.paddingTop='max(env(safe-area-inset-top),22px)'}))).observe(document.body,{childList:true})}catch(e){}
+const DETEC=creerDetective({PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});
 window.__DET=DETEC;
-const SCIE=creerScience({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__SCI=SCIE;
-const HOPI=creerHopital({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__HOPI=HOPI;
-const DESI=creerDesign({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__DESI=DESI;
-const FASH=creerMode({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__FASH=FASH;
+const SCIE=creerScience({PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__SCI=SCIE;
+const HOPI=creerHopital({PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__HOPI=HOPI;
+const DESI=creerDesign({PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__DESI=DESI;
+const FASH=creerMode({PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__FASH=FASH;
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{

@@ -6,7 +6,7 @@ import {creerViewer,M3,cellule3d,corps3d} from './science/vue3d.js';
 import {LAB,DIAL,GROUPES,EXPS,ORGANES,CELLULES,LIQUIDES,ASTRES,MATERIAUX,COULEURS_BLOUSE,DECOS} from './science/data.js';
 
 export function creerScience(D){
-  const {G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
+  const {PAR,G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
   const SCI=()=>{const a=A();if(!a.sci)a.sci={exp:{},pts:0,look:{s:'f',skin:3,hair:'tresses',outfit:'uniforme',c:'#ffffff',acc:['lunettes']},grp:{},cert:null};const s=a.sci;if(!s.exp)s.exp={};if(!s.grp)s.grp={};if(!s.look)s.look={s:'f',skin:3,hair:'tresses',outfit:'uniforme',c:'#ffffff',acc:['lunettes']};return s};
   let ov=null,mot=null,pr=null,panneau=false,tOuv=0,E=null,viewer=null,kb=null,popH=null,timers=[];
@@ -33,7 +33,7 @@ export function creerScience(D){
     <div id="sci3d" style="flex:1;position:relative;min-height:0"></div><div id="scihud" style="position:absolute;left:0;right:0;bottom:0;height:170px;pointer-events:none"></div>
     <div id="scimsg" style="position:absolute;left:8px;right:8px;top:50px;background:rgba(10,20,30,.88);padding:6px 9px;border-radius:10px;font-size:13px;display:none"></div>
     <div id="scipan" style="position:absolute;inset:0;background:rgba(8,14,22,.96);display:none;flex-direction:column;padding:10px;overflow:auto;z-index:5"></div>`;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov);PAR.equiper(ov,{retour:'sciRetour()'});
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     mot=creerMoteur($('sci3d'),{low,look:lookBlouse(),onProche:p=>{pr=p;majBouton()}});
     mot.charger(defLab());
@@ -54,8 +54,8 @@ export function creerScience(D){
     ['pointerup','pointercancel','lostpointercapture'].forEach(n=>jb.addEventListener(n,e=>{if(e.pointerId===id){id=null;mot.joy.x=mot.joy.y=0;jk.style.left='44px';jk.style.top='44px'}}));
     kb=e=>{if(!ov||panneau)return;const k=e.key.toLowerCase();if(k==='e')interagir();else if(k==='f')examiner();else if(k==='escape')quitter()};window.addEventListener('keydown',kb)}
   function majBouton(){const b=$('bint');if(!b)return;if(!pr){b.innerHTML='✋ Interagir';return}let t=pr.kind==='pnj'?'💬 Parler à '+pr.def.nom.split(',')[0]:pr.kind==='sortie'?pr.def.label:(pr.def.label||'✋ '+pr.def.nom);b.innerHTML=t.length>34?t.slice(0,33)+'…':t}
-  function panel(h,sans){panneau=true;mot&&mot.fige(true);const p=$('scipan');p.style.display='flex';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','sciFermerP()','#7b2d26')+'</div>')}
-  function fermerP(){stopTout();E=null;panneau=false;const p=$('scipan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
+  function panel(h,sans){PAR.cacher();panneau=true;mot&&mot.fige(true);const p=$('scipan');p.style.display='flex';p.style.paddingBottom='84px';p.innerHTML=h+(sans?'':'<div style="margin-top:8px">'+btn('✖ Fermer','sciFermerP()','#7b2d26')+'</div>')}
+  function fermerP(){PAR.cacher();stopTout();E=null;panneau=false;const p=$('scipan');if(p){p.style.display='none';p.innerHTML=''}mot&&mot.fige(false)}
   // ---------- interactions dans le bâtiment
   function interagir(){
     if(!mot||panneau)return;const p=mot.proche();if(!p){msg('Rien à utiliser ici. Approche-toi d’un équipement ou d’une personne.',2200);return}
@@ -64,8 +64,9 @@ export function creerScience(D){
     const e=p.def;if(e.panneau){ouvrirPanneau(e.panneau);return}msg(e.ex||e.nom,4500)}
   function examiner(){if(!mot||panneau)return;const p=mot.proche();if(!p){msg('🔍 Rien de particulier ici.',2200);return}if(p.kind==='pnj'){msg(p.def.nom+' : '+p.def.role+'.',2500);return}msg('🔍 '+(p.def.ex||p.def.nom),4500)}
   let dialG=null;
-  function dialoguer(p){const d=DIAL[p.dial];if(!d)return;mot.parler(p.id,6);noeud(d,'n0')}
-  function noeud(d,nid){const n=d[nid];if(!n){fermerP();return}dialG=d;panel(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:30px">🗣</span><b>${esc(d.nom)}</b></div><div style="background:#1f3347;border-radius:12px;padding:10px;margin:8px 0;font-size:15px;line-height:1.4">${esc(n.t)}</div>`+n.c.map(([l,nx])=>btn('➤ '+esc(l),`sciRep('${nx||''}')`)).join(''),true)}
+  function dialoguer(p){const d=DIAL[p.dial];if(!d)return;mot.parler(p.id,6);dialP=p;noeud(d,'n0')}
+  let dialP=null;
+  function noeud(d,nid){const n=d[nid];if(!n){fermerP();return}dialG=d;PAR.afficher(ov,{nom:d.nom,texte:n.t,voice:PAR.voixDe(dialP),ancre:dialP&&mot.ecran(dialP.id),choix:n.c.map(([l,nx])=>[l,`sciRep('${nx||''}')`]),retour:'sciRetour()'});panneau=true;mot&&mot.fige(true);const pp=$('scipan');if(pp){pp.style.display='none';pp.innerHTML=''}}
   function ouvrirPanneau(n){
     if(n==='chimie'||n==='biologie'||n==='physique')return groupe(n);
     if(n==='dossiers')return dossiers();if(n==='perso')return perso();if(n==='certif')return certificat()}
@@ -220,7 +221,7 @@ export function creerScience(D){
   // ---------- actions
   const actions={
     sciOuvrir:()=>ouvrir(),sciQuitter:()=>quitter(),sciFermerP:()=>fermerP(),sciInteragir:()=>interagir(),sciExaminer:()=>examiner(),sciDossiers:()=>dossiers(),
-    sciRep:nx=>{if(!nx){fermerP();return}noeud(dialG,nx)},sciGroupe:id=>groupe(id),sciExp:id=>lancer(id),
+    sciRetour:()=>{if(panneau)fermerP();else quitter()},sciRep:nx=>{if(!nx){fermerP();return}noeud(dialG,nx)},sciGroupe:id=>groupe(id),sciExp:id=>lancer(id),
     sciExpPre:()=>{qcm(EXPS[E.id].pre,()=>jeu(),'🧠 Avant l’expérience : ton hypothèse')},
     sciQ:i=>{if(E.q.rep!==undefined&&E.q.rep===E.q.q.a)return;E.q.rep=i;if(i!==E.q.q.a&&E.q.titre.indexOf('Après')>=0)E.err++;SFX[i===E.q.q.a?'ok':'ko']&&SFX[i===E.q.q.a?'ok':'ko']();qcmRendu()},
     sciQRetry:()=>{E.q.rep=undefined;qcmRendu()},sciQSuite:()=>{const s=E.q.suite;s()},

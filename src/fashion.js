@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import {MODELES,COULEURS,TISSUS,MOTIFS,ACCESS,COIFFURES,PEAUX,COULEURS_CHEVEUX,LEVRES,YEUX,OUTILS,ETAPES,CULTURE,MISSIONS} from './fashion/data.js';
 
 export function creerMode(D){
-  const {G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
+  const {PAR,G,esc,SFX,save,refreshHud,parler,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
   const FS=()=>{const a=A();if(!a.mode2)a.mode2={look:{sexe:'f',skin:3,corp:'moyen',coiff:'tresses',long:2,ch:'#111111',lev:'#b5314a',yeux:'#3b2a1a',maq:false},crea:{modele:'robe',couleur:'#c0392b',tissu:'wax',motif:'aucun',boutons:false,poches:false,ceinture:false,acc:'aucun'},port:[],photos:[],done:{},stars:{},coiffOk:false,defile:{n:0,best:0},cert:null,culture:false};const m=a.mode2;['done','stars'].forEach(k=>{if(!m[k])m[k]={}});if(!m.port)m.port=[];if(!m.photos)m.photos=[];if(!m.defile)m.defile={n:0,best:0};return m};
   let ov=null,R=null,sc=null,cam=null,raf=0,pop=null,tab='accueil',body=null,stage=null,backdrop=null,runway=null,sel=null,ptr=new Map(),cs={yaw:.3,dist:3.6,auto:true,y:.95},pose='face',bg='blanc',C=null,DF=null,confirm=-1,couture=null,sautSave=0;
@@ -115,7 +115,7 @@ export function creerMode(D){
     ov=document.createElement('div');ov.id='fsov';ov.style.cssText='position:fixed;inset:0;z-index:9000;background:#161226;color:#fff;font-family:system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden';
     ov.innerHTML=`<div style="display:flex;align-items:center;gap:4px;padding:5px 7px;background:linear-gradient(90deg,#6a1b9a,#e84393);flex:0 0 auto"><b style="flex:1;font-size:13px">👗 BOYEKOLI FASHION STUDIO</b>${btn('✖','fsQuitter()','#7b2d26','padding:5px 9px;margin:0')}</div><div id="fs3d" style="flex:1;position:relative;min-height:0"><div id="fsmsg" style="position:absolute;left:8px;right:8px;top:6px;background:rgba(10,10,20,.9);padding:6px 9px;border-radius:10px;font-size:13px;display:none;z-index:3"></div></div>
     <div id="fstabs" style="display:flex;overflow-x:auto;background:#100c1c;flex:0 0 auto"></div><div id="fssheet" style="height:40vh;overflow:auto;padding:7px 9px;background:#241a38;flex:0 0 auto"></div><div id="fsover" style="position:absolute;inset:0;background:rgba(14,10,26,.97);display:none;flex-direction:column;padding:10px;overflow:auto;z-index:6"></div>`;
-    document.body.appendChild(ov);
+    document.body.appendChild(ov);PAR.equiper(ov,{retour:'fsRetour()',coin:true,cible:'#fs3d'});
     let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
     R=new THREE.WebGLRenderer({antialias:!low,preserveDrawingBuffer:true});R.setPixelRatio(Math.min(devicePixelRatio||1,low?1:1.5));$('fs3d').appendChild(R.domElement);R.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%';
     sc=new THREE.Scene();cam=new THREE.PerspectiveCamera(42,1,.1,60);sc.add(new THREE.HemisphereLight('#ffffff','#6a5a8a',1.4));const dl=new THREE.DirectionalLight('#fff4e0',1.5);dl.position.set(2,4,4);sc.add(dl);const dl2=new THREE.DirectionalLight('#ffd0f0',.5);dl2.position.set(-3,2,2);sc.add(dl2);
@@ -124,7 +124,7 @@ export function creerMode(D){
     parler('Bienvenue au Fashion Studio.')}
   function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',taille);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=body=null;ptr.clear();DF=null;C=null;couture=null;save()}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
-  function over(h){const o=$('fsover');o.style.display='flex';o.innerHTML=h}
+  function over(h){const o=$('fsover');o.style.display='flex';o.style.paddingBottom='84px';o.innerHTML=h}
   function fermerOver(){const o=$('fsover');if(o){o.style.display='none';o.innerHTML=''}}
   function msg(t,ms){const m=$('fsmsg');if(!m)return;m.textContent=t;m.style.display='block';clearTimeout(msg.t);msg.t=setTimeout(()=>{if(m)m.style.display='none'},ms||3000)}
   const TABS=[['accueil','🏠 Accueil'],['style','🧵 Stylisme'],['couture','✂️ Couture'],['coiff','💇 Coiffure'],['maq','💄 Maquillage'],['mann','👤 Mannequin'],['photo','📸 Photo'],['defile','👗 Défilé'],['port','🗂 Portfolio'],['miss','🎯 Missions']];
@@ -205,10 +205,10 @@ export function creerMode(D){
     C={i:0,ok:0};cq()}
   function cq(){
     const q=CULTURE[C.i];if(!q){const m=FS();let ex='';if(!m.culture&&C.ok>=3){m.culture=true;A().pieces+=5;refreshHud();save();ex=' · +5 🪙'}over(`<h3>📚 Résultat : ${C.ok}/${CULTURE.length}${ex}</h3>`+btn('↩ Fermer','fsFermerOver()'));return}
-    over(`<div style="font-size:12px">Question ${C.i+1}/${CULTURE.length}</div><h3 style="margin:4px 0">${esc(q[0])}</h3>`+q[1].map((x,i)=>btn(esc(x),`fsRep(${i})`)).join('')+(C.fb?`<p style="font-size:13px">${C.fb}</p>`+btn('Suivant ▶','fsSuiv()','#2e7d32'):''))}
+    if(!C.fb)PAR.dire(q[0],'bea');over(`<div style="font-size:12px">Question ${C.i+1}/${CULTURE.length}</div><h3 style="margin:4px 0">${esc(q[0])}</h3>`+q[1].map((x,i)=>btn(esc(x),`fsRep(${i})`)).join('')+(C.fb?`<p style="font-size:13px">${C.fb}</p>`+btn('Suivant ▶','fsSuiv()','#2e7d32'):''))}
   // ---------- actions
   const actions={
-    fsOuvrir:()=>ouvrir(),fsQuitter:()=>quitter(),fsTab:t=>setTab(t),fsFermerOver:()=>fermerOver(),
+    fsRetour:()=>{const o=$('fsover');if(o&&o.style.display==='flex')fermerOver();else quitter()},fsOuvrir:()=>ouvrir(),fsQuitter:()=>quitter(),fsTab:t=>setTab(t),fsFermerOver:()=>fermerOver(),
     fsSet:(k,v)=>{FS().crea[k]=v;sauve();reconstruire();rend()},fsCoul:c=>{FS().crea.couleur=c;sauve();reconstruire();rend()},fsTog:k=>{const c=FS().crea;c[k]=!c[k];sauve();reconstruire();rend()},
     fsLook:(k,v)=>{FS().look[k]=v;sauve();reconstruire();rend()},fsChev:c=>actions.fsLook('ch',c),fsLev:c=>actions.fsLook('lev',c),fsYeux:c=>actions.fsLook('yeux',c),fsPeau:c=>actions.fsLook('skin',PEAUX.indexOf(c)),
     fsCoiffOk:()=>{const m=FS();m.coiffOk=true;save();msg(m.look.coiff==='courtes'?'Coiffure validée (courte). La mission demande une coiffure africaine.':'✅ Coiffure validée dans le salon !',3500);SFX.ok&&SFX.ok()},
