@@ -293,7 +293,7 @@ export function creerSimulateurs(D){
   const tenir=f=>{if(!G.dialog)openBox({kind:'metiers',vue:'sim',msg:''});f()};
   const MJ=creerModeJeu({A,save,refreshHud,toast:t=>D.toast(t),parler,pts,SFX,esc,mannequin:L=>mannequin(L),PIECES,COUL,MOTIFS,libre:()=>ov&&ov.querySelector('#md')});
   const actions=Object.assign({},MJ.actions,{
-    simMusique:()=>tenir(musique),simMode:()=>tenir(mode),simDeco:()=>tenir(deco),simAeroport:aeroport,simAvion:()=>openBox({kind:'metiers',vue:'missions',msg:''}),simAvionMission:id=>tenir(()=>avion(id)),simInscriptionPilote:()=>{const d=G.dialog;if(A().pieces<20){d.msg='Il te manque '+(20-A().pieces)+' pièces.';SFX.ko&&SFX.ko();rr();return}A().pieces-=20;pil().inscrit=true;save();refreshHud();SFX.coin&&SFX.coin();d.msg='Inscription validée ! Prépare maintenant la théorie.';rr()},simCours:id=>{fermer();openBox({kind:'metiers',vue:'module',m:id,msg:''})},simProfil:()=>openBox({kind:'metiers',vue:'profil'}),
+    simMusique:()=>window.musOuvrir&&window.musOuvrir(),simMode:()=>tenir(mode),simDeco:()=>tenir(deco),simAeroport:aeroport,simAvion:()=>openBox({kind:'metiers',vue:'missions',msg:''}),simAvionMission:id=>tenir(()=>avion(id)),simInscriptionPilote:()=>{const d=G.dialog;if(A().pieces<20){d.msg='Il te manque '+(20-A().pieces)+' pièces.';SFX.ko&&SFX.ko();rr();return}A().pieces-=20;pil().inscrit=true;save();refreshHud();SFX.coin&&SFX.coin();d.msg='Inscription validée ! Prépare maintenant la théorie.';rr()},simCours:id=>{fermer();openBox({kind:'metiers',vue:'module',m:id,msg:''})},simProfil:()=>openBox({kind:'metiers',vue:'profil'}),
     simInfoAero:()=>{const d=G.dialog;d.vue='infoaero';require_render()},
     simMuInst:k=>{inst=k;dessineMu()},
     simNote:i=>{son(inst,NOTES[i][1]);pts('musique',0)},

@@ -26,7 +26,7 @@ export function creerMetiers(D){
   function vueHub(d){
     let h='<h3>🏙 Pôle des métiers</h3><p style="font-size:13px">Découvre les métiers, apprends en t’amusant et gagne des pièces. Chaque guide t’accompagne.</p>'+msg(d);
     MODULES.forEach(m=>{h+=`<button onclick="metOuvrir('${m.id}')">${m.ico} ${esc(m.nom)} <small>(${nbFaits(m)}/${m.dossiers.length})</small></button>`});
-    h+='<button class="p" onclick="simAeroport()">✈️ Aéroport et simulateur de vol</button><button class="p" onclick="simMusique()">🎶 Studio de musique (instruments et création)</button><button class="p" onclick="simMode()">👗 Salon de mode (créer des tenues)</button><button class="p" onclick="simDeco()">🏠 Atelier de décoration (plans de pièces)</button><button onclick="simProfil()">🌟 Mon profil de talents</button><button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="metBoutique()">🏪 Ma boutique</button>';
+    h+='<button class="p" onclick="simAeroport()">✈️ Aéroport et simulateur de vol</button><button class="p" onclick="simMusique()">🎵 MUSIQUE – Découvre, joue et compose !</button><button class="p" onclick="simMode()">👗 Salon de mode (créer des tenues)</button><button class="p" onclick="simDeco()">🏠 Atelier de décoration (plans de pièces)</button><button onclick="simProfil()">🌟 Mon profil de talents</button><button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="metBoutique()">🏪 Ma boutique</button>';
     return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
   }
   function vueModule(d){
