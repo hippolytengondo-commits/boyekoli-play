@@ -66,3 +66,9 @@ Mise à jour (01/11/2026, nuit) : l'utilisateur a fourni quatre planches d'image
 Mise à jour (02/11/2026) : réalisés — centre commercial (quincaillerie, bourse d'échange, boutiques, animalerie) à la place de l'ancien étal ; aventures libres avec effort de creusage, coffres qui s'ouvrent, célébration ; animaux de compagnie (adoption, nourriture avec les provisions du supermarché, l'animal suit le joueur).
 Reste de la feuille de route : agence de détectives, laboratoire scientifique, hôpital fonctionnel, atelier de décoration, mode et coiffure, agriculture et élevage, boutique du joueur, ville intelligente, école de pilotage.
 À vérifier sur téléphone : visibilité de l'animal qui suit le joueur, animation d'ouverture des coffres, prix du centre commercial.
+
+## Pôle des métiers (livré le 01/11/2026)
+- Accès : étage 3 du centre commercial (escalator depuis l'étage 2) ou bouton « Pôle des métiers » du menu.
+- Dossiers de quiz (6 modules, 13 dossiers) : agence de détectives, laboratoire scientifique, centre hospitalier (éducatif), atelier de décoration, atelier mode et coiffure, ville intelligente, studio de musique et danse, école de pilotage (bases). Contenu dans `src/contenu/metiers.js`, 9 personnages-guides.
+- Ferme : 4 parcelles (maïs, manioc, légumes ; arrosage qui accélère), poules et chèvres (œufs, lait), boutique avec rendu de monnaie.
+- Limites connues : la décoration, la mode et la musique sont des quiz et non des éditeurs 3D ; à enrichir plus tard. Relecture des textes par un enseignant et, pour l'hôpital, par un professionnel de santé. Test sur téléphone du niveau 3 à faire.

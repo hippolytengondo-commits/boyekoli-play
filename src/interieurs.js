@@ -163,6 +163,14 @@ const DECOR={
       box(g,.6,.45,.05,std('#1b1b1b'),-6,1.3,3.2);
       tableau(g,-6,2.4,D/2-.05,5,.8,[{t:'🔁 BOURSE D’ÉCHANGE',s:44,y:.5}],'#1f7a4d');
       for(let i=0;i<4;i++)box(g,.4,.4,.4,std(['#c0392b','#e0a526','#2e86de','#27ae60'][i],.6),-8+i*1.3,1.2,3.2);
+    }else if((n||1)===3){
+      // pôle des métiers : panneaux des métiers et comptoir d'accueil
+      const L=[['🕵️ DÉTECTIVES','#34495e'],['🔬 LABORATOIRE','#16a085'],['🏥 HÔPITAL','#c0392b'],['🏠 DÉCORATION','#d35400'],['👗 MODE','#8e44ad'],['🌆 VILLE','#2980b9'],['🎶 MUSIQUE','#c2185b'],['✈️ PILOTAGE','#1f5f9e'],['🌾 FERME','#2e7d32']];
+      L.forEach(([t,c],i)=>{const x=-10+i*2.5;tableau(g,x,2.8,-D/2+.05,2.3,.8,[{t,s:34,y:.5}],c)});
+      tableau(g,0,3.8,-D/2+.05,9,.6,[{t:'PÔLE DES MÉTIERS · DÉCOUVRE, APPRENDS, GAGNE',s:34,y:.5}],'#222');
+      box(g,5,1.05,1.3,wood('#3d4a5a'),0,.52,-3);B.push({x0:-2.5,x1:2.5,z0:-3.65,z1:-2.35});
+      box(g,.7,.5,.05,std('#1b1b1b'),0,1.4,-3);
+      for(let i=0;i<5;i++)box(g,.35,.5,.35,std(['#c0392b','#e0a526','#2e86de','#27ae60','#8e44ad'][i],.6),-2+i,1.3,-2.75);
     }else{
       // étage : boutiques de Maman Béa et atelier mode
       box(g,5,1,1.2,wood('#a87445'),0,.5,-D/2+1.4);B.push({x0:-2.5,x1:2.5,z0:-D/2+.8,z1:-D/2+2});

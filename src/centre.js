@@ -5,7 +5,7 @@ import {bouts} from './interieurs.js';
 
 export const MATERIAUX=['brique','bois','sable','ciment','fer','bitume','cuivre'];
 export function creerCentre(D){
-  const {G,esc,openBox,renderDialog,SFX,save,refreshHud,parler,openShop,boutiqueMode,changerEtage,animalerie}=D;
+  const {G,esc,metiers,openBox,renderDialog,SFX,save,refreshHud,parler,openShop,boutiqueMode,changerEtage,animalerie}=D;
   const stock=()=>{const a=G.adv;if(!a.stock)a.stock={};return a.stock};
   const n=k=>stock()[k]||0;
   const prixAchat=k=>RESS[k].p*2;
@@ -73,11 +73,15 @@ export function creerCentre(D){
         MATERIAUX.forEach((k,i)=>L.push({x:-9.9+i*3.3,z:-D2/2+2.9,r:1.9,label:RESS[k].e+' Quincaillerie : acheter '+RESS[k].n,run:()=>actions.ccMatos()}));
         L.push({x:-6,z:1.7,r:2.6,label:'🔁 Bourse d’échange : vendre ou échanger',run:()=>actions.ccTroc()});
         L.push({x:bt.monter.x,z:bt.monter.z,r:1.6,label:'🔼 Escalator : monter à l’étage · boutiques',run:()=>changerEtage(+1)});
+      }else if(niv===3){
+        metiers(dim).forEach(sp=>{sp.z=-1.2;sp.r=3.2;L.push(sp)});
+        L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre',run:()=>changerEtage(-1)});
       }else{
         L.push({x:0,z:-D2/2+3,r:2.6,label:'🛍 Boutique de Maman Béa : meubles, mangues, vente',run:()=>{openShop();}});
         L.push({x:-8.5,z:-D2/2+3,r:2.4,label:'👗 Atelier mode : tenues et coiffures',run:()=>boutiqueMode()});
         L.push({x:8.5,z:-D2/2+3,r:2.4,label:'🐾 Animalerie : adopter un animal',run:()=>animalerie()});
         L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre au rez-de-chaussée',run:()=>changerEtage(-1)});
+        L.push({x:bt.monter.x,z:bt.monter.z,r:1.6,label:'🔼 Escalator : monter au pôle des métiers',run:()=>changerEtage(+1)});
       }
       return L;
     },
