@@ -171,6 +171,9 @@ const DECOR={
       [[-4.2,-D/2+1.6,'#8e5a2b'],[4.2,-D/2+1.6,'#2e6da4']].forEach(([x,z,c])=>{box(g,2.4,.5,1.4,std(c,.8),x,.25,z);box(g,2.4,.8,.3,std(c,.8),x,.8,z-.55);B.push({x0:x-1.3,x1:x+1.3,z0:z-.8,z1:z+.8})});   // meubles d'exposition
       for(let i=0;i<3;i++){const x=-9.5+i*1.6,z=-D/2+1.8;cyl(g,.04,.04,1.5,std('#444'),x,.75,z,6);const t=cyl(g,.28,.34,.9,std(['#c0392b','#e0a526','#2e86de'][i],.8),x,1.2,z,12);const h=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),std('#6b4028',.7));h.position.set(x,1.85,z);g.add(h);B.push({x0:x-.4,x1:x+.4,z0:z-.4,z1:z+.4})}
       tableau(g,-8.5,2.6,-D/2+.05,4,.8,[{t:'👗 ATELIER MODE',s:44,y:.5}],'#8e44ad');
+      box(g,3.4,.9,1.2,wood('#7a4a26'),8.5,.45,-D/2+1.4);B.push({x0:6.8,x1:10.2,z0:-D/2+.8,z1:-D/2+2});
+      [['#b5763a',-1.1],['#8d9aa6',-.37],['#f1f1f1',.37],['#2e9e4a',1.1]].forEach(([c,dx])=>{box(g,.5,.4,.5,std(c,.8),8.5+dx,1.1,-D/2+1.4)});
+      tableau(g,8.5,2.6,-D/2+.05,4,.8,[{t:'🐾 ANIMALERIE',s:44,y:.5}],'#2e7d32');
     }
     escalator(g,B,W,D);
     if((n||1)===1)tableau(g,0,3.6,D/2-.05,6,.7,[{t:'BIENVENUE · NIVEAU 0',s:36,y:.5}],'#1d4f91');

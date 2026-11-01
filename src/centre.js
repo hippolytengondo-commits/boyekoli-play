@@ -5,7 +5,7 @@ import {bouts} from './interieurs.js';
 
 export const MATERIAUX=['brique','bois','sable','ciment','fer','bitume','cuivre'];
 export function creerCentre(D){
-  const {G,esc,openBox,renderDialog,SFX,save,refreshHud,parler,openShop,boutiqueMode,changerEtage}=D;
+  const {G,esc,openBox,renderDialog,SFX,save,refreshHud,parler,openShop,boutiqueMode,changerEtage,animalerie}=D;
   const stock=()=>{const a=G.adv;if(!a.stock)a.stock={};return a.stock};
   const n=k=>stock()[k]||0;
   const prixAchat=k=>RESS[k].p*2;
@@ -76,6 +76,7 @@ export function creerCentre(D){
       }else{
         L.push({x:0,z:-D2/2+3,r:2.6,label:'🛍 Boutique de Maman Béa : meubles, mangues, vente',run:()=>{openShop();}});
         L.push({x:-8.5,z:-D2/2+3,r:2.4,label:'👗 Atelier mode : tenues et coiffures',run:()=>boutiqueMode()});
+        L.push({x:8.5,z:-D2/2+3,r:2.4,label:'🐾 Animalerie : adopter un animal',run:()=>animalerie()});
         L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre au rez-de-chaussée',run:()=>changerEtage(-1)});
       }
       return L;

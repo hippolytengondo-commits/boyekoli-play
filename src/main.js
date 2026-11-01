@@ -34,6 +34,7 @@ import {NIVEAUX as NIVEAUX_MUSEE} from './contenu/musee.js';
 const NB_NIVEAUX_MUSEE=NIVEAUX_MUSEE.length;
 import {creerAventures} from './aventures.js';
 import {creerCentre} from './centre.js';
+import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation,construireGare} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
@@ -376,6 +377,7 @@ function construireVille(){
 // libère la mémoire graphique des scènes quittées (important sur téléphone)
 function liberer(o){o.traverse(c=>{if(c.geometry)c.geometry.dispose();const m=c.material;if(m)(Array.isArray(m)?m:[m]).forEach(x=>x.dispose())})}
 function clearScene(){
+  ANI.retirer();
   Object.values(vehObjs).forEach(o=>{scene.remove(o);liberer(o)});vehObjs={};G.monte=null;G.vv=0;G.steer=0;
   if(W){scene.remove(W.group);liberer(W.group)}
   if(playerObj){scene.remove(playerObj);liberer(playerObj)}
@@ -398,7 +400,7 @@ function buildScene(){
   sun.color.set(el<=0?0x9db4ff:el<14?0xffb070:0xfff0d4);
   sun.intensity=S.interior?2.4:(el<=0?.35:el<14?2.2:3.4);
   W.mjMark=(MJ[G.sc]&&G.mjBonus===G.sc)?marqueur(G.sc):null;if(W.mjMark)W.group.add(W.mjMark);
-  playerObj=makePlayer();scene.add(playerObj);
+  playerObj=makePlayer();scene.add(playerObj);ANI.monter();
   Object.keys(NPC).filter(k=>NPC[k].sc===G.sc).forEach(id=>addNpc(id,NPC[id]));
   Object.keys(AUTOP).filter(k=>AUTOP[k].sc===G.sc).forEach(id=>addNpc(id,AUTOP[id]));
   if(G.sc==='interieur')occupants().forEach(o=>addNpc(o.id,o));
@@ -659,6 +661,7 @@ function renderDialog(){
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='rayon'||d.kind==='caisse'||d.kind==='prov')h=SUP.html(d);
   else if(d.kind==='matos'||d.kind==='troc')h=CC.html(d);
+  else if(d.kind==='animal')h=ANI.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
   else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin'||d.kind==='effort')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
@@ -1102,7 +1105,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+EN.boutons()
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1392,6 +1395,7 @@ function loop(now){
     if(ud.guidon)ud.guidon.rotation.y=-st*.5;
     const sd=ud.siege;playerObj.position.set(G.x+sd.x*co+sd.z*si,sd.y,G.z-sd.x*si+sd.z*co);playerObj.visible=true;assis=true;
   }
+  ANI.maj(dt,tt);
   playerObj.userData.update(dt,{speed:G.monte?0:sp,sit:assis,pose:G.mode==='creator'?'creator':'',cam:camera.position,lean:G.lean||0});
   // PNJ
   Object.keys(npcObjs).forEach(id=>{
@@ -1562,7 +1566,8 @@ function lancerQuiz3D(o){
 }
 function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(G.int.t==='supermarche'?3:G.int.t==='centre'?2:NB_NIVEAUX_MUSEE,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
 const MUSEE=creerMusee({G,esc,save,gain,SFX,toast:t=>toast(t),openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,changerEtage:changerEtageMusee});
-const CC=creerCentre({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,openShop:()=>openShop(),boutiqueMode:()=>{closeDialog();openCreator('play')},changerEtage:changerEtageMusee});
+const ANI=creerAnimaux({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,gain,parler:parlerFr,scene,refreshHud});
+const CC=creerCentre({G,esc,animalerie:()=>ANI.actions.aniAnimalerie(),openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,openShop:()=>openShop(),boutiqueMode:()=>{closeDialog();openCreator('play')},changerEtage:changerEtageMusee});
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{
@@ -2549,7 +2554,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

@@ -62,3 +62,7 @@ Reste à trouver : diamant, or, cuivre, cobalt, volcan des Virunga, Stade des Ma
 
 Mise à jour (01/11/2026, nuit) : l'utilisateur a fourni quatre planches d'images (nature, arts, faune, minéraux). 19 vignettes ont été découpées et intégrées dans `img/musee/` (virunga, nyiragongo, zongo, fleuve, masque, statue, tambour, likembe, poterie, vannerie, tissus, danse, rumba, gorille, okapi, diamant, cuivre, or, mine). Le musée compte maintenant 8 niveaux (nouveau niveau « Faune et biodiversité »).
 Écartés volontairement (à signaler à l'utilisateur) : paon (image d'un paon bleu indien, pas du paon congolais), cobalt (pierre bleue, qui ressemble à de l'azurite, pas au minerai de cobalt), bonobo et éléphant (identification incertaine). Ces images ont un aspect généré par IA : à confirmer avec l'utilisateur et, si c'est le cas, les présenter comme illustrations.
+
+Mise à jour (02/11/2026) : réalisés — centre commercial (quincaillerie, bourse d'échange, boutiques, animalerie) à la place de l'ancien étal ; aventures libres avec effort de creusage, coffres qui s'ouvrent, célébration ; animaux de compagnie (adoption, nourriture avec les provisions du supermarché, l'animal suit le joueur).
+Reste de la feuille de route : agence de détectives, laboratoire scientifique, hôpital fonctionnel, atelier de décoration, mode et coiffure, agriculture et élevage, boutique du joueur, ville intelligente, école de pilotage.
+À vérifier sur téléphone : visibilité de l'animal qui suit le joueur, animation d'ouverture des coffres, prix du centre commercial.
