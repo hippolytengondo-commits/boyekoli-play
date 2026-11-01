@@ -211,7 +211,7 @@ function resize(){
 window.addEventListener('resize',resize);
 
 // ---------- Scènes ----------
-window.__W=()=>W;let W=null;            // scène courante {group,colliders,boxes,bounds,update,...}
+window.__SC=()=>SCENES;window.__collide=(x,z)=>collide(x,z);window.__W=()=>W;let W=null;            // scène courante {group,colliders,boxes,bounds,update,...}
 let playerObj=null;
 let npcObjs={};let vehObjs={},vehT=0;
 let mangoGroup=null;
