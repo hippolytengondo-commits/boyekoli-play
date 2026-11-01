@@ -96,3 +96,10 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Paysage RDC : Kinshasa (tours, stade, avenues), fleuve Congo, Brazzaville, collines et montagnes avec collisions ; 4 caméras ; pause ; carburant fictif ; mode tactile (joystick) et mode ordinateur (clavier, souris, molette) ; graphismes économiques.
 - Choix techniques : le projet n'utilise ni React ni Rapier ; la physique simplifiée et les modèles 3D sont écrits en Three.js pur (pas de fichiers GLB).
 - À tester sur téléphone : fluidité (activer « Graphismes économiques » en pause), prise en main, difficulté des leçons 5 à 9.
+
+## BOYEKOLI MUSIC STUDIO (01/11/2026)
+- Entrées : bouton du menu « 🎵 MUSIQUE – Découvre, joue et compose ! », pôle des métiers, et bâtiment coloré au bord de la route de l'aéroport (côté nord, vers x=80).
+- Code : `src/musique/synth.js` (29 instruments synthétisés en Web Audio, sans fichier audio), `src/musique/scene3d.js` (studio 3D en 5 espaces + grande scène), `src/musique/data.js` (instruments, 10 cours, badges), `src/musique.js` (interface, cours, badges, cérémonie), `src/musique_jeux.js` (7 mini-jeux, composition à 5 pistes, concert).
+- Données de l'enfant dans `adv.mus` : cours, jeux, défis d'instruments, créations (12 max, jamais exportées), badges (attribués uniquement quand les exercices correspondants sont validés).
+- À tester sur téléphone : son (volume, latence), fluidité de la 3D (mode économique via `kelas_quality`), lisibilité de la grille de composition.
+- À relire par un enseignant de musique : textes des cours et des instruments. Les sons sont synthétiques, non des enregistrements d'instruments réels.
