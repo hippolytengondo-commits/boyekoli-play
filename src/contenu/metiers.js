@@ -15,25 +15,10 @@ export const MODULES=[
  {id:'detective',ico:'🕵️',nom:'Agence de détectives',guide:'detective',txt:'Deviens détective : visite l’agence, mène deux grandes enquêtes en 3D (le musée et l’école), analyse les indices au laboratoire.',dossiers:[
   {id:'d1',titre:'Le mystère du musée',jeu:'musee',intro:'',qs:[]},
   {id:'d2',titre:'Le mystère de l’école',jeu:'ecole',intro:'',qs:[]}]},
- {id:'laboratoire',ico:'🔬',nom:'Laboratoire scientifique',guide:'scientifique',txt:'Corps humain, cellules, plantes, animaux, système solaire et expériences.',dossiers:[
-  {id:'l1',titre:'Le corps humain',intro:'Bienvenue au laboratoire ! Explorons le corps humain.',qs:[
-   Q('Quel organe pompe le sang dans tout le corps ?',['Le cœur','Le foie','Le poumon','L’estomac'],0,'Le cœur est une pompe qui envoie le sang partout.'),
-   Q('Quel organe permet de respirer ?',['Les reins','Les poumons','Le cerveau','La peau'],1,'Les poumons apportent l’oxygène au sang.'),
-   Q('Combien de sens avons-nous classiquement ?',['3','4','5','8'],2,'La vue, l’ouïe, l’odorat, le goût et le toucher.'),
-   Q('Quel est l’os qui protège le cerveau ?',['Le crâne','Le fémur','La côte','Le tibia'],0,'Le crâne protège le cerveau.'),
-   Q('Que faut-il faire avant de manger ?',['Se laver les mains','Courir','Dormir','Crier'],0,'Se laver les mains évite beaucoup de maladies.')]},
-  {id:'l2',titre:'Plantes, animaux et cellules',intro:'Observons le vivant au microscope : plantes, animaux et cellules.',qs:[
-   Q('Comment s’appelle la plus petite unité du vivant ?',['L’atome','La cellule','L’organe','La feuille'],1,'Tous les êtres vivants sont faits de cellules.'),
-   Q('Quel gaz les plantes absorbent-elles pour la photosynthèse ?',['Le dioxygène','Le dioxyde de carbone','L’azote','L’hélium'],1,'Elles absorbent le CO₂ et rejettent du dioxygène.'),
-   Q('Quel animal congolais est un primate de la forêt ?',['Le gorille','Le requin','Le chameau','Le pingouin'],0,'Le gorille vit dans les forêts du Congo.'),
-   Q('Quelle partie de la plante absorbe l’eau du sol ?',['La racine','La fleur','La feuille','Le fruit'],0,'Les racines puisent l’eau et les sels minéraux.'),
-   Q('Les animaux qui mangent de la viande sont…',['herbivores','carnivores','végétariens','insectes'],1,'Un carnivore mange de la viande.')]},
-  {id:'l3',titre:'Le système solaire',intro:'Direction l’espace : le Soleil et ses planètes.',qs:[
-   Q('Quelle est l’étoile au centre de notre système solaire ?',['La Lune','Le Soleil','Mars','Vénus'],1,'Le Soleil est une étoile.'),
-   Q('Combien de planètes compte le système solaire ?',['6','8','10','12'],1,'Huit planètes, de Mercure à Neptune.'),
-   Q('Quelle planète est surnommée la planète rouge ?',['Mars','Jupiter','Saturne','Mercure'],0,'Mars est rouge à cause de l’oxyde de fer.'),
-   Q('La Terre fait un tour sur elle-même en…',['1 heure','1 jour','1 mois','1 an'],1,'Un tour sur elle-même = un jour (24 h).'),
-   Q('Pourquoi y a-t-il des saisons ?',['Car la Terre tourne autour du Soleil, inclinée','Car la Lune bouge','Car le Soleil s’éteint','Car il y a du vent'],0,'L’inclinaison de la Terre et son tour autour du Soleil créent les saisons.')]}]},
+ {id:'laboratoire',ico:'🔬',nom:'Laboratoire scientifique',guide:'scientifique',txt:'BOYEKOLI SCIENCE LAB : visite le laboratoire en 3D et réalise des expériences simulées de chimie, de biologie et de physique.',dossiers:[
+  {id:'l1',titre:'Laboratoire de chimie',sci:true,intro:'',qs:[]},
+  {id:'l2',titre:'Laboratoire de biologie',sci:true,intro:'',qs:[]},
+  {id:'l3',titre:'Laboratoire de physique',sci:true,intro:'',qs:[]}]},
  {id:'hopital',ico:'🏥',nom:'Centre hospitalier',guide:'docteur',txt:'Urgences, pédiatrie, laboratoire, pharmacie, maternité : des scénarios pour apprendre la santé. (Éducatif : en cas de problème réel, consulte un vrai médecin.)',dossiers:[
   {id:'h1',titre:'Aux urgences',intro:'Aux urgences, il faut garder son calme et agir vite. Voici des situations de la vie.',qs:[
    Q('Un enfant se coupe légèrement. Que faire en premier ?',['Laver la plaie à l’eau propre et au savon','Mettre de la boue','Ne rien faire','Frotter fort'],0,'On nettoie d’abord la plaie avec de l’eau propre et du savon.'),
