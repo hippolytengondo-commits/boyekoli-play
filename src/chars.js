@@ -12,9 +12,9 @@ const lerp=(a,b,t)=>a+(b-a)*t;
 const taper=(rt,rb,len,m,seg)=>{const g=new THREE.CylinderGeometry(rt,rb,len,seg||14,3);g.translate(0,-len/2,0);const o=new THREE.Mesh(g,m);o.castShadow=true;return o};
 // torse sculpté par révolution d'un profil (rayon, hauteur)
 function torsoGeo(female){
-  const pr=female?[[.14,0],[.16,.07],[.15,.15],[.118,.27],[.138,.38],[.152,.46],[.142,.54],[.09,.6],[.05,.64]]:[[.14,0],[.156,.07],[.15,.15],[.13,.27],[.15,.38],[.168,.47],[.16,.55],[.1,.61],[.055,.65]];
+  const pr=female?[[.16,0],[.195,.07],[.185,.15],[.135,.27],[.15,.38],[.172,.46],[.15,.54],[.09,.6],[.05,.64]]:[[.14,0],[.156,.07],[.15,.15],[.13,.27],[.15,.38],[.168,.47],[.16,.55],[.1,.61],[.055,.65]];
   const g=new THREE.LatheGeometry(pr.map(a=>new THREE.Vector2(a[0],a[1])),28);
-  g.scale(female?1.12:1.24,1,.76);
+  g.scale(female?1.2:1.24,1,female?.86:.76);
   if(female){const p=g.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i),z=p.getZ(i);if(z>0&&y>.32&&y<.5){const k=Math.exp(-Math.pow((y-.41)/.06,2));p.setZ(i,z*(1+.17*k));p.setY(i,y+.004*k)}}}
   g.computeVertexNormals();return g;
 }
@@ -128,10 +128,10 @@ export function makeHuman(look){
   const longD=bottom==='long',skirt=bottom==='skirt',trousers=bottom==='trousers';
 
   const root=new THREE.Group();
-  const body=new THREE.Group();body.scale.set(1.1,.92,1.1);root.add(body);
+  const body=new THREE.Group();body.scale.set(female?1.16:1.08,.92,female?1.16:1.08);root.add(body);
 
   const hips=jnt(0,.95,0);body.add(hips);
-  const pelvis=ball(.16,trousers?trouserM:(longD?topM:(skirt?topM:trouserM)),1.22,.62,.86);pelvis.position.y=.02;hips.add(pelvis);
+  const pelvis=ball(.16,trousers?trouserM:(longD?topM:(skirt?topM:trouserM)),female?1.6:1.22,female?.74:.62,female?1.08:.86);pelvis.position.y=.02;hips.add(pelvis);
   const spine=jnt(0,.06,0);hips.add(spine);
   const torso=new THREE.Mesh(torsoGeo(female),topM);torso.castShadow=true;spine.add(torso);
   if(out.collar){const col=new THREE.Mesh(new THREE.TorusGeometry(.072,.016,8,20),M('#f2f2f2',.8));col.rotation.x=Math.PI/2;col.position.set(0,.605,.005);col.scale.set(1.25,1,.9);spine.add(col)}
@@ -174,9 +174,9 @@ export function makeHuman(look){
     lid.scale.set(1.2,.9,.8);lid.position.set(ex,ey+.001,.088);lid.rotation.x=-.15;headJ.add(lid);
     if(female){const lash=new THREE.Mesh(new THREE.BoxGeometry(eyeR*2.5,.003,.006),hairM);lash.position.set(ex,ey+eyeR*1.0,.097);lash.rotation.z=-s*.1;headJ.add(lash)}
     // sourcils
-    const bw=.032,bh=L.brow===1?.009:.004;
+    const bw=.03,bh=L.brow===1?.008:.0034;
     const br=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,.008),hairM);
-    br.position.set(ex,.188+(L.brow===2?.004:0),.092);br.rotation.z=-s*(L.brow===2?.22:.08);headJ.add(br);
+    br.position.set(ex,.192+(L.brow===2?.004:0),.092);br.rotation.z=s*(L.brow===2?.12:.1);headJ.add(br);
     if(L.brow===2){const b2=br.clone();b2.position.x=ex+s*.014;b2.position.y=.172;b2.rotation.z=s*.12;headJ.add(b2)}
   });
   // nez
@@ -284,7 +284,7 @@ export function makeHuman(look){
     const sh=jnt(side*(female?.215:.24),.5,0);spine.add(sh);
     const longSleeve=longD||out.sleeves==='long';
     const sb=ball(.058,topM,1,1,1,14);sh.add(sb);
-    const up=taper(.052,.042,.29,skinM);sh.add(up);
+    const up=taper(female?.058:.052,female?.046:.042,.29,skinM);sh.add(up);
     const sl=taper(.058,longSleeve?.047:.05,longSleeve?.29:.15,topM);sh.add(sl);
     const el=jnt(0,-.29,0);sh.add(el);
     const eb=ball(.043,longSleeve?topM:skinM,1,1,1,12);el.add(eb);
@@ -300,13 +300,13 @@ export function makeHuman(look){
   // jambes : cuisse, genou, mollet, cheville, chaussure
   const legs=[];
   [-1,1].forEach(side=>{
-    const hj=jnt(side*.09,0,0);hips.add(hj);
+    const hj=jnt(side*(female?.105:.09),0,0);hips.add(hj);
     const lm=trousers?trouserM:skinM,add=trousers?.012:0;
-    const th=taper(.088+add,.062+add,.43,lm);hj.add(th);
+    const fw=female?1.22:1;const th=taper((.088+add)*fw,(.062+add)*fw,.43,lm);hj.add(th);
     const kn=jnt(0,-.43,0);hj.add(kn);
     const kb=ball(.063+add,lm,1,1,1,12);kn.add(kb);
     const sh=taper(.058+add,.036+add,.41,lm);kn.add(sh);
-    const calf=ball(1,lm,.056+add,.12,.062+add,12);calf.position.set(0,-.12,-.012);kn.add(calf);
+    const calf=ball(1,lm,(.056+add)*(female?1.15:1),.12,(.062+add)*(female?1.15:1),12);calf.position.set(0,-.12,-.012);kn.add(calf);
     const foot=new THREE.Group();foot.position.y=-.43;kn.add(foot);
     const toe=ball(1,shoe,.05,.036,.115,12);toe.position.set(0,-.012,.05);foot.add(toe);
     const heel=ball(1,shoe,.043,.04,.05,10);heel.position.set(0,0,-.03);foot.add(heel);
@@ -319,13 +319,13 @@ export function makeHuman(look){
     const tex=wax?waxTexture(L.c,L.c2||'#e0a526'):null;
     const sm=tex?new THREE.MeshStandardMaterial({map:tex,roughness:.85,side:THREE.DoubleSide,normalMap:foldNormal(),normalScale:new THREE.Vector2(.5,.5)}):M(L.c,.85,0,{side:THREE.DoubleSide,normalMap:foldNormal(),normalScale:new THREE.Vector2(.5,.5)});
     if(look.fabric&&!tex)fabricInto(sm,look.fabric.id,look.fabric.skirt||look.fabric.top);
-    const sk2=new THREE.Mesh(new THREE.CylinderGeometry(.19,out.belt?.34:.3,out.belt?.7:.62,24,1,true),sm);
+    const sk2=new THREE.Mesh(new THREE.CylinderGeometry(female?.23:.19,out.belt?.36:.32,out.belt?.7:.62,24,1,true),sm);
     sk2.position.y=out.belt?-.37:-.34;sk2.castShadow=true;hips.add(sk2);
   }
   if(longD){
     const m=new THREE.MeshStandardMaterial({map:noiseTexture(L.c,.16),roughness:.8,side:THREE.DoubleSide,normalMap:foldNormal(),normalScale:new THREE.Vector2(.6,.6)});
     if(look.fabric)fabricInto(m,look.fabric.id,look.fabric.skirt||look.fabric.top);
-    const robe=new THREE.Mesh(new THREE.CylinderGeometry(.2,.37,.98,28,1,true),m);robe.position.y=-.45;robe.castShadow=true;hips.add(robe);
+    const robe=new THREE.Mesh(new THREE.CylinderGeometry(female?.235:.2,.39,.98,28,1,true),m);robe.position.y=-.45;robe.castShadow=true;hips.add(robe);
     if(out.trim){const hem=new THREE.Mesh(new THREE.TorusGeometry(.37,.012,6,28),M('#e0a526',.4,.7));hem.rotation.x=Math.PI/2;hem.position.y=-.93;hips.add(hem)}
     legs.forEach(l=>{l.kn.visible=false});
     fixedFeet=[-1,1].map(s=>{const t=new THREE.Mesh(new THREE.BoxGeometry(.09,.06,.2),shoe);t.position.set(s*.09,-.94,.06);hips.add(t);return t});
