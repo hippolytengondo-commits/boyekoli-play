@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {panneauPub} from './pub.js';
-import {sponsorN} from './sponsors.js';
+import {sponsorN,SPONSORS} from './sponsors.js';
 import * as T from './textures.js';
 import {std,box,cyl,rng} from './world.js';
 import {leafyTree,palm,grassField,bush} from './nature.js';
@@ -34,7 +34,7 @@ export function buildArene(matiere){
     cyl(g,.55,.65,4.2,std(th.pil,.85),x,2.1,z,12);cyl(g,.8,.8,.35,std('#efe8da',.8),x,4.35,z,12);colliders.push({x:x,z:z,r:.8})}
   // panneaux des sponsors dans toutes les salles de réponse : la paire change selon la matière
   {let h=7;for(const c of String(matiere||'x'))h=(h*31+c.charCodeAt(0))>>>0;const mi=h%97;
-   [[-11.5,-5,1.07],[11.5,-5,-1.07],[-10.5,8.5,2.2],[10.5,8.5,-2.2]].forEach(([x,z,ry],j)=>{const pb=panneauPub(sponsorN(mi+j));pb.position.set(x,0,z);pb.rotation.y=ry;g.add(pb);colliders.push({x:x,z:z,r:1.7})})}
+   [[-11.5,-5,1.07],[11.5,-5,-1.07],[-10.5,8.5,2.2],[10.5,8.5,-2.2]].forEach(([x,z,ry],j)=>{let sp=j===0?SPONSORS.find(q=>q.id==='ezemo'):null;if(!sp){sp=sponsorN(mi+j);let k=1;while(sp&&sp.id==='ezemo'&&k<9)sp=sponsorN(mi+j+k++)}const pb=panneauPub(sp);pb.position.set(x,0,z);pb.rotation.y=ry;g.add(pb);colliders.push({x:x,z:z,r:1.7})})}
   // arbres au loin
   for(let i=0;i<22;i++){const a=r()*6.28,d=22+r()*10;const x=Math.cos(a)*d,z=Math.sin(a)*d;
     const t=i%3===0?palm(i+5):leafyTree({kind:i%2?'mango':'leafy',seed:i+30,fruits:false,trunk:3.2+r()*1.4});t.position.set(x,0,z);t.scale.setScalar(i%3===0?1:1.2+r()*.4);g.add(t);colliders.push({x:x,z:z,r:.7})}

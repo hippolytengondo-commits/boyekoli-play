@@ -5,6 +5,9 @@ import * as T from './textures.js';
 import {std,box,cyl,room} from './world.js';
 import {voiture,voitureJoueur,motoJoueur} from './trafic.js';
 import {CATALOGUE} from './quartier_res.js';
+import {NIVEAUX} from './contenu/musee.js';
+import {RAYONS} from './contenu/supermarche.js';
+import {produit} from './produits.js';
 
 const wood=c=>new THREE.MeshStandardMaterial({map:T.woodTexture(c||'#7a4a26')});
 const paint=c=>new THREE.MeshStandardMaterial({map:T.plasterTexture(c),roughness:.95});
@@ -13,8 +16,8 @@ const dalle=c=>std(c||'#d9dcd9',.6);
 
 // dimensions (largeur, profondeur, hauteur) selon le type et le niveau
 export const TAILLE=(t,n)=>{
-  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],supermarche:[14,9,3.8],musee:[16,10,4.2],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
-  const f=1+.12*(n-1);return [base[0]*f,base[1]*f,base[2]];
+  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],supermarche:[20,12,4],musee:[18,11,4.4],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
+  const f=(t==='musee'||t==='supermarche')?1:1+.12*(n-1);return [base[0]*f,base[1]*f,base[2]];
 };
 
 function lit(g,boxes,x,z,col,ry){
@@ -34,6 +37,50 @@ function etagere(g,boxes,x,z,w,h,cols){
   box(g,w,h,.4,wood('#6b4226'),x,h/2,z);
   for(let r=0;r<3;r++)for(let i=0;i<Math.floor(w/.35);i++)box(g,.22,.4,.25,std(cols[(i+r)%cols.length],.8),x-w/2+.3+i*.35,.6+r*.6,z+.05);
   boxes.push({x0:x-w/2,x1:x+w/2,z0:z-.25,z1:z+.25});
+}
+// ---- rayons garnis de produits en 3D ----
+const NOMS_SAC={'Farine de maïs (5 kg)':['FARINE','#f5efe3'],'Riz (2 kg)':['RIZ','#fff8e0'],'Sucre (1 kg)':['SUCRE','#ffffff'],'Haricots (1 kg)':['HARICOTS','#e6d2b0']};
+function rayonGarni(g,B,x,z,w,r){
+  const planche=wood('#7a4a26');
+  box(g,w,2.5,.12,planche,x,1.25,z-.3);                                   // fond
+  [-w/2,w/2].forEach(dx=>box(g,.1,2.4,.6,planche,x+dx,1.2,z));            // montants
+  [.08,.85,1.62].forEach((y,lv)=>{
+    box(g,w,.06,.6,planche,x,y,z);
+    const n=Math.floor((w-.4)/.52);
+    for(let i=0;i<n;i++){
+      const idx=(i+lv*2)%r.produits.length,kind=r.modeles[idx],nom=r.produits[idx].n,sac=NOMS_SAC[nom];
+      const p=produit(kind,sac?{a:sac[0],b:sac[1]}:null);
+      p.position.set(x-w/2+.45+i*.52,y+.03,z+.04);p.rotation.y=((i*37+lv*11)%7-3)*.05;g.add(p);
+    }
+  });
+  B.push({x0:x-w/2,x1:x+w/2,z0:z-.4,z1:z+.35});
+}
+function ilot(g,B,x,z,kinds){
+  box(g,3.2,.6,1.2,wood('#9a6a3a'),x,.3,z);box(g,3.3,.06,1.3,wood('#7a4a26'),x,.62,z);
+  for(let i=0;i<7;i++)for(let j=0;j<2;j++){const p=produit(kinds[(i+j)%kinds.length]);p.position.set(x-1.35+i*.45,.65,z-.3+j*.6);p.scale.setScalar(1.05);g.add(p)}
+  B.push({x0:x-1.7,x1:x+1.7,z0:z-.7,z1:z+.7});
+}
+// ---- tableaux du musée : cadre, photo (ou grande illustration), plaque ----
+export function emplacementTableau(i,W,D){
+  const back=[-6.6,-4,-1.4,1.4,4,6.6];
+  if(i<6)return {x:back[i],z:-D/2+.08,ry:0};
+  return {x:-W/2+.08,z:-1.5+(i-6)*2.8,ry:Math.PI/2};
+}
+const cacheTex={};
+function tableauPhoto(g,x,z,ry,e,couleur){
+  const gr=new THREE.Group();gr.position.set(x,0,z);gr.rotation.y=ry;g.add(gr);
+  const W=1.7,H=2.1;
+  box(gr,W+.2,H+.2,.08,wood('#5a3a22'),0,1.95,0);
+  const mat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7});
+  const plan=new THREE.Mesh(new THREE.PlaneGeometry(W,H),mat);plan.position.set(0,1.95,.05);gr.add(plan);
+  // illustration de secours (emoji) tant que la photo n'est pas disponible
+  const secours=()=>{const c=document.createElement('canvas');c.width=256;c.height=320;const k=c.getContext('2d');k.fillStyle=couleur;k.fillRect(0,0,256,320);k.fillStyle='rgba(255,255,255,.18)';k.fillRect(14,14,228,292);k.font='120px serif';k.textAlign='center';k.textBaseline='middle';k.fillStyle='#fff';k.fillText(e.ico||'🏛',128,150);k.font='bold 22px system-ui,sans-serif';k.fillText(String(e.titre).slice(0,20),128,270);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;mat.map=t;mat.needsUpdate=true};
+  if(e.img){
+    if(cacheTex[e.img]&&cacheTex[e.img].image){mat.map=cacheTex[e.img];mat.needsUpdate=true}
+    else new THREE.TextureLoader().load(e.img,t=>{t.colorSpace=THREE.SRGBColorSpace;cacheTex[e.img]=t;mat.map=t;mat.needsUpdate=true;
+      const a=t.image.width/t.image.height;plan.scale.set(Math.min(1,a*H/W),Math.min(1,W/(a*H)),1)},undefined,secours);
+  }else secours();
+  tableau(gr,0,.72,.05,1.9,.42,[{t:String(e.titre).slice(0,26),s:34,y:.5}],couleur);
 }
 function tableau(g,x,y,z,w,h,lignes,bg){
   const b=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:T.textBoard(lignes,768,Math.round(768*h/w),bg||'#2e3b33','#fff','#8d5a3b'),roughness:.9}));
@@ -57,24 +104,30 @@ const DECOR={
     tableau(g,0,2.6,-D/2+.05,4.4,1,[{t:'🏍 MOTOS  ·  🚗 VOITURES',s:58,y:.5}],'#2b2b2b');
   },
   musee(g,B,W,D,n){
-    // six vitrines contre le mur du fond, chacune avec son panneau ; un banc au centre
-    const V=[['HISTOIRE','#8c5a2b'],['PERSONNALITÉS','#6a3d9a'],['MONUMENTS','#1f5f9e'],['RESSOURCES','#b8860b'],['CULTURES','#c0392b'],['NATURE','#2e7d32']];
-    V.forEach((v,i)=>{const x=-6.2+i*2.48;
-      box(g,1.9,.9,.9,wood('#6b4226'),x,.45,-D/2+1.2);box(g,1.9,1.1,.9,new THREE.MeshStandardMaterial({color:0x9fd6ff,transparent:true,opacity:.35,roughness:.1}),x,1.45,-D/2+1.2);
-      box(g,.5,.45,.4,std(v[1],.7),x,1.2,-D/2+1.2);B.push({x0:x-1,x1:x+1,z0:-D/2+.7,z1:-D/2+1.7});
-      tableau(g,x,3.1,-D/2+.05,2.3,.7,[{t:v[0],s:40,y:.5}],v[1])});
-    banc(g,B,-2,.8);banc(g,B,2,.8);
-    box(g,.9,.9,.9,wood('#6b4226'),0,.45,-1.3);box(g,.5,1.3,.5,std('#b8860b',.5),0,1.5,-1.3);B.push({x0:-.6,x1:.6,z0:-1.8,z1:-.8});
+    // un étage du musée : les tableaux (photos) sont accrochés aux murs ; un escalator relie les niveaux
+    const niv=NIVEAUX[Math.max(0,Math.min(NIVEAUX.length-1,n-1))];
+    niv.expos.forEach((e,i)=>{const p=emplacementTableau(i,W,D);tableauPhoto(g,p.x,p.z,p.ry,e,niv.couleur)});
+    // pupitre central du quiz
+    box(g,1.2,.9,1.2,wood('#6b4226'),0,.45,-.6);box(g,.7,.18,.7,std(niv.couleur,.5),0,1.0,-.6);B.push({x0:-.8,x1:.8,z0:-1.2,z1:0});
+    tableau(g,0,2.2,-D/2+.05,5,.9,[{t:niv.ico+' '+niv.nom.toUpperCase(),s:46,y:.5}],niv.couleur);
+    // escalator
+    const ex=W/2-1.7;box(g,1.5,.1,6,std('#444',.6),ex,.05,D/2-3.6);
+    for(let i=0;i<10;i++)box(g,1.3,.12,.4,std(i%2?'#9aa3ad':'#c8ced4',.5),ex,.2+i*.1,D/2-1.0-i*.42);
+    [-.72,.72].forEach(dx=>{box(g,.06,.9,5.2,std('#222',.5),ex+dx,.8,D/2-3.4)});
+    B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
+    banc(g,B,-3.2,1.6);banc(g,B,3.2,1.6);
   },
   supermarche(g,B,W,D,n){
-    // 4 rayons contre le mur du fond, deux îlots au centre, une caisse près de l'entrée
-    const R=[['FRUITS ET LÉGUMES','#2e7d32',['#c0392b','#e0a526','#6aa84f','#d35400']],['ÉPICERIE','#8d5a3b',['#f5efe3','#c9a27a','#e0a526','#ffffff']],['BOISSONS','#1f5f9e',['#2e86de','#e0a526','#ffffff','#8e44ad']],['ÉCOLE ET MAISON','#6a3d9a',['#2e86de','#c0392b','#ffffff','#e0a526']]];
-    R.forEach((r,i)=>{const x=-4.8+i*3.2;etagere(g,B,x,-D/2+1.1,2.8,2.2,r[2]);tableau(g,x,2.9,-D/2+.05,2.8,.7,[{t:r[0],s:44,y:.5}],r[1])});
-    [-3.2,3.2].forEach((x,i)=>{etagere(g,B,x,-.5,2.6,1.2,R[i===0?0:2][2])});
-    box(g,2.8,1.05,.9,wood('#3d4a5a'),W/2-2.2,.52,D/2-3.2);B.push({x0:W/2-3.6,x1:W/2-.8,z0:D/2-3.7,z1:D/2-2.7});
-    box(g,.5,.4,.04,std('#1b1b1b'),W/2-2.6,1.2,D/2-3.2);
-    tableau(g,W/2-2.2,2.4,D/2-.05,2.4,.7,[{t:'CAISSE',s:60,y:.5}],'#1f7a4d');
-    [[-5.3,2.3],[-4.6,2.3],[-3.9,2.3]].forEach(([x,z])=>{box(g,.55,.5,.85,std('#9aa3ad'),x,.55,z)});
+    // grand magasin : quatre rayons garnis le long du mur du fond, deux îlots au centre, deux caisses près de l'entrée
+    RAYONS.forEach((r,i)=>{const x=-7.5+i*5;
+      rayonGarni(g,B,x,-D/2+.8,4.4,r);
+      tableau(g,x,3.1,-D/2+.05,4.2,.8,[{t:r.ico+' '+r.nom.toUpperCase(),s:40,y:.5}],['#2e7d32','#8d5a3b','#1f5f9e','#6a3d9a'][i])});
+    // îlots centraux : fruits à gauche, boissons à droite
+    ilot(g,B,-4.5,-.6,['mangue','banane','ananas','tomate']);ilot(g,B,4.5,-.6,['bouteille','jus','brique','bouteille']);
+    // caisses
+    [[6.2,3.4],[2.6,3.4]].forEach(([x,z])=>{box(g,2.4,1.0,.9,wood('#3d4a5a'),x,.5,z);box(g,.5,.38,.04,std('#1b1b1b'),x-.5,1.2,z);B.push({x0:x-1.2,x1:x+1.2,z0:z-.5,z1:z+.5});
+      tableau(g,x,2.5,D/2-.05,2.2,.6,[{t:'CAISSE',s:56,y:.5}],'#1f7a4d')});
+    [[-8.6,3.4],[-7.9,3.4],[-7.2,3.4],[-6.5,3.4]].forEach(([x,z])=>{box(g,.6,.5,.9,std('#9aa3ad'),x,.55,z);box(g,.6,.04,.9,std('#c8ced4'),x,.9,z)});
   },
   autoecole(g,B,W,D,n){
     // accueil : comptoir d'inscription à gauche, salle de cours à droite

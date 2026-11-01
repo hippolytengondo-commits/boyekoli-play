@@ -31,7 +31,6 @@ import {creerEnrichissement} from './enrichissement.js';
 import {creerSupermarche} from './supermarche.js';
 import {creerMusee} from './musee.js';
 import {creerAventures} from './aventures.js';
-import {SALLES} from './contenu/musee.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
@@ -227,14 +226,13 @@ const SCENES={
    {x:42,z:-5.3,r:2.6,to:'classe',label:'Entrer dans l’école',ok:()=>doorOpen(),closed:'Porte fermée',tx:0,tz:2.6,phi:-Math.PI/2}]},
  maison:{build:()=>construireMaison(),interior:true,doors:[{x:0,z:2.5,r:1.9,to:'ville',label:'Sortir',tx:-22,tz:-3.9,phi:Math.PI/2}],
    spots:[{x:-1.6,z:-2.2,r:1.9,label:'Miroir : changer mon look',run:()=>openCreator('play')},{x:-1.0,z:-.6,r:1.9,label:'Plans : construire ma maison',run:()=>openMaison()}]},
- interieur:{build:()=>{const w=buildInterieur(G.int.t,G.int.n),r=G.int.ret;SCENES.interieur.doors=[{x:0,z:w.dim.D/2-.9,r:1.6,to:'ville',label:'Sortir',tx:r.x,tz:r.z,phi:r.phi}];
+ interieur:{build:()=>{const w=buildInterieur(G.int.t,G.int.n),r=G.int.ret;SCENES.interieur.doors=(G.int.t==='musee'&&G.int.n>1)?[]:[{x:0,z:w.dim.D/2-.9,r:1.6,to:'ville',label:'Sortir',tx:r.x,tz:r.z,phi:r.phi}];
    SCENES.interieur.spots=G.int.k>=0?[{x:w.dim.W/2-1.4,z:w.dim.D/2-1.3,r:1.6,label:'Gérer ou améliorer cette construction',run:()=>openBox({kind:'terrain',k:G.int.k,msg:'',retInt:true})}]:[];
    if(G.int.t==='concession')SCENES.interieur.spots.push({x:w.dim.W/2-2.6,z:-w.dim.D/2+3.2,r:2,label:'Vendeur : acheter une moto ou une voiture',run:()=>openBox({kind:'conc',msg:''})});
    if(G.int.t==='supermarche'){const W3=w.dim.W,D3=w.dim.D;
-     [['fruits','Fruits et légumes'],['epicerie','Épicerie'],['boissons','Boissons'],['ecole','École et maison']].forEach(([id,nom],i)=>SCENES.interieur.spots.push({x:-4.8+i*3.2,z:-D3/2+2.7,r:1.9,label:'Rayon '+nom+' : voir les prix',run:()=>SUP.actions.supRayon(id)}));
-     SCENES.interieur.spots.push({x:W3/2-2.2,z:D3/2-4.5,r:2,label:'Caisse : défi des courses (budget)',run:()=>SUP.actions.supCaisse()})}
-   if(G.int.t==='musee'){const D4=w.dim.D;
-     SALLES.forEach((sl,i)=>SCENES.interieur.spots.push({x:-6.2+i*2.48,z:-D4/2+2.6,r:1.5,label:sl.ico+' Salle : '+sl.nom,run:()=>MUSEE.actions.museeSalle(sl.id)}))}
+     [['fruits','Fruits et légumes'],['epicerie','Épicerie'],['boissons','Boissons'],['ecole','École et maison']].forEach(([id,nom],i)=>SCENES.interieur.spots.push({x:-7.5+i*5,z:-D3/2+2.9,r:2.1,label:'Rayon '+nom+' : voir les prix',run:()=>SUP.actions.supRayon(id)}));
+     SCENES.interieur.spots.push({x:4.4,z:1.9,r:2.6,label:'Caisse : défi des courses (budget)',run:()=>SUP.caisse()})}
+   if(G.int.t==='musee')MUSEE.spots(w.dim).forEach(sp=>SCENES.interieur.spots.push(sp));
    if(G.int.t==='autoecole'){const W2=w.dim.W,D2=w.dim.D;
      SCENES.interieur.spots.push({x:-W2/2+2.7,z:-D2/2+3.5,r:1.9,label:'Accueil : s’inscrire à l’auto-école',run:()=>openBox({kind:'insc',msg:'',etape:'accueil',prix:FRAIS_AE})},
        {x:W2/2-2.6,z:-D2/2+3.3,r:1.9,label:'Moniteur : leçons de conduite',run:()=>{if(G.adv.inscrit)openBox({kind:'ae'});else{toast('Inscris-toi d’abord à l’accueil.');SFX.ko()}}})}
@@ -417,14 +415,14 @@ function occupants(){
   }
   if(I.t==='musee'){
     const {W:Wd,D:Dd}=W.dim;
-    return [{id:'guide',x:2.5,z:Dd/2-3,ry:Math.PI,look:{s:'f',h:.97,skin:'#6b4028',c:'#8c5a2b',k:'pagne',co:'tresses'}},
-      {id:'visiteur0',x:-1.5,z:0,ry:Math.PI,look:{s:'h',h:.95,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
+    return (G.int.n>1?[]:[{id:'guide',x:2.5,z:Dd/2-3,ry:Math.PI,look:{s:'f',h:.97,skin:'#6b4028',c:'#8c5a2b',k:'pagne',co:'tresses'}},
+      ]).concat([{id:'visiteur0',x:-1.5,z:2.4,ry:Math.PI,look:{s:'h',h:.95,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}}]).map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
   }
   if(I.t==='supermarche'){
     const {W:Wd,D:Dd}=W.dim;
-    return [{id:'caissiere',x:Wd/2-2.2,z:Dd/2-4.4,ry:0,look:{s:'f',h:.97,skin:'#6b4028',c:'#1f7a4d',k:'uniforme',co:'tresses'}},
-      {id:'client0',x:-3.2,z:1.2,ry:Math.PI,look:{s:'h',h:1,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}},
-      {id:'client1',x:1.4,z:2.4,ry:Math.PI/2,look:{s:'f',h:.95,skin:'#5a3319',c:'#e0a526',k:'pagne',co:'tresses'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
+    return [{id:'caissiere',x:6.2,z:2.4,ry:0,look:{s:'f',h:.97,skin:'#6b4028',c:'#1f7a4d',k:'uniforme',co:'tresses'}},
+      {id:'client0',x:-2,z:1.4,ry:Math.PI,look:{s:'h',h:1,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}},
+      {id:'client1',x:1,z:-2.6,ry:Math.PI/2,look:{s:'f',h:.95,skin:'#5a3319',c:'#e0a526',k:'pagne',co:'tresses'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
   }
   if(I.t==='autoecole'){
     const {W:Wd,D:Dd}=W.dim;
@@ -645,8 +643,8 @@ function renderDialog(){
   else if(d.kind==='menu')h=htmlMenu(d);
   else if(d.kind==='pompe')h=htmlPompe(d);
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
-  else if(d.kind==='rayon'||d.kind==='caisse')h=SUP.html(d);
-  else if(d.kind==='salle')h=MUSEE.html(d);
+  else if(d.kind==='rayon')h=SUP.html(d);
+  else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
   else if(d.kind==='avent')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
@@ -1534,8 +1532,18 @@ const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.vo
 // collections, surprise du jour et événement du jour
 const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
 const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
-const MUSEE=creerMusee({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
-const SUP=creerSupermarche({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
+const parlerFr=(t,force)=>{if(force){const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w}else speak(t,'ilunga')};
+// quiz dans la salle de réponses (les réponses flottent, comme dans les missions scolaires) ; q : {q,c:[choix],a:index,exp}
+function lancerQuiz3D(o){
+  CONTENU[o.cle]={intro:o.intro,qs:o.qs};
+  const n={name:o.titre,role:o.titre,intro:o.intro,outro:'Bravo, tu as terminé !'};
+  const m3d=G.ui==='3d';
+  if(m3d)entrerArene(o.mat||'geo');
+  openBox({kind:'quiz',id:o.cle,m3d:m3d,collecte:null,assign:null,preview:false,backEsp:'',n:n,classe:o.titre,portrait:'ilunga',voice:'ilunga',back:false,backNiv:'',backMat:'',jeux:null,ji:0,j:null,rev:false,stage:'lines',i:0,qi:0,qs:o.qs.slice(),opts:null,bad:[],qerr:false,errs:0,firsts:0,gain:0,res:null});
+}
+function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(5,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
+const MUSEE=creerMusee({G,esc,save,gain,SFX,toast:t=>toast(t),openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,changerEtage:changerEtageMusee});
+const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D});
 let surpriseProposee=false;
 setInterval(()=>{
   if(surpriseProposee||G.mode!=='play'||G.dialog||G.monte||G.sc==='arene')return;

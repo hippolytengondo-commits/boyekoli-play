@@ -1,13 +1,13 @@
 // Supermarché : rayons (catégories de produits et prix) et défis de courses. Les prix sont ceux du jeu, en pièces.
 // Ajouter un produit ou un défi = ajouter une ligne ici ; les réponses sont calculées par le programme.
 export const RAYONS=[
- {id:'fruits',nom:'Fruits et légumes',ico:'🍅',txt:'Des produits frais, souvent cultivés près de chez nous.',produits:[
+ {id:'fruits',nom:'Fruits et légumes',ico:'🍅',modeles:['mangue','banane','tomate','oignon','feuilles','ananas'],txt:'Des produits frais, souvent cultivés près de chez nous.',produits:[
   {n:'Mangues (3)',p:6},{n:'Bananes (le régime)',p:8},{n:'Tomates (1 kg)',p:5},{n:'Oignons (1 kg)',p:4},{n:'Feuilles de manioc (la botte)',p:2},{n:'Ananas',p:3}]},
- {id:'epicerie',nom:'Épicerie',ico:'🌾',txt:'Les aliments qui se conservent longtemps : farine, riz, huile, sel, sucre.',produits:[
+ {id:'epicerie',nom:'Épicerie',ico:'🌾',modeles:['sac','sac','huile','boite','sac','sac'],txt:'Les aliments qui se conservent longtemps : farine, riz, huile, sel, sucre.',produits:[
   {n:'Farine de maïs (5 kg)',p:20},{n:'Riz (2 kg)',p:9},{n:'Huile de palme (1 L)',p:7},{n:'Sel (1 kg)',p:1},{n:'Sucre (1 kg)',p:5},{n:'Haricots (1 kg)',p:6}]},
- {id:'boissons',nom:'Boissons',ico:'🥤',txt:'Eau, jus et lait. Regarde bien le prix au litre avant de choisir !',produits:[
+ {id:'boissons',nom:'Boissons',ico:'🥤',modeles:['bouteille','jus','brique','boite'],txt:'Eau, jus et lait. Regarde bien le prix au litre avant de choisir !',produits:[
   {n:'Eau (1,5 L)',p:2},{n:'Jus d’ananas (1 L)',p:4},{n:'Lait (1 L)',p:5},{n:'Thé (la boîte)',p:3}]},
- {id:'ecole',nom:'École et maison',ico:'✏️',txt:'Cahiers, stylos et produits pour la maison.',produits:[
+ {id:'ecole',nom:'École et maison',ico:'✏️',modeles:['cahier','stylo','savon','torche'],txt:'Cahiers, stylos et produits pour la maison.',produits:[
   {n:'Cahier (96 pages)',p:2},{n:'Stylo bleu',p:1},{n:'Savon',p:2},{n:'Torche',p:6}]}
 ];
 // budget : pièces dont tu disposes ; articles : [nom, prix à l'unité, quantité] ; comp : [nom, prix, quantité, unité] pour les deux offres à comparer

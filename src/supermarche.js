@@ -25,52 +25,28 @@ export function questionsDe(sc,idx){
 }
 
 export function creerSupermarche(D){
-  const {G,esc,save,gain,SFX,renderDialog,openBox}=D;
-  const adv=()=>{const a=G.adv;if(!a.courses)a.courses={};return a};
-  const prochain=()=>COURSES.findIndex((c,i)=>!adv().courses[i]);
+  const {G,esc,openBox,parler,quiz3D}=D;
+  const faits=()=>COURSES.map((c,i)=>!!G.adv.done['sup:'+i]);
   function vueRayon(d){
     const r=RAYONS.find(x=>x.id===d.rid);
     let h=`<h3>${r.ico} Rayon : ${esc(r.nom)}</h3><p style="font-size:13px">${esc(r.txt)} Les prix sont ceux du jeu, en pièces.</p>`;
-    r.produits.forEach(p=>{h+=`<p class="row"><span>${esc(p.n)}</span><b>${p.p} 🪙</b></p>`});
-    return h+`<p style="font-size:12px;opacity:.75">Astuce : un grand paquet n’est pas toujours le moins cher au kilo. Va à la caisse pour t’entraîner à comparer !</p><button class="s" onclick="closeDialog()">Fermer</button>`;
+    r.produits.forEach((p,i)=>{h+=`<p class="row"><span>${esc(p.n)}</span><b>${p.p} 🪙</b></p>`});
+    return h+`<p style="font-size:12px;opacity:.75">Astuce : un grand paquet n’est pas toujours le moins cher au kilo. Va à la caisse pour t’entraîner à comparer !</p><button onclick="supLire()">🔊 Réécouter</button><button class="s" onclick="closeDialog()">Fermer</button>`;
   }
-  function vueCaisse(d){
-    let h='<h3>🛒 Caisse : le défi des courses</h3>';
-    const i=d.idx===undefined?prochain():d.idx;
-    if(d.etat==='fin'){
-      const nb=d.bon;
-      h+=`<div style="font-size:48px;text-align:center">${d.nouveau?'🎉':'👍'}</div><p style="text-align:center"><b>${nb} bonne${nb>1?'s':''} réponse${nb>1?'s':''} sur 3</b>`;
-      h+=d.nouveau?`<br>+${d.pieces} 🪙 · +${d.savoir} savoir</p>`:'<br>Défi déjà réussi : cette fois, c’est pour t’entraîner.</p>';
-      h+=prochain()>=0?'<button class="p" onclick="supCaisse()">Défi suivant ▶</button>':'<p>🏅 Tu as réussi tous les défis du supermarché. Bravo, grand gestionnaire !</p>';
-      return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
-    }
-    if(i<0&&d.etat===undefined)return h+'<p>🏅 Tu as réussi tous les défis du supermarché.</p><button class="p" onclick="supCaisse(0)">S’entraîner encore</button><button class="s" onclick="closeDialog()">Fermer</button>';
-    const sc=COURSES[i],qs=questionsDe(sc,i);
-    if(d.etat===undefined)return h+`<p><b>${esc(sc.t)}</b></p><p>Tu as un budget de <b>${sc.b} pièces</b>. Il y a 3 questions : calculer le total, la monnaie, puis comparer deux offres. Aucune pièce n’est dépensée : c’est un jeu pour apprendre à bien gérer un budget.</p><button class="p" onclick="supGo(${i})">Commencer</button><button class="s" onclick="closeDialog()">Plus tard</button>`;
-    const q=qs[d.k];
-    h+=`<p style="font-size:12px;opacity:.7">${esc(sc.t)} · question ${d.k+1} sur 3</p><p><b>${esc(q.q)}</b></p>`;
-    if(d.rep===undefined)q.o.forEach((t,j)=>{h+=`<button onclick="supRep(${j})">${'ABCD'[j]} · ${esc(t)}</button>`});
-    else{
-      h+=d.rep===q.a?`<p class="ok">✔ Bonne réponse ! ${esc(q.e)}</p>`:`<p class="ko">✖ Pas tout à fait. ${esc(q.e)}</p>`;
-      h+=`<button class="p" onclick="supSuiv()">${d.k<2?'Question suivante ▶':'Terminer'}</button>`;
-    }
-    return h;
+  const texteRayon=r=>'Rayon '+r.nom+'. '+r.txt+' '+r.produits.map(p=>p.n+' : '+p.p+(p.p>1?' pièces':' pièce')).join('. ')+'.';
+  function caisse(){
+    const f=faits();let i=f.findIndex(x=>!x);
+    if(i<0)i=Math.floor(Date.now()/86400000)%COURSES.length;       // tout est réussi : on s'entraîne avec le défi du jour
+    const sc=COURSES[i];
+    quiz3D({cle:'sup:'+i,titre:'Supermarché · '+sc.t,intro:'Défi des courses : '+sc.t+'. Tu as un budget de '+sc.b+' pièces. Calcule le total, la monnaie, puis compare deux offres. Aucune pièce n’est dépensée : c’est pour apprendre à gérer un budget.',
+      qs:questionsDe(sc,i).map(q=>({q:q.q,c:q.o,a:q.a,exp:q.e}))});
   }
-  function html(d){if(d.kind==='rayon')return vueRayon(d);if(d.kind==='caisse')return vueCaisse(d);return null}
   return {
-    html,
+    html:d=>d.kind==='rayon'?vueRayon(d):null,
+    caisse,
     actions:{
-      supRayon:id=>openBox({kind:'rayon',rid:id}),
-      supCaisse:i=>{openBox({kind:'caisse',idx:i})},
-      supGo:i=>{const d=G.dialog;d.idx=i;d.etat='q';d.k=0;d.bon=0;d.rep=undefined;renderDialog()},
-      supRep:j=>{const d=G.dialog,q=questionsDe(COURSES[d.idx],d.idx)[d.k];if(d.rep!==undefined)return;d.rep=j;if(j===q.a){d.bon++;SFX.ok()}else SFX.ko();renderDialog()},
-      supSuiv:()=>{
-        const d=G.dialog;
-        if(d.k<2){d.k++;d.rep=undefined;renderDialog();return}
-        d.nouveau=!adv().courses[d.idx];
-        if(d.nouveau){d.pieces=d.bon+1;d.savoir=d.bon*3;gain(d.pieces,d.bon*2,d.savoir);adv().courses[d.idx]=true;save()}
-        d.etat='fin';d.idx=undefined;SFX.bravo();renderDialog();
-      }
+      supRayon:id=>{openBox({kind:'rayon',rid:id});parler(texteRayon(RAYONS.find(x=>x.id===id)))},
+      supLire:()=>{const d=G.dialog;if(d&&d.kind==='rayon')parler(texteRayon(RAYONS.find(x=>x.id===d.rid)),true)}
     }
   };
 }
