@@ -14,7 +14,7 @@ export function creerMoteur(el,opt){
   const cam=new THREE.PerspectiveCamera(48,W0/H0,.1,120);
   sc.add(new THREE.HemisphereLight('#fff4e0','#6a6a80',1.6));
   const sun=new THREE.DirectionalLight('#fff0d0',1.3);sun.position.set(6,14,8);sun.castShadow=!o.low;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-20,right:20,top:16,bottom:-16,far:50});sc.add(sun);
-  let monde=null,def=null,bloc=[],objs={},pnjs={},sorties=[],cherches=[];
+  let snap=true,monde=null,def=null,bloc=[],objs={},pnjs={},sorties=[],cherches=[];
   const joueur={x:0,z:0,ry:0,v:0,obj:null};
   const joy={x:0,y:0},keys={};
   let T=0;
@@ -65,7 +65,7 @@ export function creerMoteur(el,opt){
     // joueur
     if(joueur.obj)sc.remove(joueur.obj);
     joueur.obj=makeHuman(Object.assign({h:1},o.look||{s:'f',skin:3,hair:'courtes',outfit:'polo',c:'#7a5a3a'}));joueur.obj.scale.multiplyScalar(.95);sc.add(joueur.obj);
-    joueur.x=d.start.x;joueur.z=d.start.z;joueur.ry=0;
+    joueur.x=d.start.x;joueur.z=d.start.z;joueur.ry=0;snap=true;
     // chapeau et loupe du détective
     const chap=box(.46,.05,.46,'#3a2a1a',0,1.78,0,joueur.obj);box(.28,.14,.28,'#3a2a1a',0,1.86,0,joueur.obj);
   }
@@ -110,10 +110,10 @@ export function creerMoteur(el,opt){
       Object.values(pnjs).forEach(q=>{q.lab.visible=dist(joueur.x,joueur.z,q.def.x,q.def.z)<6.5});
     }
     // caméra : vue 3/4 en hauteur
-    const tx=joueur.x,tz=joueur.z;cam.position.lerp(new THREE.Vector3(tx,10.5,tz+8.2),Math.min(1,dt*4));cam.lookAt(tx,.8,tz-.6);
+    const tx=joueur.x,tz=joueur.z;if(snap){cam.position.set(tx,8.6,tz+6.6);snap=false}else cam.position.lerp(new THREE.Vector3(tx,8.6,tz+6.6),Math.min(1,dt*5));cam.lookAt(tx,.9,tz-.5);
     r.render(sc,cam);raf=requestAnimationFrame(boucle)}
   raf=requestAnimationFrame(boucle);
-  const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?62:48;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
+  const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?66:50;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
   return {setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
     objs:()=>objs,pnjs:()=>pnjs,def:()=>def,
     stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.dispose()}catch(e){}el.innerHTML=''}};
