@@ -61,7 +61,7 @@ const dist=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
 
 // ---------- État ----------
 const newAdv=()=>({done:{},stars:{},good:0,total:0,pieces:0,tissu:0,mangues:0,stock:{},maison:{},rev:{},xp:0,items:{},bought:{},fin:false});
-const G={ui:'photo',nom:'',photo:null,real:'pf1',voice:true,sexe:'f',look:Object.assign({},DEFAULT_LOOK,{acc:[]}),sound:true,music:true,mjBonus:null,sc:'ville',x:-13,z:0.5,ry:0,phi:0,pitch:.3,mode:'start',dialog:null,
+const G={ui:'photo',nom:'',photo:null,real:'pf1',voice:true,sexe:'f',look:Object.assign({},DEFAULT_LOOK,{acc:[]}),sound:true,music:true,mjBonus:null,sc:'ville',x:-22,z:-3.6,ry:Math.PI,phi:-Math.PI/2,pitch:.3,mode:'start',dialog:null,
   joy:{x:0,y:0},key:{x:0,y:0},speed:0,near:null,greeted:{},adv:newAdv(),mini:null,cine:null};
 // ---------- Sauvegarde locale protégée : copies de secours, jamais de recul silencieux ----------
 const KB='kelas_game_v12_bak';
@@ -1515,9 +1515,10 @@ function endCine(){
   G.cine=null;G.mode='play';
   ['joy','actwrap','top','info','mmw'].forEach(i=>$(i).classList.remove('hide'));
   $('cine').classList.add('hide');$('skip').classList.add('hide');
+  G.x=-22;G.z=-3.6;G.phi=-Math.PI/2;G.ry=Math.PI;buildScene();
   snapCamera();refreshHud();
   openBox({kind:'info',title:'Bienvenue, '+G.nom+' !',i:0,lines:[
-    'Tu es dans ton village. Déplace-toi avec le joystick à gauche, et fais glisser ton doigt sur l’écran pour tourner la caméra.',
+    'Tu es devant ta maison, dans ton village. Déplace-toi avec le joystick à gauche, et fais glisser ton doigt sur l’écran pour tourner la caméra.',
     'L’école LEXARIS ACADÉMIE est tout à droite. Mama Lola garde le portail : réponds à ses questions pour entrer.',
     'En chemin, cueille des mangues au manguier, vends-les à Maman Béa et meuble ta maison.']});
 }
@@ -2289,7 +2290,7 @@ function stageCheck(id){
 function openProfile(){openBox({kind:'profile'})}
 function openCreatorFromPhoto(){
   closeDialog();PM.hide();$('cv').style.display='block';
-  G.sc='ville';G.x=-13;G.z=0.5;G.phi=0;buildScene();
+  G.sc='ville';G.x=-22;G.z=-3.6;G.phi=-Math.PI/2;G.ry=Math.PI;buildScene();
   openCreator('photo');
 }
 function htmlProfile(){
@@ -2502,7 +2503,7 @@ function enterPhoto(intro){
 }
 function enterGame(newGame){
   $('start').classList.add('hide');
-  G.sc='ville';G.x=-13;G.z=0.5;G.phi=0;
+  G.sc='ville';G.x=-22;G.z=-3.6;G.phi=-Math.PI/2;G.ry=Math.PI;
   if(newGame){buildScene();G.mode='creator';openCreator('start')}
   else{
     G.mode='play';
@@ -2645,7 +2646,7 @@ function init(){
     $('go').textContent='Nouvelle partie';$('go').className='p';
   }
   setSexe(G.sexe);refreshHud();
-  G.sc='ville';G.x=-13;G.z=0.5;G.phi=0;
+  G.sc='ville';G.x=-22;G.z=-3.6;G.phi=-Math.PI/2;G.ry=Math.PI;
   if(G.ui!=='photo'||!s||!s.nom){/* fond 3D inutile : la photo sert de décor */}
   $('cv').style.display='none';
   $('lb').style.width='100%';
