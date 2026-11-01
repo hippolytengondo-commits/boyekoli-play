@@ -131,3 +131,9 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 5. 🌆 BOYEKOLI SMART CITY (simulation urbaine, à mélanger avec la ville et le mode aménagement existants) → « Ville intelligente (0/1) ».
 6. 🚀 BOYEKOLI SPACE EXPLORER (fusées, pilotage, missions, planètes, station, observatoire) → « Exploration spatiale (0/1) ».
 Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `adv`, pièces/étoiles/badges existants, tests mobile, ne pas modifier les autres activités. Les modèles GLB ne sont pas disponibles : modèles procéduraux.
+
+## BOYEKOLI SCIENCE LAB (livré le 01/11/2026)
+- Bâtiment explorable (réception, chimie, biologie, physique, microscopie/observation, recherche, stockage, bureau du chercheur) via `src/science.js` (moteur partagé `src/detective/moteur.js`) ; contenu dans `src/science/data.js`.
+- 11 expériences simulées avec objectif, matériel, étapes, question avant/après, observation, explication : chimie (couleurs, indicateur de chou rouge, effervescence, changements d'état), biologie (cellules 3D manipulables, germination et plantes, organes 3D), physique (circuit et conducteurs, leviers, gravité, miroirs).
+- Progression : compte dans « Laboratoire scientifique (0/3) » (`done['met:l1'|'l2'|'l3']`), points scientifiques, pièces, étoiles, badges de jeune chimiste/biologiste/physicien, certificat, déblocage progressif, décorations du laboratoire, vestiaire (blouse, lunettes, personnage).
+- Limites : modèles procéduraux (pas de GLB), liquides animés en SVG, pas de manipulation « saisir/déposer » physique des objets en 3D (les actions se font par boutons dans des panneaux) ; sons à ajouter ; test smartphone à faire.
