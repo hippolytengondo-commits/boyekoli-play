@@ -133,18 +133,18 @@ export function creerScience(D){
   const M3=(c,op,rough)=>new THREE.MeshStandardMaterial({color:c,transparent:op<1,opacity:op===undefined?1:op,roughness:rough===undefined?.5:rough});
   function cellule3d(type,g){
     const vg=type==='vegetale';
-    const corps=new THREE.Mesh(vg?new THREE.BoxGeometry(2.4,1.8,1.6):new THREE.SphereGeometry(1.2,24,18),M(vg?'#d7efc9':'#f6e0b5',.35));corps.userData.part=vg?'paroi':'cytoplasme';g.add(corps);
+    const corps=new THREE.Mesh(vg?new THREE.BoxGeometry(2.4,1.8,1.6):new THREE.SphereGeometry(1.2,24,18),M3(vg?'#d7efc9':'#f6e0b5',.35));corps.userData.part=vg?'paroi':'cytoplasme';g.add(corps);
     if(vg){const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2.4,1.8,1.6)),new THREE.LineBasicMaterial({color:'#2e7d32'}));g.add(e)}
-    else{const mb=new THREE.Mesh(new THREE.SphereGeometry(1.25,24,18),M('#f1a7b5',.25));mb.userData.part='membrane';g.add(mb)}
-    const noy=new THREE.Mesh(new THREE.SphereGeometry(.36,18,14),M('#8e44ad',1));noy.position.set(.2,.1,0);noy.userData.part='noyau';g.add(noy);
-    if(vg){const va=new THREE.Mesh(new THREE.SphereGeometry(.55,16,12),M('#8ec9e8',.7));va.position.set(-.7,-.1,.1);va.userData.part='vacuole';g.add(va);
-      [[.7,.5,.3],[.6,-.5,-.2],[-.2,.6,.4],[.1,-.5,.4],[-.6,.5,-.3]].forEach(p=>{const c=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),M('#2e9e4a'));c.scale.set(1.4,.8,.8);c.position.set(...p);c.userData.part='chloroplaste';g.add(c)})}
-    else{[[.7,.4,.3],[-.5,.5,-.3],[-.4,-.5,.4],[.6,-.4,-.3]].forEach(p=>{const c=new THREE.Mesh(new THREE.CapsuleGeometry(.1,.25,4,8),M('#e67e22'));c.position.set(...p);c.rotation.z=1;c.userData.part='mitochondrie';g.add(c)})}}
+    else{const mb=new THREE.Mesh(new THREE.SphereGeometry(1.25,24,18),M3('#f1a7b5',.25));mb.userData.part='membrane';g.add(mb)}
+    const noy=new THREE.Mesh(new THREE.SphereGeometry(.36,18,14),M3('#8e44ad',1));noy.position.set(.2,.1,0);noy.userData.part='noyau';g.add(noy);
+    if(vg){const va=new THREE.Mesh(new THREE.SphereGeometry(.55,16,12),M3('#8ec9e8',.7));va.position.set(-.7,-.1,.1);va.userData.part='vacuole';g.add(va);
+      [[.7,.5,.3],[.6,-.5,-.2],[-.2,.6,.4],[.1,-.5,.4],[-.6,.5,-.3]].forEach(p=>{const c=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),M3('#2e9e4a'));c.scale.set(1.4,.8,.8);c.position.set(...p);c.userData.part='chloroplaste';g.add(c)})}
+    else{[[.7,.4,.3],[-.5,.5,-.3],[-.4,-.5,.4],[.6,-.4,-.3]].forEach(p=>{const c=new THREE.Mesh(new THREE.CapsuleGeometry(.1,.25,4,8),M3('#e67e22'));c.position.set(...p);c.rotation.z=1;c.userData.part='mitochondrie';g.add(c)})}}
   function corps3d(g){
-    const peau=M('#f1c9a5',.28);const add=(geo,m,x,y,z,part)=>{const me=new THREE.Mesh(geo,m);me.position.set(x,y,z);if(part)me.userData.part=part;g.add(me);return me};
+    const peau=M3('#f1c9a5',.28);const add=(geo,m,x,y,z,part)=>{const me=new THREE.Mesh(geo,m);me.position.set(x,y,z);if(part)me.userData.part=part;g.add(me);return me};
     add(new THREE.CapsuleGeometry(.5,1.0,6,14),peau,0,.2,0);add(new THREE.SphereGeometry(.38,16,12),peau,0,1.35,0);
     [-1,1].forEach(s=>{add(new THREE.CapsuleGeometry(.13,.9,4,8),peau,s*.7,.2,0).rotation.z=s*.1;add(new THREE.CapsuleGeometry(.16,1.0,4,8),peau,s*.25,-1.1,0)});
-    ORGANES.forEach(o=>{const m=add(new THREE.SphereGeometry(o.r*.6,16,12),M(o.c,1,.4),o.x*1.2,o.y*1.1-.1+(o.id==='cerveau'?.4:0),o.id==='cerveau'?.02:.2,o.id);if(o.id==='poumons'){m.scale.set(1.5,1.1,.7);const m2=m.clone();m2.position.x=-m.position.x;m2.userData.part='poumons';g.add(m2);m.position.x=Math.abs(m.position.x)+.25;m2.position.x=-(Math.abs(m.position.x))}})}
+    ORGANES.forEach(o=>{const m=add(new THREE.SphereGeometry(o.r*.6,16,12),M3(o.c,1,.4),o.x*1.2,o.y*1.1-.1+(o.id==='cerveau'?.4:0),o.id==='cerveau'?.02:.2,o.id);if(o.id==='poumons'){m.scale.set(1.5,1.1,.7);const m2=m.clone();m2.position.x=-m.position.x;m2.userData.part='poumons';g.add(m2);m.position.x=Math.abs(m.position.x)+.25;m2.position.x=-(Math.abs(m.position.x))}})}
   // ---------- expériences interactives
   const JEUX={
     // ===== CHIMIE
