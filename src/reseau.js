@@ -25,7 +25,7 @@ const BATS=[
   {id:'i4',nom:'Maisons',x:84,z:38,hw:3.2,hd:2.5,coul:'#d9a54a',cout:25}
 ];
 const SPOTS_BAT=[[68,68],[84,68],[100,68],[114,68],[88,12.5],[72,30],[104,40],[84,38]];
-const STUDIO={id:'studio',nom:'Studio de musique',x:64,z:-12.5,hw:9.2,hd:4.4,cout:60,spots:[[64,-12.5],[88,-12.5],[106,-12.5]]};
+const STUDIO={id:'studio',nom:'Studio de musique',x:64,z:-12.5,hw:9.2,hd:4.4,cout:60,spots:[[64,-12.5],[92,-12.5]]};
 export const longueur=s=>s.b-s.a;
 export const cout=(s,voies)=>({pieces:Math.round(longueur(s)*voies*.25),bitume:Math.ceil(longueur(s)*voies/20)});
 
