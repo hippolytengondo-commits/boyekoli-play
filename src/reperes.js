@@ -254,3 +254,24 @@ export function construireAeroport(parent,cols,bxs,X0,Z0){
   const entree=W2(0,-2.2),av1=W2(0,6);
   return {hall:{x:entree.x+1.4,z:entree.z},avion:{x:W2(-1,3).x+4.2,z:W2(-1,3).z,r:5},xr1};
 }
+
+// ---------- BOYEKOLI MUSIC STUDIO : bâtiment coloré au bord de la route de l'aéroport (côté nord)
+export function construireStudioMusique(parent,cols,bxs,x,z){
+  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  box(g,18,7,8,M('#f3e6ff'),0,3.5,0);
+  [-7,-3.5,0,3.5,7].forEach((dx,i)=>box(g,3,6,.15,M(['#7d3fd1','#e8a23a','#d6302b','#2e9e4a','#4aa0d8'][i]),dx,3.2,4.1));
+  box(g,18.6,.6,8.6,M('#2a1a4a'),0,7.3,0);
+  box(g,5,3.4,.2,new THREE.MeshStandardMaterial({color:0x6fb7e6,transparent:true,opacity:.6,roughness:.1}),0,1.7,4.15);
+  box(g,6.4,.25,2.2,M('#ffffff'),0,3.6,5.1);
+  // tambours géants sur le toit et haut-parleurs
+  [[-7.5,'#d6302b'],[7.5,'#2e9e4a']].forEach(([dx,c])=>{cyl(g,1.6,1.6,1.4,M(c),dx,8.2,0,0,0,0,16);cyl(g,1.65,1.65,.12,M('#f2e6c9'),dx,8.95,0,0,0,0,16)});
+  [[-9.6],[9.6]].forEach(([dx])=>{box(g,1.2,2.6,1,M('#161616'),dx,1.3,3.4);[.6,1.7].forEach(y=>cyl(g,.4,.4,.1,M('#444'),dx,y,3.95,Math.PI/2,0,0,12))});
+  const cv=new THREE.Mesh(new THREE.PlaneGeometry(15,2.4),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🎵 BOYEKOLI MUSIC STUDIO',s:86,y:.42},{t:'Découvre, joue et compose !',s:46,y:.82,b:false,c:'#ffe9a8'}],1536,240,'#4a1f8a','#ffffff'),emissive:0x331166,emissiveIntensity:.5}));
+  cv.position.set(0,9.9,3.6);g.add(cv);
+  // notes décoratives
+  ['♪','♫','♬'].forEach((n,i)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8),new THREE.MeshBasicMaterial({map:T.textBoard([{t:n,s:150,y:.5}],128,128,'#7d3fd1','#ffd54f')}));p.position.set(-6+i*6,5.6,4.25);g.add(p)});
+  bxs.push({x0:x-9.2,x1:x+9.2,z0:z-4.4,z1:z+4.4});
+  const pan=(px,pz)=>{cyl(parent,.07,.09,3,M('#555'),px,1.5,pz,8);const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.4,1.1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🎵 STUDIO MUSIQUE',s:56,y:.5}],512,176,'#7d3fd1','#ffffff'),side:THREE.DoubleSide}));pl.position.set(px,3.1,pz);parent.add(pl);cols.push({x:px,z:pz,r:.4})};
+  pan(x-14,z+4.2);
+  return {x:x,z:z+5.6};
+}

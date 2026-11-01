@@ -6,7 +6,7 @@ export function creerJeux(C,D){
   const M=()=>C.MUS();const A=()=>C.A();const btn=C.btn;const $=C.$;
   const rr=()=>C.rendre();
   const ETO=s=>'⭐'.repeat(s)+'☆'.repeat(3-s);
-  const wait=(ms,f)=>{const t=setTimeout(()=>{if(C.estOuvert())f()},ms);return t};
+  const wait=(ms,f)=>{const id0=G_.id,t=setTimeout(()=>{if(C.estOuvert()&&(G_.id===id0||!id0))f()},ms);return t};
   // ---------- table de composition
   const nbRows=inst=>INSTR[inst].mel?6:INSTR[inst].pads.length;
   const grille=inst=>Array.from({length:nbRows(inst)},()=>Array(16).fill(0));
@@ -153,8 +153,8 @@ export function creerJeux(C,D){
     musConcertStop:()=>{C.stopLecture();const b=$('bconc');if(b)b.innerHTML='🎭 Lancer la représentation'}
   });
   function lum(id){const e=document.getElementById(id);if(!e)return;e.style.filter='brightness(1.9)';e.style.transform='scale(1.06)';setTimeout(()=>{if(e){e.style.filter='';e.style.transform=''}},200)}
-  function sonDetective(){const L=G_.L[G_.i];C.audio();const t0=C.ctx.currentTime+.1;C.syn.jouer('flute',L[0],t0,{bus:6,dur:.6});C.syn.jouer('flute',L[1],t0+.9,{bus:6,dur:.6})}
-  function memNext(){G_.seq.push(Math.floor(Math.random()*4));G_.ph='demo';G_.pos=0;G_.msg='👀 Observe… ('+G_.seq.length+' notes)';const m=document.getElementById('gmsg');if(m)m.textContent=G_.msg;
+  function sonDetective(){if(G_.id!=='detective'||!G_.L)return;const L=G_.L[G_.i];C.audio();const t0=C.ctx.currentTime+.1;C.syn.jouer('flute',L[0],t0,{bus:6,dur:.6});C.syn.jouer('flute',L[1],t0+.9,{bus:6,dur:.6})}
+  function memNext(){if(G_.id!=='memoire'||!G_.seq)return;G_.seq.push(Math.floor(Math.random()*4));G_.ph='demo';G_.pos=0;G_.msg='👀 Observe… ('+G_.seq.length+' notes)';const m=document.getElementById('gmsg');if(m)m.textContent=G_.msg;
     G_.seq.forEach((n,i)=>wait(500+i*650,()=>{C.son('piano',[60,64,67,72][n]);lum('gm_'+n)}));wait(500+G_.seq.length*650+300,()=>{G_.ph='tap';G_.pos=0;G_.msg='À toi !';const m2=document.getElementById('gmsg');if(m2)m2.textContent=G_.msg})}
   // ---------- concert
   function vueConcert(){

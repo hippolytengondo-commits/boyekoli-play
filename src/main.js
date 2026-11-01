@@ -40,7 +40,7 @@ import {creerMusique} from './musique.js';
 import {creerJeux as creerJeuxMusique} from './musique_jeux.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
-import {construireReperes,construireStation,construireGare,construireAeroport} from './reperes.js';
+import {construireReperes,construireStation,construireGare,construireAeroport,construireStudioMusique} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
 import {buildChambre,buildCuisine,buildEtage} from './maisonplus.js';
 
@@ -366,6 +366,8 @@ function construireVille(){
    w.bounds.x1=Math.max(w.bounds.x1,150);
    SCENES.ville.spots.push({x:ap.hall.x,z:ap.hall.z,r:4,label:'✈️ Aéroport : inscription, licence de pilote',run:()=>SIM.actions.simAeroport()});
    SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,label:'🛩 Avion : monter à bord (licence requise)',run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}SIM.actions.simAvion()}})}
+  {const sm=construireStudioMusique(w.group,w.colliders,w.boxes,80,-10);
+   SCENES.ville.spots.push({x:sm.x,z:sm.z-1.2,r:4.2,label:'🎵 BOYEKOLI MUSIC STUDIO : entrer',run:()=>MUSIC.actions.musOuvrir()})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);
