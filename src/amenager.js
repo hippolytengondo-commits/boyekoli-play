@@ -63,7 +63,7 @@ export function creerAmenager(D){
   function majUI(){
     if(!ui)return;
     let h='<b>🏗 Mode aménagement</b> <span style="float:right">'+bt('✖','amFin()','#7b2d26','min-width:28px;height:26px;font-size:12px')+'</span><br>';
-    if(!sel){h+='<small>Touche un bâtiment, un arbre ou une route pour le choisir, puis déplace-le.</small><br>'+bt('🌳+','amPlanter()','#2e7d32','font-size:13px')+'<small>planter (6 🪙)</small> '+bt('🛣+','amRoute()','#4a4a52','font-size:13px')+'<small>route</small>';ui.innerHTML=h;return}
+    if(!sel){h+='<small>Touche un bâtiment, un arbre ou une route pour le choisir, puis <b>fais-le glisser avec le doigt</b> (ou utilise les flèches).</small><br>'+bt('🌳+','amPlanter()','#2e7d32','font-size:13px')+'<small>planter (6 🪙)</small> '+bt('🛣+','amRoute()','#4a4a52','font-size:13px')+'<small>route</small>';ui.innerHTML=h;return}
     const o=sel.o,u=o.userData.edit,v=valide(o),c=coutSel();
     h+=`<b>${esc(nomObj(o))}</b>${u.type==='route'?' · '+routeCfg().len+' m · '+routeCfg().voies+'+'+routeCfg().voies+' voies':''}<br>`;
     h+='<div style="display:flex;align-items:center;flex-wrap:wrap">'+bt('◀','amDep(-1,0)')+bt('▲','amDep(0,-1)')+bt('▼','amDep(0,1)')+bt('▶','amDep(1,0)');
@@ -90,10 +90,23 @@ export function creerAmenager(D){
   const peutPayer=c=>A().pieces>=c.pieces&&(stock().bitume||0)>=c.bitume;
   // ---------- sélection par touche sur l'écran
   const ray=new THREE.Raycaster(),mv=new THREE.Vector2();let dn=null;
+  let drag=null;const plan=new THREE.Plane(new THREE.Vector3(0,1,0),0);
+  function pointeSol(e,cv){const b=cv.getBoundingClientRect();mv.set(((e.clientX-b.left)/b.width)*2-1,-((e.clientY-b.top)/b.height)*2+1);ray.setFromCamera(mv,D.getCamera());const p=new THREE.Vector3();return ray.ray.intersectPlane(plan,p)?p:null}
+  function surSel(e,cv){if(!sel)return false;const b=cv.getBoundingClientRect();mv.set(((e.clientX-b.left)/b.width)*2-1,-((e.clientY-b.top)/b.height)*2+1);ray.setFromCamera(mv,D.getCamera());
+    const h=ray.intersectObject(sel.o,true);return h.length>0}
   function bindCanvas(){
     const cv=D.getCanvas();
-    cv.addEventListener('pointerdown',e=>{dn={x:e.clientX,y:e.clientY}});
-    cv.addEventListener('pointerup',e=>{if(!actif||!dn||G.sc!=='ville')return;const d=Math.hypot(e.clientX-dn.x,e.clientY-dn.y);dn=null;if(d>8)return;
+    cv.addEventListener('pointerdown',e=>{dn={x:e.clientX,y:e.clientY};
+      if(actif&&sel&&G.sc==='ville'&&surSel(e,cv)){const p=pointeSol(e,cv);if(p){const u=sel.o.userData.edit,cx=u.type==='route'?sel.cfg.x:sel.o.position.x,cz=u.type==='route'?sel.cfg.z:sel.o.position.z;drag={dx:cx-p.x,dz:cz-p.z,bouge:false}}}});
+    cv.addEventListener('pointermove',e=>{if(!drag||!actif||!sel)return;const p=pointeSol(e,cv);if(!p)return;
+      const u=sel.o.userData.edit,pas=(u.type==='arbre'||u.type==='plante')?1:PAS;
+      const nx=Math.round((p.x+drag.dx)/pas)*pas,nz=Math.round((p.z+drag.dz)/pas)*pas;
+      const cx=u.type==='route'?sel.cfg.x:sel.o.position.x,cz=u.type==='route'?sel.cfg.z:sel.o.position.z;
+      if(nx===cx&&nz===cz)return;drag.bouge=true;
+      if(u.type==='route'){sel.o.position.x+=nx-sel.cfg.x;sel.o.position.z+=nz-sel.cfg.z;sel.cfg.x=nx;sel.cfg.z=nz}else{sel.o.position.x=nx;sel.o.position.z=nz}
+      sel.modifie=true;cadreMaj();majUI()});
+    cv.addEventListener('pointerup',e=>{const etaitDrag=drag&&drag.bouge;drag=null;if(etaitDrag){dn=null;return}
+      if(!actif||!dn||G.sc!=='ville')return;const d=Math.hypot(e.clientX-dn.x,e.clientY-dn.y);dn=null;if(d>8)return;
       const b=cv.getBoundingClientRect();mv.set(((e.clientX-b.left)/b.width)*2-1,-((e.clientY-b.top)/b.height)*2+1);ray.setFromCamera(mv,D.getCamera());
       const hits=ray.intersectObjects(D.getW().group.children,true);
       for(const h of hits){let o=h.object;while(o&&!(o.userData&&o.userData.edit))o=o.parent;if(o){choisir(o);return}}

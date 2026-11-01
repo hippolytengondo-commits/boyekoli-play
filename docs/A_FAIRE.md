@@ -115,3 +115,10 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Fixes (repères) : maison familiale, école, rue principale et liaison, rond-point, site de l'aéroport, anneaux de la nouvelle cité. Les arbres sous un nouveau bâtiment ou une nouvelle route sont supprimés (on peut en replanter).
 - À faire plus tard : déplacer la maison familiale (porte, intérieur), l'école et l'aéroport ; panneau des directions déplaçable ; mémoriser la position de la caméra en mode aménagement ; annuler/rétablir.
 - Studio de musique : bouton « 🚪 Sortir » dans chaque onglet, « Retour à la salle de musique », Échap et retour du téléphone.
+
+## BOYEKOLI DETECTIVE (01/11/2026)
+- Agence de détectives : bâtiment en face de la gare (ouest du village, x≈-40) ; entrée = overlay 3D (`src/detective.js`, `src/detective/moteur.js`, `src/detective/data.js`). Pièces : bureau (ordinateur/dossiers, tableau d'investigation, carte, bibliothèque documentaire), salle d'interrogatoire, laboratoire, garage (véhicule d'enquête). Détective personnalisable (bouton 👤).
+- Deux enquêtes sans violence : « Le mystère du musée » (masque Kuba déplacé pour nettoyage) et « Le mystère de l'école » (matériel mis au sec après une fuite). Examiner / chercher les objets cachés / ramasser / photographier / interroger (dialogues à choix) / carnet / inventaire / tableau de rapprochement / laboratoire (empreintes à la loupe, tests) / solution en 4 questions avec aides.
+- Progression : compte dans « Agence de détectives (0/2) » du pôle des métiers (`done['met:d1'|'met:d2']`), étoiles, pièces (15 + 5 par étoile à la première réussite), certificat de détective débutant (conservé dans `adv.det`).
+- À faire / limites : modèles 3D procéduraux (pas de GLB) ; photos stockées en miniatures dans la sauvegarde ; pas encore de chargement progressif ni d'effets sonores dédiés ; tests manuels sur smartphone à faire ; relecture des textes par un enseignant.
+- Mode aménagement : on peut maintenant faire glisser l'objet choisi avec le doigt. La maison familiale n'est pas encore déplaçable (porte et intérieur liés au code du village).
