@@ -77,6 +77,18 @@ export const MODELES={
     box(g,.12,2.4,.12,M('#555'),4.2,1.2,D/2+4.4);box(g,1.1,1.1,.08,M('#c0392b'),4.2,2.7,D/2+4.4);
     enseigneToit(g,H,'AUTO-ÉCOLE','Permis · Conduite · Sécurité','#1f5f9e','🚦');
   },
+  hopital(g){
+    // hôpital : grand bâtiment blanc, bandeau bleu, croix rouge, fenêtres, ambulance devant
+    const BW=14,BD=9,H=7;
+    box(g,BW,H,BD,M('#f4f7f9'),0,H/2,0);box(g,BW+.5,.5,BD+.5,M('#1b6ca8'),0,H+.25,0);box(g,BW,.8,.2,M('#1b9aa8'),0,5.4,BD/2+.02);
+    for(let r=0;r<2;r++)for(let c=-2;c<=2;c++)box(g,1.4,1.2,.12,new THREE.MeshStandardMaterial({color:0x9fd3f5,transparent:true,opacity:.7}),c*2.4,2.3+r*2.4,BD/2+.02);
+    box(g,3.2,2.8,.15,M('#2b6e8f'),0,1.4,BD/2+.03);box(g,2.6,2.4,.1,new THREE.MeshStandardMaterial({color:0x9fd3f5,transparent:true,opacity:.6}),0,1.3,BD/2+.06);box(g,5,.3,1.6,M('#ffffff'),0,3,BD/2+.9);
+    box(g,1.6,.5,.2,M('#d6302b'),0,H+1.4,BD/2-.5);box(g,.5,1.6,.2,M('#d6302b'),0,H+1.4,BD/2-.5);
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(9,1.3),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🏥 BOYEKOLI MEDICAL CENTER',s:80,y:.5}],1024,150,'#1b6ca8','#ffffff')}));pl.position.set(0,H+2.8,BD/2-.6);g.add(pl);
+    // ambulance garée devant
+    box(g,4,1.3,1.8,M('#ffffff'),-5.8,1,BD/2+3);box(g,1.2,1,1.7,M('#ffffff'),-3.4,.9,BD/2+3);box(g,4.1,.2,1.85,M('#d6302b'),-5.8,.7,BD/2+3);box(g,.2,.9,.4,M('#d6302b'),-6,1.4,BD/2+3.92);box(g,.5,.2,.5,M('#2c7fb8'),-4.2,1.75,BD/2+3);
+    [[-7,1],[-4.4,1]].forEach(([x,z])=>cyl(g,.35,.35,.3,M('#222'),x,.35,BD/2+3+z*.8,12));
+  },
   agence(g){
     // agence de détectives : façade bleu nuit, store beige, grande loupe et chapeau sur le toit
     const BW=9,BD=7,H=4.2;
@@ -143,6 +155,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'hopital',x:-47,z:26,ry:Math.PI/2,w:14,d:9,nom:'l’Hôpital',coul:'#1b6ca8',norot:true},
   {id:'agence',x:-40.5,z:0,ry:Math.PI/2,w:9,d:7,nom:'l’Agence de détectives',coul:'#2b3f6b',norot:true},
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},
   {id:'supermarche',x:-24,z:30,ry:0,interieur:'supermarche',nom:'le Supermarché',coul:'#1f7a4d'},

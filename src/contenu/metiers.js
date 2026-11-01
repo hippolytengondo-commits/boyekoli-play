@@ -19,18 +19,9 @@ export const MODULES=[
   {id:'l1',titre:'Laboratoire de chimie',sci:true,intro:'',qs:[]},
   {id:'l2',titre:'Laboratoire de biologie',sci:true,intro:'',qs:[]},
   {id:'l3',titre:'Laboratoire de physique',sci:true,intro:'',qs:[]}]},
- {id:'hopital',ico:'🏥',nom:'Centre hospitalier',guide:'docteur',txt:'Urgences, pédiatrie, laboratoire, pharmacie, maternité : des scénarios pour apprendre la santé. (Éducatif : en cas de problème réel, consulte un vrai médecin.)',dossiers:[
-  {id:'h1',titre:'Aux urgences',intro:'Aux urgences, il faut garder son calme et agir vite. Voici des situations de la vie.',qs:[
-   Q('Un enfant se coupe légèrement. Que faire en premier ?',['Laver la plaie à l’eau propre et au savon','Mettre de la boue','Ne rien faire','Frotter fort'],0,'On nettoie d’abord la plaie avec de l’eau propre et du savon.'),
-   Q('Quelqu’un s’évanouit. Qui faut-il appeler ?',['Un adulte et les secours','Personne','Un ami seulement','On attend la nuit'],0,'Toujours alerter un adulte et les secours.'),
-   Q('Quelle est la température normale du corps ?',['Environ 37 °C','Environ 10 °C','Environ 50 °C','Environ 90 °C'],0,'La température normale est d’environ 37 °C.'),
-   Q('Que faire en cas de brûlure légère ?',['Passer sous l’eau fraîche','Mettre du beurre','Percer les cloques','Frotter'],0,'On refroidit à l’eau fraîche.')]},
-  {id:'h2',titre:'Pédiatrie, pharmacie et maternité',intro:'Prendre soin des enfants, des médicaments et des mamans.',qs:[
-   Q('Pourquoi les vaccins sont-ils importants ?',['Ils protègent contre des maladies','Ils donnent faim','Ils font grandir d’un coup','Ils ne servent à rien'],0,'Les vaccins préparent le corps à se défendre.'),
-   Q('Qui peut donner un médicament à un enfant ?',['Un adulte, selon l’ordonnance','L’enfant seul','N’importe qui','Un voisin'],0,'Un adulte, en suivant l’ordonnance du médecin.'),
-   Q('Que contient une moustiquaire imprégnée ?',['Un produit qui éloigne les moustiques','Du sable','De l’eau','Rien'],0,'Elle protège contre le paludisme.'),
-   Q('Quelle maladie est transmise par le moustique anophèle ?',['Le paludisme','La grippe','La carie','La rougeole'],0,'Le paludisme (malaria) est transmis par l’anophèle.'),
-   Q('Un médicament périmé, on…',['ne l’utilise pas','le boit quand même','le partage','le garde pour plus tard'],0,'On ne prend jamais un médicament périmé.')]}]},
+ {id:'hopital',ico:'🏥',nom:'Centre hospitalier',guide:'docteur',txt:'BOYEKOLI MEDICAL CENTER : accueille des patients fictifs et découvre les métiers de l’hôpital. Simulation éducative, sans vrai diagnostic.',dossiers:[
+  {id:'h1',titre:'Ma première journée à l’hôpital',med:true,intro:'',qs:[]},
+  {id:'h2',titre:'À la découverte des métiers de l’hôpital',med:true,intro:'',qs:[]}]},
  {id:'decoration',ico:'🏠',nom:'Atelier de décoration',guide:'architecte',txt:'Mesures, surfaces, couleurs et formes pour aménager tes pièces.',dossiers:[
   {id:'a1',titre:'Peindre et mesurer',intro:'Un bon décorateur calcule avant de peindre.',qs:[
    Q('Un mur mesure 4 m de long et 3 m de haut. Quelle est sa surface ?',['7 m²','12 m²','14 m²','1 m²'],1,'4 × 3 = 12 m².'),

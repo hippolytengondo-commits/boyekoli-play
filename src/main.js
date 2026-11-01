@@ -41,6 +41,7 @@ import {creerReseau} from './reseau.js';
 import {creerAmenager} from './amenager.js';
 import {creerDetective} from './detective.js';
 import {creerScience} from './science.js';
+import {creerHopital} from './hopital.js';
 import {creerJeux as creerJeuxMusique} from './musique_jeux.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
@@ -349,10 +350,11 @@ function construireVille(){
   }
   G.parkings=qr.parkings||[];
   // bâtiments repères : universités, police, santé, bibliothèque, auto-école, concession
-  let spotAgence=null;
+  let spotAgence=null;const spotsExtra=[];
   {
     const rp=construireReperes(w,AMEN.AM().rep);
     rp.portes.forEach(r=>{
+      if(r.id==='hopital'){spotsExtra.push({x:r.px,z:r.pz,r:3,label:'🏥 BOYEKOLI MEDICAL CENTER : entrer',run:()=>HOPI.actions.medOuvrir()});return}
       if(r.id==='agence'){spotAgence={x:r.px,z:r.pz,r:2.8,label:'🕵️ Agence de détectives : entrer',run:()=>DETEC.actions.detOuvrir()};return}
       const retour={x:r.px+(r.ry?0:0),z:r.pz+(r.ry?-1.6:1.6),phi:r.ry?-Math.PI/2:Math.PI/2};
       if(r.stage){
@@ -367,6 +369,7 @@ function construireVille(){
   }
   SCENES.ville.spots=qr.spots;
   if(spotAgence)SCENES.ville.spots.push(spotAgence);
+  spotsExtra.forEach(sp=>SCENES.ville.spots.push(sp));
   // gare, contre le mur ouest, juste à côté de la maison du joueur (celle de la maman) : le train mène aux aventures
   {const og=AMEN.AM().gare||{x:-30.8,z:0};const gp=construireGare(w.group,w.colliders,w.boxes,og.x,og.z);
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
@@ -1128,7 +1131,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+'<button onclick="musOuvrir()" style="background:linear-gradient(90deg,#7d3fd1,#e8a23a);color:#fff">🎵 MUSIQUE – Découvre, joue et compose !</button>'+'<button onclick="amDebut()" style="background:#d35400;color:#fff">🏗 Mode aménagement : tout déplacer</button>'+'<button onclick="sciOuvrir()" style="background:#0f4c75;color:#fff">🔬 Science Lab (laboratoire 3D)</button>'+'<button onclick="detOuvrir()" style="background:#2b3f6b;color:#fff">🕵️ Agence de détectives (enquêtes en 3D)</button>'+MET.bouton()+SIM.bouton()+EN.boutons()
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+'<button onclick="musOuvrir()" style="background:linear-gradient(90deg,#7d3fd1,#e8a23a);color:#fff">🎵 MUSIQUE – Découvre, joue et compose !</button>'+'<button onclick="amDebut()" style="background:#d35400;color:#fff">🏗 Mode aménagement : tout déplacer</button>'+'<button onclick="medOuvrir()" style="background:#0b6e6e;color:#fff">🏥 Medical Center (hôpital 3D)</button>'+'<button onclick="sciOuvrir()" style="background:#0f4c75;color:#fff">🔬 Science Lab (laboratoire 3D)</button>'+'<button onclick="detOuvrir()" style="background:#2b3f6b;color:#fff">🕵️ Agence de détectives (enquêtes en 3D)</button>'+MET.bouton()+SIM.bouton()+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1600,6 +1603,7 @@ const AMEN=creerAmenager({G,esc,SFX,save,refreshHud,parler:parlerFr,toast:t=>toa
 const DETEC=creerDetective({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});
 window.__DET=DETEC;
 const SCIE=creerScience({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__SCI=SCIE;
+const HOPI=creerHopital({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__HOPI=HOPI;
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{
@@ -2586,7 +2590,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,SCIE.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,SCIE.actions,HOPI.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

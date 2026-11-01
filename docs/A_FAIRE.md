@@ -137,3 +137,7 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - 11 expériences simulées avec objectif, matériel, étapes, question avant/après, observation, explication : chimie (couleurs, indicateur de chou rouge, effervescence, changements d'état), biologie (cellules 3D manipulables, germination et plantes, organes 3D), physique (circuit et conducteurs, leviers, gravité, miroirs).
 - Progression : compte dans « Laboratoire scientifique (0/3) » (`done['met:l1'|'l2'|'l3']`), points scientifiques, pièces, étoiles, badges de jeune chimiste/biologiste/physicien, certificat, déblocage progressif, décorations du laboratoire, vestiaire (blouse, lunettes, personnage).
 - Limites : modèles procéduraux (pas de GLB), liquides animés en SVG, pas de manipulation « saisir/déposer » physique des objets en 3D (les actions se font par boutons dans des panneaux) ; sons à ajouter ; test smartphone à faire.
+
+## Medical Center (fait)
+- `src/hopital.js` + `src/hopital/data.js` : hôpital 3D (moteur d'enquête), mission 1 (4 cas, 2 requis), mission 2 (6 services, 4 requis), ambulance, anatomie, certificat. `adv.med`. Bâtiment au village (REPERES `hopital`, x -47, z 26) + bouton menu. Limites : modèles procéduraux, textes à faire relire par des professionnels de santé.
+- Reste à faire dans la file : Design Studio, Fashion Studio, Smart City, Space Explorer.
