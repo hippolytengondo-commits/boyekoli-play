@@ -109,3 +109,9 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Route de l'aéroport à 1+1, 2+2, 3+3 puis 4+4 voies (`routeVoies` dans `src/routes.js`). Le studio de musique a été déplacé à x=64.
 - Bureau d'aménagement des routes (x=60, z=17) : `src/reseau.js`. 3 emplacements de routes (2 avenues nord-sud et une rocade) : construire, déplacer (3 positions), élargir (1 à 4 voies par sens). Coût en pièces + bitume ; démolir rembourse 60 %.
 - Limites : la route d'entrée de la nouvelle cité et les anneaux gardent leur largeur actuelle (des bâtiments les bordent) ; des arbres décoratifs peuvent apparaître sur les routes construites dans la zone Est ; les véhicules ne sont pas contraints de suivre les routes.
+
+## Mode aménagement général (01/11/2026)
+- Menu « 🏗 Mode aménagement » : en touchant un objet du village on le choisit puis on le déplace (flèches, pas de 2 m ; 1 m pour les arbres), on le fait pivoter (bâtiments), on valide (coût en pièces). Objets modulables : les 5 bâtiments repères (centre commercial, concession, supermarché, musée, auto-école), la gare, les 2 stations-service, tous les arbres, les arbres plantés et les routes libres (créer, déplacer, allonger, 1 à 4 voies par sens, supprimer). Code : `src/amenager.js`.
+- Fixes (repères) : maison familiale, école, rue principale et liaison, rond-point, site de l'aéroport, anneaux de la nouvelle cité. Les arbres sous un nouveau bâtiment ou une nouvelle route sont supprimés (on peut en replanter).
+- À faire plus tard : déplacer la maison familiale (porte, intérieur), l'école et l'aéroport ; panneau des directions déplaçable ; mémoriser la position de la caméra en mode aménagement ; annuler/rétablir.
+- Studio de musique : bouton « 🚪 Sortir » dans chaque onglet, « Retour à la salle de musique », Échap et retour du téléphone.
