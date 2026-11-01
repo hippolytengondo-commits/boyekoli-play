@@ -77,3 +77,9 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Aéroport dans le village (extrémité est) : terminal, tour, avions garés ; simulateur de vol (`src/avion.js`) ; studio de musique avec séquenceur ; salon de mode ; atelier de décoration ; profil de talents (`src/simulateurs.js`).
 - À tester sur téléphone : boutons du simulateur de vol, son du studio, lisibilité du salon de mode et du plan de décoration. Les avions garés sont des modèles simples.
 - Pistes d'évolution : plus d'instruments et de rythmes, plus de pièces de mode, meubles en 3D dans la maison.
+
+## Mini-jeu de mode, animaux 3D, centre commercial (01/11/2026)
+- Salon de mode refondu en jeu de carrière : 12 commandes de clients, 4 grades, calcul et quiz de coupe/couture avant chaque création, budget, pièces à débloquer, défilé noté (étoiles), entraînement quotidien (+2 pièces/jour max) et atelier libre. Données dans `src/contenu/modejeu.js`, logique dans `src/modejeu.js`.
+- Animalerie : modèles 3D (chien, chat, lapin, perroquet) à la place des cubes ; ces modèles sont aussi ceux de l'animal qui suit le joueur.
+- Centre commercial décalé vers le nord et auvent réduit, pour dégager la route. À vérifier sur téléphone.
+- Pistes : davantage de pièces de mode, quiz de couture supplémentaires, relecture par un enseignant de coupe et couture.

@@ -205,7 +205,7 @@ export function buildVille(opts){
     if(Math.abs(z)<2.0&&x<27)return true;
     if(x>-27-(mf.cuisine?4.4:0)&&x<-17+(mf.chambre?4.4:0)&&z>-11.7&&z<-6.3)return true;            // maison
     if(x>26&&x<44&&z>-8&&z<5)return true;                     // cour de l'école
-    if(x>-5.5&&x<11.5&&z>-14.5&&z<-5.5)return true;           // centre commercial
+    if(x>-5.5&&x<11.5&&z>-16&&z<-6.5)return true;           // centre commercial
     if(x>0&&x<8&&z>-5.5&&z<1.5)return true;
     return false;
   }});

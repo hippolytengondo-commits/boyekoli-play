@@ -1,3 +1,4 @@
+import {modele as modeleAnimal} from './animaux.js';
 // Intérieurs des constructions du quartier résidentiel : construits seulement quand le joueur entre
 // (rien n'est gardé en mémoire dans le quartier). Chaque type a son décor, plus riche aux niveaux supérieurs.
 import * as THREE from 'three';
@@ -180,7 +181,7 @@ const DECOR={
       for(let i=0;i<3;i++){const x=-9.5+i*1.6,z=-D/2+1.8;cyl(g,.04,.04,1.5,std('#444'),x,.75,z,6);const t=cyl(g,.28,.34,.9,std(['#c0392b','#e0a526','#2e86de'][i],.8),x,1.2,z,12);const h=new THREE.Mesh(new THREE.SphereGeometry(.17,12,10),std('#6b4028',.7));h.position.set(x,1.85,z);g.add(h);B.push({x0:x-.4,x1:x+.4,z0:z-.4,z1:z+.4})}
       tableau(g,-8.5,2.6,-D/2+.05,4,.8,[{t:'👗 ATELIER MODE',s:44,y:.5}],'#8e44ad');
       box(g,3.4,.9,1.2,wood('#7a4a26'),8.5,.45,-D/2+1.4);B.push({x0:6.8,x1:10.2,z0:-D/2+.8,z1:-D/2+2});
-      [['#b5763a',-1.1],['#8d9aa6',-.37],['#f1f1f1',.37],['#2e9e4a',1.1]].forEach(([c,dx])=>{box(g,.5,.4,.5,std(c,.8),8.5+dx,1.1,-D/2+1.4)});
+      ['chien','chat','lapin','perroquet'].forEach((t,i)=>{const dx=[-1.1,-.37,.37,1.1][i],m=modeleAnimal(t);m.position.set(8.5+dx,.9,-D/2+1.4);m.scale.setScalar(.8);m.rotation.y=(i-1.5)*.18;g.add(m)});
       tableau(g,8.5,2.6,-D/2+.05,4,.8,[{t:'🐾 ANIMALERIE',s:44,y:.5}],'#2e7d32');
     }
     escalator(g,B,W,D);

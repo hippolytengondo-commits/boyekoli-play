@@ -9,12 +9,54 @@ export const ANIMAUX={
   perroquet:{ico:'🦜',nom:'Perroquet',prix:35,noms:['Coco','Jaco','Zazou'],txt:'Le perroquet gris du Gabon et du Congo sait imiter des sons. Il vit longtemps !'}
 };
 const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.8});
-function modele(type){
-  const g=new THREE.Group(),b=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);g.add(m);return m};
-  if(type==='chien'){b(.3,.28,.62,'#b5763a',0,.4,0);b(.26,.24,.26,'#b5763a',0,.62,.36);b(.1,.14,.08,'#6b4423',-.1,.74,.36);b(.1,.14,.08,'#6b4423',.1,.74,.36);b(.1,.28,.1,'#b5763a',-.1,.14,.22);b(.1,.28,.1,'#b5763a',.1,.14,.22);b(.1,.28,.1,'#b5763a',-.1,.14,-.22);b(.1,.28,.1,'#b5763a',.1,.14,-.22);const t=b(.06,.06,.3,'#b5763a',0,.55,-.42);t.rotation.x=-.7}
-  else if(type==='chat'){b(.24,.22,.5,'#8d9aa6',0,.32,0);b(.2,.2,.2,'#8d9aa6',0,.5,.3);b(.07,.1,.05,'#6b7682',-.07,.64,.3);b(.07,.1,.05,'#6b7682',.07,.64,.3);[[-.08,.2],[.08,.2],[-.08,-.2],[.08,-.2]].forEach(([x,z])=>b(.07,.2,.07,'#8d9aa6',x,.1,z));const t=b(.05,.05,.4,'#8d9aa6',0,.48,-.4);t.rotation.x=-.9}
-  else if(type==='lapin'){b(.24,.22,.34,'#f1f1f1',0,.26,0);b(.18,.18,.18,'#f1f1f1',0,.4,.2);b(.05,.22,.05,'#f1f1f1',-.05,.62,.2);b(.05,.22,.05,'#f1f1f1',.05,.62,.2);b(.1,.1,.1,'#f1f1f1',0,.3,-.2)}
-  else {b(.16,.28,.14,'#2e9e4a',0,.34,0);b(.14,.14,.14,'#2e9e4a',0,.55,.04);b(.06,.06,.1,'#f0b429',0,.54,.14);b(.1,.08,.08,'#c0392b',0,.2,-.1);b(.08,.3,.05,'#c0392b',0,.1,-.12)}
+export function modele(type){
+  const g=new THREE.Group();
+  const mesh=(geo,c,x,y,z,sx,sy,sz,rx,ry,rz)=>{const m=new THREE.Mesh(geo,M(c));m.position.set(x,y,z);if(sx!==undefined)m.scale.set(sx,sy,sz);if(rx||ry||rz)m.rotation.set(rx||0,ry||0,rz||0);g.add(m);return m};
+  const sph=(r,c,x,y,z,sx=1,sy=1,sz=1)=>mesh(new THREE.SphereGeometry(r,16,12),c,x,y,z,sx,sy,sz);
+  const cyl=(r1,r2,h,c,x,y,z,rx,ry,rz)=>mesh(new THREE.CylinderGeometry(r1,r2,h,10),c,x,y,z,1,1,1,rx,ry,rz);
+  const cone=(r,h,c,x,y,z,rx,ry,rz)=>mesh(new THREE.ConeGeometry(r,h,10),c,x,y,z,1,1,1,rx,ry,rz);
+  const yeux=(y,z,dx,r=.035)=>{[-dx,dx].forEach(x=>{sph(r*1.6,'#ffffff',x,y,z);sph(r,'#111',x,y,z+r*1.1)})};
+  if(type==='chien'){
+    const c='#b5763a',c2='#7a4a22';
+    sph(.2,c,0,.42,0,.9,.85,1.7);                                             // corps
+    sph(.19,c,0,.6,.34,1,1,1);                                                 // tête
+    sph(.11,'#e8c79a',0,.55,.5,1,.8,1);sph(.04,'#111',0,.58,.6);               // museau, truffe
+    [-.15,.15].forEach(x=>mesh(new THREE.BoxGeometry(.07,.2,.12),c2,x,.62,.3,1,1,1,.2,0,x>0?-.25:.25));   // oreilles tombantes
+    yeux(.65,.46,.07);
+    [[-.1,.3],[.1,.3],[-.1,-.3],[.1,-.3]].forEach(([x,z])=>cyl(.05,.045,.3,c,x,.15,z));                  // pattes
+    cyl(.03,.05,.3,c2,0,.5,-.4,-1,0,0);                                        // queue
+    mesh(new THREE.TorusGeometry(.13,.02,6,16),'#c0392b',0,.5,.28,1,1,1,0,Math.PI/2,0);                 // collier
+  }else if(type==='chat'){
+    const c='#8d9aa6',c2='#5f6b76';
+    sph(.16,c,0,.34,0,.85,.85,1.7);
+    sph(.15,c,0,.5,.3,1,1,1);
+    [-.09,.09].forEach(x=>cone(.05,.12,c2,x,.65,.3));                          // oreilles pointues
+    yeux(.52,.42,.06,.03);sph(.025,'#ff9aa8',0,.49,.46);
+    [[-.07,.22],[.07,.22],[-.07,-.22],[.07,-.22]].forEach(([x,z])=>cyl(.035,.03,.25,c,x,.12,z));
+    mesh(new THREE.TorusGeometry(.2,.03,6,16,Math.PI),c2,0,.35,-.42,1,1,1,0,Math.PI/2,Math.PI/2);       // queue courbe
+    [-1,1].forEach(d=>[0,1,2].forEach(i=>cyl(.002,.002,.12,'#ffffff',d*.1,.48,.44,0,0,Math.PI/2+(i-1)*.25)));
+  }else if(type==='lapin'){
+    const c='#f2f2f2';
+    sph(.17,c,0,.25,0,1,.95,1.3);
+    sph(.12,c,0,.36,.2,1,1,1);
+    [-.04,.04].forEach(x=>sph(.04,c,x,.58,.17,.8,3.6,.8));                     // grandes oreilles
+    [-.04,.04].forEach(x=>sph(.02,'#ffb6c1',x,.58,.2,.6,3.2,.4));
+    yeux(.4,.3,.05,.025);sph(.022,'#ff9aa8',0,.36,.32);
+    sph(.06,c,0,.25,-.22);                                                      // queue pompon
+    [[-.08,.12],[.08,.12]].forEach(([x,z])=>sph(.05,c,x,.06,z,.8,.7,1.6));
+    [-.1,.1].forEach(x=>sph(.07,c,x,.12,-.1,.8,1.2,1.5));
+  }else{
+    const v='#2e9e4a',r='#c0392b';
+    cyl(.01,.01,.5,'#7a4a22',0,.25,0);cyl(.12,.12,.04,'#7a4a22',0,.02,0);        // perchoir
+    cyl(.01,.01,.22,'#7a4a22',0,.52,0,0,0,Math.PI/2);
+    sph(.12,v,0,.66,0,1,1.5,1);                                              // corps
+    sph(.095,v,0,.86,.05,1,1,1);                                                // tête
+    cone(.035,.09,'#f0b429',0,.85,.15,Math.PI/2+.5,0,0);                        // bec crochu
+    yeux(.89,.11,.06,.022);
+    [-1,1].forEach(d=>sph(.07,'#237a38',d*.11,.64,-.03,.45,2.1,1.3));   // ailes
+    mesh(new THREE.BoxGeometry(.08,.36,.025),r,0,.42,-.15,1,1,1,-.3,0,0);mesh(new THREE.BoxGeometry(.05,.3,.02),'#f0b429',0,.4,-.17,1,1,1,-.3,0,0);       // queue rouge
+    sph(.04,'#f1c40f',0,.74,.09,1,1,.5);
+  }
   return g;
 }
 

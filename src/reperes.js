@@ -86,7 +86,7 @@ export const MODELES={
     [3.4,6.9,10.4].forEach(y=>box(g,BW+.4,.3,BD+.4,M('#ffffff'),0,y,0));
     box(g,BW+.6,.6,BD+.6,M('#1f5f9e'),0,H+.3,0);
     box(g,5.2,3.4,.3,M('#1f5f9e'),0,1.7,BD/2+.9);box(g,4.6,2.8,.12,vitre,0,1.5,BD/2+.9);                  // entrée vitrée
-    box(g,6.4,.25,2.4,M('#ffffff'),0,3.4,BD/2+1.2);                                                          // auvent
+    box(g,6.4,.25,1.5,M('#ffffff'),0,3.4,BD/2+.75);                                                        // auvent
     const pl=new THREE.Mesh(new THREE.PlaneGeometry(13,2.2),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🛒 CENTRE COMMERCIAL',s:92,y:.36},{t:'Matériaux · Bourse d’échange · Boutiques',s:46,y:.78,b:false,c:'#ffe9a8'}],1536,260,'#1f5f9e','#ffffff'),emissive:0x112244,emissiveIntensity:.35,roughness:.5}));
     pl.position.set(0,H+1.9,BD/2-.4);g.add(pl);
     [-5.5,5.5].forEach(x=>box(g,.25,1.6,.25,M('#333'),x,H+.85,BD/2-.45));
@@ -123,7 +123,7 @@ export const MODELES={
 
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
-  {id:'centre',x:3,z:-10.2,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},
   {id:'supermarche',x:-24,z:30,ry:0,interieur:'supermarche',nom:'le Supermarché',coul:'#1f7a4d'},
   {id:'musee',x:28,z:31,ry:0,interieur:'musee',nom:'le Musée du Congo',coul:'#8c5a2b'},

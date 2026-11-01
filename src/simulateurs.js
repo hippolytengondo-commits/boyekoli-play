@@ -1,6 +1,7 @@
 // Simulateurs de métiers : studio de musique, salon de mode, atelier de décoration, aéroport (avion), profil de talents.
 // Chaque simulateur est un plein écran autonome ; le temps passé nourrit le profil de talents (aide à découvrir sa voie).
 import {lancerAvion} from './avion.js';
+import {creerModeJeu} from './modejeu.js';
 
 export const TALENTS={
   musique:{ico:'🎶',nom:'Musique',metiers:['Musicien·ne','Compositeur·trice','Ingénieur·e du son','Chanteur·se','Producteur·trice']},
@@ -83,12 +84,12 @@ export function creerSimulateurs(D){
   }
   // ---------- MODE
   const PIECES={
-    haut:{nom:'Haut',o:[['Chemise','shirt'],['Blouse','blouse'],['Débardeur','tank'],['Boubou haut','boubou']]},
+    haut:{nom:'Haut',o:[['Chemise','shirt'],['Blouse','blouse'],['Débardeur','tank'],['Boubou haut','boubou'],['Veste','veste']]},
     bas:{nom:'Bas',o:[['Pantalon','pant'],['Jupe','skirt'],['Pagne','pagne'],['Short','short']]},
     robe:{nom:'Robe',o:[['Aucune',''],['Robe wax','robe'],['Robe longue','long'],['Robe cérémonie','cere']]},
     chaus:{nom:'Chaussures',o:[['Sandales','sand'],['Baskets','bask'],['Souliers','soul'],['Pieds nus','']]},
     coif:{nom:'Coiffure',o:[['Courts','court'],['Tresses','tresse'],['Afro','afro'],['Chignon','chignon'],['Foulard','foulard'],['Rasé','']]},
-    acc:{nom:'Accessoire',o:[['Aucun',''],['Lunettes','lun'],['Collier','coll'],['Chapeau','chap'],['Sac','sac']]}
+    acc:{nom:'Accessoire',o:[['Aucun',''],['Lunettes','lun'],['Collier','coll'],['Chapeau','chap'],['Sac','sac'],['Boucles','boucles']]}
   };
   const COUL=['#c0392b','#e67e22','#f1c40f','#27ae60','#2980b9','#8e44ad','#e84393','#2d3436','#f5f5f5','#16a085'];
   const MOTIFS=[['Uni',''],['Rayures','r'],['Pois','p'],['Zigzag','z'],['Wax','w']];
@@ -121,6 +122,7 @@ export function creerSimulateurs(D){
       const T=L.haut;
       if(T==='tank')s+=`<path d="M72 112 L128 112 L124 192 L76 192 Z" fill="${hH}"/><rect x="84" y="106" width="8" height="14" fill="${hH}"/><rect x="108" y="106" width="8" height="14" fill="${hH}"/>`;
       else if(T==='boubou')s+=`<path d="M64 110 L136 110 L150 205 L50 205 Z" fill="${hH}"/><rect x="38" y="112" width="26" height="40" fill="${hH}"/><rect x="136" y="112" width="26" height="40" fill="${hH}"/>`;
+      else if(T==='veste')s+=`<path d="M68 110 L132 110 L130 196 L70 196 Z" fill="${hH}"/><rect x="46" y="110" width="22" height="68" rx="7" fill="${hH}"/><rect x="132" y="110" width="22" height="68" rx="7" fill="${hH}"/><path d="M100 112 L88 150 L100 196 L112 150 Z" fill="#f5f5f5"/><path d="M100 112 L92 112 L100 135 L108 112Z" fill="#0003"/><circle cx="100" cy="165" r="2" fill="#222"/><circle cx="100" cy="180" r="2" fill="#222"/>`;
       else s+=`<path d="M70 110 L130 110 L128 194 L72 194 Z" fill="${hH}"/><rect x="48" y="110" width="20" height="${T==='blouse'?44:34}" rx="6" fill="${hH}"/><rect x="132" y="110" width="20" height="${T==='blouse'?44:34}" rx="6" fill="${hH}"/>`+(T==='shirt'?`<line x1="100" y1="112" x2="100" y2="192" stroke="#0004"/>`:'');
     }
     // coiffure
@@ -134,6 +136,7 @@ export function creerSimulateurs(D){
     if(L.acc==='lun')s+=`<circle cx="90" cy="64" r="8" fill="#9bd" stroke="#222" stroke-width="2" fill-opacity=".4"/><circle cx="110" cy="64" r="8" fill="#9bd" stroke="#222" stroke-width="2" fill-opacity=".4"/><line x1="98" y1="64" x2="102" y2="64" stroke="#222" stroke-width="2"/>`;
     if(L.acc==='coll')s+=`<path d="M84 100 Q100 124 116 100" stroke="#f1c40f" stroke-width="4" fill="none"/><circle cx="100" cy="116" r="4" fill="#c0392b"/>`;
     if(L.acc==='chap')s+=`<ellipse cx="100" cy="38" rx="44" ry="8" fill="#c9a24a"/><path d="M78 38 Q100 8 122 38Z" fill="#c9a24a"/>`;
+    if(L.acc==='boucles')s+=`<circle cx="74" cy="72" r="4" fill="#f1c40f"/><circle cx="126" cy="72" r="4" fill="#f1c40f"/><circle cx="74" cy="80" r="3" fill="#c0392b"/><circle cx="126" cy="80" r="3" fill="#c0392b"/>`;
     if(L.acc==='sac')s+=`<rect x="140" y="180" width="30" height="26" rx="4" fill="#8e5a2b"/><path d="M146 180 Q155 164 164 180" stroke="#5a3a1b" stroke-width="3" fill="none"/>`;
     return s+'</svg>';
   }
@@ -145,12 +148,12 @@ export function creerSimulateurs(D){
     return {ok,tot,det,th};
   }
   function mode(){
-    cadre('👗 Salon de mode','mode',c=>{c.innerHTML='<div id="md"></div>';dessineMode()});
+    cadre('👗 Salon de mode','mode',c=>{c.innerHTML='<div id="md"></div>';MJ.hub()});
     parler('Bienvenue au salon de mode. Compose une tenue, choisis les tissus, puis présente-la au défilé.');
   }
   function dessineMode(){
     const c=ov&&ov.querySelector('#md');if(!c)return;const L=look;
-    let h=`<div style="display:flex;gap:8px"><div style="flex:0 0 44%;height:310px">${mannequin(L)}</div><div style="flex:1;font-size:12px">`;
+    let h=bt('← Jeu de mode (niveaux)','p','simMdJeu()')+`<div style="display:flex;gap:8px"><div style="flex:0 0 44%;height:310px">${mannequin(L)}</div><div style="flex:1;font-size:12px">`;
     h+='<div>'+Object.keys(PIECES).map(k=>bt(PIECES[k].nom,L.cat===k?'on':'',`simMdCat('${k}')`)).join('')+bt('🎨 Couleurs','','simMdCat(\'coul\')')+bt('👤 Peau/cheveux','','simMdCat(\'corps\')')+'</div>';
     if(PIECES[L.cat]){h+='<div>'+PIECES[L.cat].o.map(o=>bt(o[0],(L[L.cat]===o[1])?'on':'',`simMdSet('${L.cat}','${o[1]}')`)).join('')+'</div>'}
     else if(L.cat==='coul'){
@@ -248,7 +251,8 @@ export function creerSimulateurs(D){
     return h;
   }
   const tenir=f=>{if(!G.dialog)openBox({kind:'metiers',vue:'sim',msg:''});f()};
-  const actions={
+  const MJ=creerModeJeu({A,save,refreshHud,toast:t=>D.toast(t),parler,pts,SFX,esc,mannequin:L=>mannequin(L),PIECES,COUL,MOTIFS,libre:()=>ov&&ov.querySelector('#md')});
+  const actions=Object.assign({},MJ.actions,{
     simMusique:()=>tenir(musique),simMode:()=>tenir(mode),simDeco:()=>tenir(deco),simAeroport:aeroport,simAvion:()=>tenir(avion),simCours:id=>{fermer();openBox({kind:'metiers',vue:'module',m:id,msg:''})},simProfil:()=>openBox({kind:'metiers',vue:'profil'}),
     simInfoAero:()=>{const d=G.dialog;d.vue='infoaero';require_render()},
     simMuInst:k=>{inst=k;dessineMu()},
@@ -278,11 +282,12 @@ export function creerSimulateurs(D){
     simDcPose:(x,y)=>{const c=CAT.find(z=>z.id===dec.cur);if(!libre(x,y,c.w,c.h)){SFX.ko&&SFX.ko();return}dec.items.push({id:c.id,x,y});SFX.coin&&SFX.coin();dessineDeco()},
     simDcRetire:k=>{dec.items.splice(k,1);dessineDeco()},
     simDcVide:()=>{dec.items=[];dessineDeco()},
+    simMdLibre:()=>dessineMode(),
     simDcValide:()=>{const S=dec.salle,cout=coutDec(),manque=S.besoin.filter(b=>!dec.items.some(i=>i.id===b));
       if(manque.length){toast('Il manque : '+manque.map(b=>CAT.find(z=>z.id===b).nom).join(', '));SFX.ko&&SFX.ko();return}
       if(cout>S.budget){toast('Budget dépassé de '+(cout-S.budget)+' FC : retire un meuble.');SFX.ko&&SFX.ko();return}
       const a=A();if(!a.deco)a.deco={};const premier=!a.deco[S.id];a.deco[S.id]=true;if(premier){a.pieces+=10;a.xp+=8;refreshHud()}pts('deco',12);save();SFX.bravo&&SFX.bravo();toast('Projet validé ! '+(premier?'+10 🪙':''));parler('Bravo, ton projet respecte le budget et la liste demandée.');dessineDeco()}
-  };
+  });
   const rr=()=>D.renderDialog();
   function require_render(){rr()}
   return {
