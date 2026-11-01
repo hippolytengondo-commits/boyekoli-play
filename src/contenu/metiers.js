@@ -27,13 +27,8 @@ export const MODULES=[
   {id:'a2',titre:'La villa familiale',deco:true,intro:'',qs:[]}]},
  {id:'mode',ico:'👗',nom:'Atelier mode et coiffure',guide:'artiste',txt:'BOYEKOLI FASHION STUDIO : crée, couds et présente des tenues, coiffe ton mannequin.',dossiers:[
   {id:'m1',titre:'Atelier mode et coiffure',fash:true,intro:'',qs:[]}]},
- {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'Aménage la ville : écoles, routes, énergie, eau et espaces verts.',dossiers:[
-  {id:'v1',titre:'Aménager la ville',intro:'Une ville bien pensée est agréable pour tous. À toi de choisir !',qs:[
-   Q('Où construire un nouvel hôpital ?',['Près des habitants, accessible par la route','Au milieu d’une décharge','Sur une rivière','Loin de tout'],0,'Un hôpital doit être accessible à tous.'),
-   Q('Quelle énergie renouvelable utilise le soleil ?',['Le panneau solaire','Le charbon','Le pétrole','Le gaz'],0,'Les panneaux solaires transforment la lumière en électricité.'),
-   Q('Le fleuve Congo permet la production d’électricité grâce au barrage…',['d’Inga','de Suez','d’Assouan','des Trois-Gorges'],0,'Le barrage d’Inga se situe sur le fleuve Congo.'),
-   Q('Pourquoi planter des arbres en ville ?',['Pour l’ombre et l’air pur','Pour gêner','Pour rien','Pour cacher les routes'],0,'Les arbres rafraîchissent et purifient l’air.'),
-   Q('Une école accueille 300 élèves, 30 par classe. Combien de classes ?',['5','10','30','100'],1,'300 ÷ 30 = 10 classes.')]}]},
+ {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'BOYEKOLI SMART CITY : sois le maire, gère le budget, l’énergie, l’eau et les services.',dossiers:[
+  {id:'v1',titre:'Maire de la ville',vil:true,intro:'',qs:[]}]},
  {id:'musique',ico:'🎶',nom:'Studio de musique et danse',guide:'artiste',txt:'Rumba, soukous, instruments et rythmes congolais.',dossiers:[
   {id:'mu1',titre:'Rumba et rythmes',intro:'Au studio, la musique congolaise fait danser le monde.',qs:[
    Q('La rumba congolaise est inscrite au patrimoine de…',['l’UNESCO','la FIFA','l’ONU Sport','la NASA'],0,'Elle a été inscrite au patrimoine culturel immatériel de l’UNESCO en 2021.'),

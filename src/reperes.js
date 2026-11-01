@@ -172,6 +172,15 @@ export const MODELES={
     box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
     enseigneToit(g,H,'FASHION STUDIO','Mode · Couture · Coiffure','#6a1b9a','👗');
   },
+  mairie(g){
+    const H=6;box(g,W,H,D,M('#f2eadb'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#1b5e7a'),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.3,D/2+.06);g.add(vi);porte(g,'#2e9e6a');
+    // petite tour de ville, drapeau et maquette d'immeubles sur le toit
+    box(g,1.4,2.6,1.4,M('#d9d0bd'),-3,H+1.3,-1);box(g,1.6,.3,1.6,M('#1b5e7a'),-3,H+2.7,-1);cyl(g,.05,.05,1.6,M('#444'),3,H+.8,-1,6);box(g,1,.6,.05,M('#2e9e6a'),3.5,H+1.4,-1);
+    [[0,1.2],[1.4,2],[2.6,.9]].forEach(([x,h])=>box(g,.9,h,.9,M('#9aa8ba'),x-1,H+h/2,-1.2));
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'HÔTEL DE VILLE','Smart City · Maire','#1b5e7a','🌆');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -186,6 +195,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'mairie',x:-47,z:-36,ry:Math.PI/2,w:10,d:7,nom:'l’Hôtel de ville',coul:'#1b5e7a',norot:true},
   {id:'labo',x:-47,z:-12,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
   {id:'design',x:-47,z:12,ry:Math.PI/2,w:10,d:7,nom:'le Design Studio',coul:'#c9733d',norot:true},
   {id:'modestudio',x:-47,z:-24,ry:Math.PI/2,w:10,d:7,nom:'le Fashion Studio',coul:'#6a1b9a',norot:true},
