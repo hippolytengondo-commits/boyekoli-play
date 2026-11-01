@@ -175,3 +175,8 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - Les jeux envoient des événements `D.mis.evt(jeu,type,donnée)` (sci.exp, med.cas/svc, det.fini/indice/analyse/temoin, ds.etat, fs.coudre/coiff/defile, vil.etat, sp.mission, mus.cours/jeu, vol.mission). Une mission n'avance que par un événement reçu pendant le jeu.
 - Accès : bouton menu « Missions Boyekoli » (le bouton « Aller dans le jeu » ouvre le jeu) ; pas encore de panneau dans le village.
 - Limites : la banderole d'objectif n'est pas posée dans le simulateur de vol (pas d'id d'overlay) ; une seule mission active à la fois ; les missions vol exigent l'inscription à l'école de pilotage.
+
+## Boyekoli Farm (agriculture et élevage, fait)
+- `src/agro.js` : ferme 3D (40 parcelles, 7 cultures congolaises, météo/saisons, arrosage, mauvaises herbes, parasites, compost, rotation, poules/chèvres/tilapias, marché à prix variables, 10 missions, 5 suffisent → `done['met:g1']`, certificat). État `adv.agro` (monnaie de la ferme « FC » séparée des pièces du joueur). Bâtiment « Ferme école » (x -47, z -72) accessible en véhicule, module « Agriculture et élevage » dans les métiers, bouton menu, événements `D.mis.evt('agr',…)` disponibles pour de futures missions croisées.
+- Les 50 missions croisées ne contiennent pas encore de mission agricole (à ajouter si souhaité : remplacer ou étendre).
+- Limites : pas de test smartphone réel ; modèles simples ; équilibrage économique à affiner.

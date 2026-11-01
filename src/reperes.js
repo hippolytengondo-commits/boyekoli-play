@@ -190,6 +190,14 @@ export const MODELES={
     box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
     enseigneToit(g,H,'SPACE EXPLORER','Fusées · Planètes · Astronautes','#1a1f5e','🚀');
   },
+  ferme(g){
+    const H=5;box(g,W,H,D,M('#b5603a'),0,H/2,0);const rf=new THREE.Mesh(new THREE.ConeGeometry(7.4,2.6,4),M('#7a4a2e'));rf.rotation.y=Math.PI/4;rf.scale.set(1,1,.72);rf.position.y=H+1.3;g.add(rf);
+    box(g,3,3.6,.2,M('#6b4423'),0,1.8,D/2+.05);box(g,3.4,.3,1.6,M('#c9c9c9'),0,3.8,D/2+.8);
+    [-2.8,2.8].forEach(x=>{box(g,.9,.9,.9,M('#e8c04a'),x,.45,D/2+2.2);box(g,.9,.9,.9,M('#8a5a2b'),x+1,.45,D/2+2.2)});
+    for(let i=-3;i<=3;i++){const t=new THREE.Mesh(new THREE.ConeGeometry(.25,.8,6),M('#4f9c3c'));t.position.set(i*1.1,.4,-D/2-1.2);g.add(t)}
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'BOYEKOLI FARM','Agriculture · Élevage','#2e6a2a','🌾');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -204,6 +212,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'ferme',x:-47,z:-72,ry:Math.PI/2,w:10,d:7,nom:'la Ferme école',coul:'#2e6a2a',norot:true},
   {id:'espace',x:-47,z:-48,ry:Math.PI/2,w:10,d:7,nom:'la Cité de l’espace',coul:'#1a1f5e',norot:true},
   {id:'mairie',x:-47,z:-36,ry:Math.PI/2,w:10,d:7,nom:'l’Hôtel de ville',coul:'#1b5e7a',norot:true},
   {id:'labo',x:-47,z:-60,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
