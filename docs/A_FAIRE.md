@@ -36,3 +36,22 @@ Au début de la prochaine session : relire ce fichier et rappeler la liste à l'
 - Vérifier sur téléphone : conduite avec volant, pédales, klaxon, carburant, stations-service, réponses d'auto-école.
 - Test d'envoi d'e-mails (Brevo).
 - Plus tard : 500 missions d'exploration, page « Nos partenaires », application Android native, extension de la cité (étapes 2 à 4).
+
+## 6. Musée : photos libres encore à intégrer (01/11/2026)
+Déjà en place : Lumumba, Yoane Wissa, Muyembe. Les autres tableaux affichent une illustration de secours tant que la photo manque.
+Méthode : Wikimedia limite les téléchargements groupés (erreur 429). Envoyer chaque fichier un par un vers Cloudinary (`boyekoli/musee/<id>`, `w_480,c_limit,q_auto:good,f_jpg`), le télécharger dans `img/musee/<id>.jpg`, vérifier l'image, puis publier. Fichiers retenus (Wikimedia Commons, `https://upload.wikimedia.org/wikipedia/commons/…`) :
+- kasavubu : 5/5d/Kasa-Vubu_in_Bandalungwa_cropped.jpg (domaine public)
+- mobutu : f/f2/Mobutu_portraits_%281976-04-28%29%28Gerald_Ford_Library%29_%28cropped%29.jpg (domaine public)
+- kabila : 5/59/Visit_of_Laurent_D%C3%A9sir%C3%A9_Kabila%2C_President_of_the_Democratic_Republic_of_Congo%2C_to_the_EC_%28cropped%29.jpg (CC BY 4.0)
+- papawemba : 6/63/Papa_Wemba.jpg (CC BY 2.0, Radio Okapi)
+- fally : 8/81/Fally_Ipupa_a_Paris%2C_en_France.jpg (CC BY-SA 4.0)
+- mukwege : e/e1/Denis_Mukwege_par_Claude_Truong-Ngoc_novembre_2014.jpg (CC BY-SA 3.0)
+- mausolee : 9/99/Kinshasa_-_Mausol%C3%A9e_de_Laurent_D%C3%A9sir%C3%A9_Kabila.jpg (CC BY-SA 4.0, Henri van der Noot)
+- echangeur : 7/7d/%C3%89CHANGEUR_DE_LIMETE_%2856%29.jpg (CC BY-SA 4.0, Alphonse Masandi)
+- palais : b/b8/Kinshasa_-_Palais_de_la_Nation_%28cropped%29.jpg (domaine public)
+- gorille : b/be/Virunga_Mountain_Gorilla.jpg (CC BY-SA 3.0, Cai Tjeenk Willink)
+- okapi : e/ee/Okapi_Ituri_in_Diergaarde_Blijdorp_geboren%2C_Bestanddeelnr_911-0336.jpg (CC0)
+- bonobo : 2/27/Pan_paniscus_%28female%29.jpg (CC BY-SA 4.0, Hans Hillewaert)
+- fleuve : 5/54/Congo_River_from_Kinshasa_in_Democratic_Republic_of_the_Congo_%28DRC%29.jpg (CC BY-SA 4.0, EdwinAlden.1995)
+À rechercher : diamant, or, cuivre, cobalt, volcan des Virunga, Stade des Martyrs (une vraie vue du stade), masque kuba, statue nkisi, lukasa, likembe.
+Pour chaque photo ajoutée : renseigner `credit` (auteur, licence, source) dans `src/contenu/musee.js` (la salle « Crédits des photos » les affiche).
