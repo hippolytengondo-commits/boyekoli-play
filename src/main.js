@@ -37,6 +37,7 @@ import {creerCentre} from './centre.js';
 import {creerMetiers} from './metiers.js';
 import {creerSimulateurs} from './simulateurs.js';
 import {creerMusique} from './musique.js';
+import {creerReseau} from './reseau.js';
 import {creerJeux as creerJeuxMusique} from './musique_jeux.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
@@ -366,8 +367,10 @@ function construireVille(){
    w.bounds.x1=Math.max(w.bounds.x1,150);
    SCENES.ville.spots.push({x:ap.hall.x,z:ap.hall.z,r:4,label:'✈️ Aéroport : inscription, licence de pilote',run:()=>SIM.actions.simAeroport()});
    SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,label:'🛩 Avion : monter à bord (licence requise)',run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}SIM.actions.simAvion()}})}
-  {const sm=construireStudioMusique(w.group,w.colliders,w.boxes,80,-10);
+  {const sm=construireStudioMusique(w.group,w.colliders,w.boxes,64,-12.5);
    SCENES.ville.spots.push({x:sm.x,z:sm.z-1.2,r:4.2,label:'🎵 BOYEKOLI MUSIC STUDIO : entrer',run:()=>MUSIC.actions.musOuvrir()})}
+  {const br=RES.construire(w.group,w.colliders,w.boxes);
+   SCENES.ville.spots.push({x:br.x,z:br.z,r:4,label:'📐 Bureau d’aménagement des routes',run:()=>RES.actions.resOuvrir()})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);
@@ -673,6 +676,7 @@ function renderDialog(){
   else if(d.kind==='matos'||d.kind==='troc')h=CC.html(d);
   else if(d.kind==='animal')h=ANI.html(d);
   else if(d.kind==='metiers')h=SIM.html(d)||MET.html(d);
+  else if(d.kind==='reseau')h=RES.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
   else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin'||d.kind==='effort')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
@@ -1583,6 +1587,7 @@ const MET=creerMetiers({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialo
 const SIM=creerSimulateurs({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),renderDialog:()=>renderDialog(),quiz3D:lancerQuiz3D,toast:t=>toast(t),modules:()=>MET.modules()});
 const MUSIC=creerMusique({G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});
 const MUSACT=creerJeuxMusique(MUSIC,{G,esc,SFX,save,refreshHud,parler:parlerFr,toast:t=>toast(t)});
+const RES=creerReseau({G,esc,openBox:d=>openBox(d),renderDialog:()=>renderDialog(),SFX,save,refreshHud,parler:parlerFr,toast:t=>toast(t)});
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
 setInterval(()=>{
@@ -2569,7 +2574,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

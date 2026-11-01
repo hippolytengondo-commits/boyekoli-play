@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import * as T from './textures.js';
 import {std,box,cyl} from './world.js';
 import {voiture,voitureJoueur,motoJoueur} from './trafic.js';
+import {routeVoies} from './routes.js';
 
 const W=10,D=7;
 const M=(c,r)=>std(c,r===undefined?.85:r);
@@ -211,17 +212,13 @@ export function construireGare(parent,cols,bxs,x,z){
 export function construireAeroport(parent,cols,bxs,X0,Z0){
   const asph=M('#4a4a50',.95);asph.polygonOffset=true;asph.polygonOffsetFactor=-3;asph.polygonOffsetUnits=-4;
   const plat=(x,z,w,d,mat,y)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat||asph);m.rotation.x=-Math.PI/2;m.position.set(x,y||.05,z);parent.add(m);return m};
-  // route bitumée depuis l'est du village jusqu'à l'aéroport + trottoirs et lignes
-  const xr0=36,xr1=X0-16;
-  plat((xr0+xr1)/2,Z0,xr1-xr0,6.4);
-  box(parent,xr1-xr0,.08,.8,M('#cfc9b8'),(xr0+xr1)/2,.04,Z0-3.6);box(parent,xr1-xr0,.08,.8,M('#cfc9b8'),(xr0+xr1)/2,.04,Z0+3.6);
-  for(let x=xr0+2;x<xr1-2;x+=6)plat(x,Z0,2.6,.18,M('#f1f1f1'),.07);
-  // parking devant le terminal
-  plat(X0-24,Z0,16,20);plat(X0-14,Z0,8,8);
-  for(let i=-4;i<=4;i++)plat(X0-27,Z0+i*2.1,5,.14,M('#f1f1f1'),.07);
+  // route bitumée depuis l'est du village jusqu'à l'aéroport : 1+1 voies, puis 2+2, 3+3 et 4+4 à l'approche du terminal
+  const xr1=X0-16;
+  [[36,52,1],[52,80,2],[80,100,3],[100,xr1,4]].forEach(([xa,xb,v])=>routeVoies(parent,xa,Z0,xb,Z0,v));
+  plat(X0-14,Z0,8,8);
   // panneaux de direction : au bout de la rue du village et à l'entrée du parking
   const pan=(x,z,txt)=>{cyl(parent,.07,.09,3,M('#555'),x,1.5,z,8);const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:txt,s:60,y:.5}],512,176,'#1f5f9e','#ffffff'),side:THREE.DoubleSide}));pl.position.set(x,3.1,z);parent.add(pl);cols.push({x,z,r:.4})};
-  pan(46,Z0-5,'✈ AÉROPORT →');pan(X0-30,Z0-5.5,'✈ AÉROPORT');
+  pan(46,Z0-5,'✈ AÉROPORT →');pan(X0-30,Z0-15.5,'✈ AÉROPORT');
   const g=new THREE.Group();g.position.set(X0,0,Z0);g.rotation.y=-Math.PI/2;parent.add(g);
   const W2=(xl,zl)=>({x:X0-zl,z:Z0+xl});
   box(g,11,.1,17,M('#5b5b60',.95),0,.05,0);

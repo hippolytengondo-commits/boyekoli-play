@@ -66,3 +66,26 @@ export function trottoirsAnneau(g,cx,cz,r,lg,tr,seg){
     m.position.set(cx,H_TROTTOIR/2,cz);g.add(m);
   });
 }
+
+// ---------- route à plusieurs voies : `voies` voies dans chaque sens (1 à 4), séparées par un terre-plein jaune central.
+// Route droite (horizontale ou verticale) de (x1,z1) à (x2,z2). Retourne sa largeur totale.
+export const LARGEUR_VOIE=3.2;
+export const largeurRoute=voies=>voies*2*LARGEUR_VOIE+.8;
+export function routeVoies(g,x1,z1,x2,z2,voies,opt){
+  const o=Object.assign({trottoirs:true},opt||{});
+  const hor=Math.abs(x2-x1)>=Math.abs(z2-z1),len=hor?Math.abs(x2-x1):Math.abs(z2-z1),W=largeurRoute(voies);
+  const cx=(x1+x2)/2,cz=(z1+z2)/2;
+  const grp=new THREE.Group();grp.position.set(cx,0,cz);if(hor)grp.rotation.y=Math.PI/2;g.add(grp);   // axe local : z
+  const flat=(w,d,mat,x,y,z)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),mat);m.rotation.x=-Math.PI/2;m.position.set(x,y,z);m.receiveShadow=true;grp.add(m);return m};
+  flat(W,len,asphalte(),0,.034,0);
+  const blanc=new THREE.MeshBasicMaterial({color:'#f2f2f2',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5}),jaune=new THREE.MeshBasicMaterial({color:'#f1c40f',polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5});
+  [-.17,.17].forEach(dx=>flat(.12,len,jaune,dx,.037,0));                 // double ligne jaune centrale
+  [-1,1].forEach(s=>flat(.16,len,blanc,s*(W/2-.3),.037,0));              // lignes de rive
+  // tirets séparant les voies d'un même sens
+  const nb=Math.max(0,Math.floor(len/6))*2*(voies-1);
+  if(nb>0){const im=new THREE.InstancedMesh(new THREE.PlaneGeometry(.14,2.6),blanc,nb);const mm=new THREE.Matrix4(),rx=new THREE.Matrix4().makeRotationX(-Math.PI/2);let i=0;
+    for(let k=1;k<voies;k++)[-1,1].forEach(s=>{for(let z=-len/2+3;z<len/2-2&&i<nb;z+=6){mm.makeTranslation(s*(.4+k*LARGEUR_VOIE),.037,z);mm.multiply(rx);im.setMatrixAt(i++,mm)}});
+    im.count=i;grp.add(im)}
+  if(o.trottoirs){const cm=new THREE.MeshStandardMaterial({color:'#cfc9b8',roughness:.9});[-1,1].forEach(s=>{const b=new THREE.Mesh(new THREE.BoxGeometry(1.4,.14,len),cm);b.position.set(s*(W/2+.7),.07,0);b.receiveShadow=true;grp.add(b)})}
+  return W;
+}

@@ -125,10 +125,29 @@ export function buildVille(opts){
   bd.position.set(bx,3.1,bz+.05);bd.castShadow=true;g.add(bd);
   colliders.push({x:bx-1.7,z:bz,r:.3},{x:bx+1.7,z:bz,r:.3});
 
-  // panneau « carte des lieux »
-  cyl(g,.07,.09,2.6,std('#5a3a22',.9),-9,1.3,-3.6,8);
-  const cm=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.5),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'CARTE',s:70,y:.2},{t:'🛒 Marché · 🌊 Fleuve',s:34,y:.45,b:false,c:'#f1c40f'},{t:'🏥 Santé · 🎓 Université',s:34,y:.65,b:false,c:'#f1c40f'},{t:'Touche pour voyager',s:28,y:.85,b:false}],512,350,'#6b4a2a','#ffffff','#e0a526'),roughness:.7}));
-  cm.position.set(-9,2.5,-3.52);cm.castShadow=true;g.add(cm);colliders.push({x:-9,z:-3.6,r:.35});
+  // panneau des directions, à côté du rond-point : chaque flèche indique où se trouve un lieu important
+  {
+    const mkBoard=(txt,coul,dir)=>{
+      const c=document.createElement('canvas');c.width=560;c.height=120;const g2=c.getContext('2d');
+      g2.fillStyle=coul;g2.beginPath();
+      if(dir==='D'){g2.moveTo(4,8);g2.lineTo(480,8);g2.lineTo(556,60);g2.lineTo(480,112);g2.lineTo(4,112)}
+      else if(dir==='G'){g2.moveTo(556,8);g2.lineTo(80,8);g2.lineTo(4,60);g2.lineTo(80,112);g2.lineTo(556,112)}
+      else{g2.moveTo(4,8);g2.lineTo(556,8);g2.lineTo(556,80);g2.lineTo(280,116);g2.lineTo(4,80)}
+      g2.closePath();g2.fill();g2.lineWidth=5;g2.strokeStyle='#ffffff';g2.stroke();
+      let f=44;g2.font='bold '+f+'px system-ui';while(g2.measureText(txt).width>(dir==='B'?500:400)&&f>20){f-=2;g2.font='bold '+f+'px system-ui'}
+      g2.fillStyle='#ffffff';g2.textAlign=dir==='G'?'right':'left';g2.textBaseline='middle';g2.fillText(txt,dir==='G'?520:dir==='B'?30:34,dir==='B'?48:62);
+      if(dir==='D'){g2.textAlign='right';g2.font='bold 56px system-ui';g2.fillText('→',536,60)}
+      if(dir==='G'){g2.textAlign='left';g2.font='bold 56px system-ui';g2.fillText('←',24,60)}
+      if(dir==='B'){g2.textAlign='right';g2.font='bold 52px system-ui';g2.fillText('↓',540,50)}
+      const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t};
+    const BD=[['✈ AÉROPORT','#1f5f9e','D'],['🎵 STUDIO MUSIQUE','#7d3fd1','D'],['🏫 ÉCOLE','#2e7d32','D'],['🛒 CENTRE COMMERCIAL','#c0392b','D'],['📐 AMÉNAGEMENT DES ROUTES','#4a4a52','D'],['🚂 GARE','#8e5a2b','G'],['🧭 MISSIONS D’EXPLORATION','#2e9e4a','B'],['🏘 NOUVELLE CITÉ À RACHETER','#e67e22','B']];
+    cyl(g,.09,.11,6,std('#4a3320',.9),-9,3,-3.9,8);
+    BD.forEach((b,i)=>{
+      const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.4,.73),new THREE.MeshStandardMaterial({map:mkBoard(b[0],b[1],b[2]),transparent:true,alphaTest:.3,roughness:.6,side:THREE.DoubleSide}));
+      pl.position.set(-9+(b[2]==='D'?1.2:b[2]==='G'?-1.2:0),5.5-i*.68,-3.78);pl.castShadow=true;g.add(pl)});
+    const dl=new THREE.Mesh(new THREE.SphereGeometry(.2,10,8),std('#e0a526',.4,{metalness:.5}));dl.position.set(-9,6.15,-3.9);g.add(dl);
+    colliders.push({x:-9,z:-3.9,r:.4});
+  }
   // banc
   box(g,2,.1,.5,std('#7a4a26'),9,.5,-5.2);box(g,.1,.5,.45,std('#4a2f1b'),8.1,.25,-5.2);box(g,.1,.5,.45,std('#4a2f1b'),9.9,.25,-5.2);
   colliders.push({x:9,z:-5.2,r:1.0});
