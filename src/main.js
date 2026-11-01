@@ -363,7 +363,7 @@ function construireVille(){
   {const ap=construireAeroport(w.group,w.colliders,w.boxes,130,0);
    w.bounds.x1=Math.max(w.bounds.x1,150);
    SCENES.ville.spots.push({x:ap.hall.x,z:ap.hall.z,r:4,label:'✈️ Aéroport : inscription, licence de pilote',run:()=>SIM.actions.simAeroport()});
-   SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,label:'🛩 Avion : monter à bord (licence requise)',run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}if(!(G.adv.done['met:p1']&&G.adv.done['met:p2'])&&!p.brevet){toast('Valide d’abord la théorie de pilotage (2 quiz).');SFX.ko();return}SIM.actions.simAvion()}})}
+   SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,label:'🛩 Avion : monter à bord (licence requise)',run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}SIM.actions.simAvion()}})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);

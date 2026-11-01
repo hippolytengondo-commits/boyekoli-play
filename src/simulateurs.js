@@ -215,50 +215,62 @@ export function creerSimulateurs(D){
     openBox({kind:'metiers',vue:'aeroport',msg:''});
     parler('Bienvenue à l’aéroport Boyekoli. Pour piloter, il faut une licence : inscription, théorie, puis vol d’examen.');
   }
+  const lecons=()=>MISSIONS.filter(m=>m.type==='lecon');
+  const leconsFaites=()=>lecons().every(m=>pil().m[m.id]);
   function vueAeroport(d){
     const p=pil();
-    let h='<h3>✈️ Aéroport Boyekoli</h3><p style="font-size:12px">✈️ <b>Commandant Ilunga</b> : « Un pilote vérifie, anticipe et garde son calme. Sans licence, pas de vol. »</p>';
+    let h='<h3>✈️ BOYEKOLI FLIGHT SIMULATOR</h3><p style="font-size:12px">✈️ <b>Commandant Ilunga</b> : « Un pilote vérifie, anticipe et garde son calme. Sans licence, pas de vol. »</p>';
     if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
     h+=`<p class="row"><span>Mes pièces</span><b>${A().pieces} 🪙</b></p><h4>🪪 Licence de pilote ${p.brevet?'✅ obtenue':''}</h4>`;
     if(!p.inscrit)h+=`<button class="p" onclick="simInscriptionPilote()">📝 S’inscrire à l’école de pilotage (20 🪙)</button>`;
     else{
-      h+=`<p style="font-size:13px">${A().done['met:p1']?'✅':'⬜'} Théorie 1 : bases du pilotage<br>${A().done['met:p2']?'✅':'⬜'} Théorie 2 : règles de l’air et instruments<br>${p.brevet?'✅':'⬜'} Pratique : vol d’examen chronométré</p>`;
+      const nl=lecons().filter(m=>p.m[m.id]).length;
+      h+=`<p style="font-size:13px">${nl>=lecons().length?'✅':'⬜'} Pratique : 9 leçons en vol (${nl}/9)<br>${A().done['met:p1']?'✅':'⬜'} Théorie 1 : bases du pilotage<br>${A().done['met:p2']?'✅':'⬜'} Théorie 2 : règles de l’air et instruments<br>${p.brevet?'✅':'⬜'} Vol complet chronométré (examen)</p>`;
       h+=`<button onclick="metOuvrir('pilotage')">📚 Cours et quiz de théorie</button>`;
+      h+=`<p style="font-size:12px">Va à l’avion garé devant le terminal pour tes leçons et tes missions.</p>`;
     }
-    if(p.inscrit&&theorie()&&!p.brevet)h+=`<p style="font-size:12px">Ta théorie est validée : va à l’avion garé devant le terminal pour passer le vol d’examen.</p>`;
-    if(p.brevet)h+=`<p style="font-size:12px">Tu es pilote ! Monte dans l’avion garé devant le terminal pour tes missions chronométrées.</p>`;
     h+=`<button onclick="simInfoAero()">🌍 Les aéroports de la RDC</button><button class="s" onclick="closeDialog()">Fermer</button>`;
     return h;
+  }
+  function ligneMission(m,ok,why){
+    const r=pil().m[m.id];
+    return ok?`<button class="${r?'':'p'}" onclick="simAvionMission('${m.id}')">${r?'✅':'▶'} ${esc(m.nom)}${m.tmax?' <small>('+Math.floor(m.tmax/60)+' min '+(m.tmax%60)+' s'+(r&&r.best?' · record '+r.best+' s':'')+')</small>':''}<br><small>${esc(m.txt)} · +${m.rec} 🪙</small></button>`
+      :`<div style="padding:8px;margin:3px 0;background:#eee;border-radius:8px;font-size:12px;color:#888">🔒 ${esc(m.nom)} : ${why}</div>`;
   }
   function vueMissions(d){
     const p=pil();let h='<h3>🛩 L’avion</h3>';
     if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
-    h+='<p style="font-size:12px">Choisis ton vol. Le chrono démarre quand tu commences à rouler. En cas d’échec (temps écoulé, accident), tu rentres à l’aéroport.</p>';
-    MISSIONS.forEach(m=>{const ok=m.brevet?(p.inscrit&&theorie()):p.brevet;const r=p.m[m.id];
-      h+=ok?`<button class="${r?'':'p'}" onclick="simAvionMission('${m.id}')">${r?'✅':'▶'} ${esc(m.nom)} <small>(${Math.floor(m.tmax/60)} min ${m.tmax%60} s${r?' · record '+r.best+' s':''})</small><br><small>${esc(m.txt)} · +${m.rec} 🪙</small></button>`:`<div style="padding:8px;margin:3px 0;background:#eee;border-radius:8px;font-size:12px;color:#888">🔒 ${esc(m.nom)} : ${m.brevet?'il faut l’inscription et la théorie validée':'il faut le brevet de pilote'}</div>`});
+    h+='<p style="font-size:12px">Leçons progressives, puis examen et missions chronométrées. En cas d’échec ou d’accident, tu rentres à l’aéroport.</p><h4>🎓 Leçons</h4>';
+    const L=lecons();
+    L.forEach((m,i)=>{const prev=i>0?p.m[L[i-1].id]:true;h+=ligneMission(m,p.inscrit&&prev,i===0?'inscris-toi à l’école de pilotage':'réussis la leçon précédente')});
+    const ex=MISSIONS.find(m=>m.id==='exam');
+    h+='<h4>🪪 Examen</h4>'+ligneMission(ex,p.inscrit&&theorie()&&leconsFaites(),'il faut les 9 leçons et la théorie (2 quiz)');
+    h+='<h4>🌍 Missions chronométrées</h4>';
+    MISSIONS.filter(m=>m.type==='chrono'&&!m.brevet).forEach(m=>{h+=ligneMission(m,p.brevet,'il faut le brevet de pilote')});
     if(p.brevet)h+='<button onclick="simAvionMission(\'libre\')">🕊 Vol libre (sans chrono)</button>';
     return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
   }
   function avion(missionId){
-    const p=pil();
     const m=MISSIONS.find(x=>x.id===missionId)||null;
-    cadre('🛫 Cockpit','pilotage',c=>{
+    let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
+    cadre('🛫 BOYEKOLI FLIGHT SIMULATOR','pilotage',c=>{
       c.style.padding='0';c.style.overflow='hidden';
-      const sim=lancerAvion(c,{mission:m,toast:t=>toast(t),
+      const sim=lancerAvion(c,{mission:m,low,toast:t=>toast(t),
+        onLow:v=>{try{localStorage.setItem('kelas_quality',v?'low':'high')}catch(e){}},
         onQuit:()=>{fermer();closeDialog()},
         onFin:r=>{
           if(!r.id)return;
           const mm=MISSIONS.find(x=>x.id===r.id),pp=pil();
           if(r.ok){
-            const prem=!pp.m[r.id];if(!pp.m[r.id])pp.m[r.id]={best:r.temps,fois:0};pp.m[r.id].fois++;pp.m[r.id].best=Math.min(pp.m[r.id].best,r.temps);
-            const g=prem?mm.rec:Math.floor(mm.rec/4);A().pieces+=g;A().xp+=prem?20:4;pts('pilotage',prem?30:8);
+            const prem=!pp.m[r.id];if(!pp.m[r.id])pp.m[r.id]={best:r.temps||0,fois:0};pp.m[r.id].fois++;if(r.temps)pp.m[r.id].best=pp.m[r.id].best?Math.min(pp.m[r.id].best,r.temps):r.temps;
+            const g=prem?mm.rec:(mm.type==='lecon'?0:Math.floor(mm.rec/4));A().pieces+=g;A().xp+=prem?15:3;pts('pilotage',prem?25:6);
             if(mm.brevet&&!pp.brevet){pp.brevet=true;toast('🪪 Brevet de pilote obtenu ! Les missions sont ouvertes.')}
-            save();refreshHud();SFX.bravo&&SFX.bravo();toast('Mission réussie : +'+g+' 🪙');parler('Mission accomplie, bravo !')}
-          else{pts('pilotage',2);save();SFX.ko&&SFX.ko();parler('Mission échouée. Retour à l’aéroport.')}
+            save();refreshHud();SFX.bravo&&SFX.bravo();toast((mm.type==='lecon'?'Leçon réussie : ':'Mission réussie : ')+'+'+g+' 🪙');parler(mm.type==='lecon'?'Leçon réussie, bravo !':'Mission accomplie, bravo !')}
+          else{pts('pilotage',2);save();SFX.ko&&SFX.ko();parler('Retour à l’aéroport.')}
         }});
       stopFn=()=>sim.stop();window.__AV=sim;
     });
-    parler('Procédure de départ : ouvre la porte, monte à bord, allume la batterie, vérifie le frein, puis démarre le moteur.');
+    parler('Bienvenue dans Boyekoli Flight Simulator.');
   }
   const toast=t=>D.toast(t);
   // ---------- PROFIL DE TALENTS
