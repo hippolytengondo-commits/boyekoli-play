@@ -141,3 +141,7 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 ## Medical Center (fait)
 - `src/hopital.js` + `src/hopital/data.js` : hôpital 3D (moteur d'enquête), mission 1 (4 cas, 2 requis), mission 2 (6 services, 4 requis), ambulance, anatomie, certificat. `adv.med`. Bâtiment au village (REPERES `hopital`, x -47, z 26) + bouton menu. Limites : modèles procéduraux, textes à faire relire par des professionnels de santé.
 - Reste à faire dans la file : Design Studio, Fashion Studio, Smart City, Space Explorer.
+
+## Design Studio (fait)
+- `src/design.js` + `src/design/data.js` : éditeur 3D de maisons (dimensions, toit, pièces 1–4, ouvertures par clic, meubles 26 modèles avec placement sans collision, styles africain/congolais/Kinshasa/contemporain, textures wax/brique, 6 caméras, jour/nuit, photos, projets multiples, sauvegarde auto `adv.deco2`), missions m1/m2 évaluées (`done['met:a1']`, `['met:a2']`), certificat. Bouton menu « Design Studio ».
+- Limites : pas de bâtiment d'entrée dans le village, murs intérieurs fixes (4 plans de pièces), pas de test smartphone réel.

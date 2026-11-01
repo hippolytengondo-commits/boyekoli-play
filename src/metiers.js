@@ -67,6 +67,7 @@ export function creerMetiers(D){
     metLancer:(mid,did)=>{const m=mod(mid),x=m.dossiers.find(z=>z.id===did),g=GUIDES[m.guide];
       if(x.jeu){if(window.detOuvrir)window.detOuvrir(x.jeu);return}
       if(x.sci){if(window.sciOuvrir)window.sciOuvrir();return}
+      if(x.deco){if(window.dsOuvrir)window.dsOuvrir();return}
       if(x.med){if(window.medOuvrir)window.medOuvrir();return}
       
       quiz3D({cle:'met:'+x.id,titre:m.nom+' · '+x.titre,intro:g.nom+' : '+x.intro,qs:x.qs,mat:'geo'})},

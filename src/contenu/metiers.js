@@ -22,19 +22,9 @@ export const MODULES=[
  {id:'hopital',ico:'🏥',nom:'Centre hospitalier',guide:'docteur',txt:'BOYEKOLI MEDICAL CENTER : accueille des patients fictifs et découvre les métiers de l’hôpital. Simulation éducative, sans vrai diagnostic.',dossiers:[
   {id:'h1',titre:'Ma première journée à l’hôpital',med:true,intro:'',qs:[]},
   {id:'h2',titre:'À la découverte des métiers de l’hôpital',med:true,intro:'',qs:[]}]},
- {id:'decoration',ico:'🏠',nom:'Atelier de décoration',guide:'architecte',txt:'Mesures, surfaces, couleurs et formes pour aménager tes pièces.',dossiers:[
-  {id:'a1',titre:'Peindre et mesurer',intro:'Un bon décorateur calcule avant de peindre.',qs:[
-   Q('Un mur mesure 4 m de long et 3 m de haut. Quelle est sa surface ?',['7 m²','12 m²','14 m²','1 m²'],1,'4 × 3 = 12 m².'),
-   Q('Le bleu et le jaune mélangés donnent…',['du vert','du rouge','du noir','du violet'],0,'Bleu + jaune = vert.'),
-   Q('Une pièce carrée a 5 m de côté. Quel est son périmètre ?',['10 m','15 m','20 m','25 m'],2,'4 × 5 = 20 m.'),
-   Q('Un pot de peinture couvre 6 m². Pour 12 m², il faut…',['1 pot','2 pots','3 pots','12 pots'],1,'12 ÷ 6 = 2 pots.'),
-   Q('Quelle forme a une porte classique ?',['Un rectangle','Un cercle','Un triangle','Un losange'],0,'Une porte est un rectangle.')]},
-  {id:'a2',titre:'Meubles, jardin et bibliothèque',intro:'Disposer les meubles, fleurir le jardin et ranger la bibliothèque.',qs:[
-   Q('Une table coûte 40 pièces et 4 chaises 10 pièces chacune. Quel est le total ?',['50','60','80','100'],2,'40 + 4 × 10 = 80.'),
-   Q('Quel est le rôle d’une fenêtre ?',['Laisser entrer lumière et air','Cacher le mur','Faire du bruit','Rien'],0,'Elle apporte lumière et aération.'),
-   Q('Pour un jardin de 10 m sur 6 m, quelle est la surface ?',['16 m²','32 m²','60 m²','100 m²'],2,'10 × 6 = 60 m².'),
-   Q('Dans une bibliothèque, on range les livres par…',['catégories ou ordre alphabétique','taille de la couverture seulement','hasard','couleur uniquement'],0,'Un classement clair aide à retrouver un livre.'),
-   Q('Quelle plante embellit un jardin et attire les abeilles ?',['Les fleurs','Les cailloux','Le ciment','Le plastique'],0,'Les fleurs attirent les abeilles qui pollinisent.')]}]},
+ {id:'decoration',ico:'🏠',nom:'Atelier de décoration',guide:'architecte',txt:'BOYEKOLI DESIGN STUDIO : dessine une maison en 3D, aménage-la et décore-la.',dossiers:[
+  {id:'a1',titre:'Ma première maison',deco:true,intro:'',qs:[]},
+  {id:'a2',titre:'La villa familiale',deco:true,intro:'',qs:[]}]},
  {id:'mode',ico:'👗',nom:'Atelier mode et coiffure',guide:'artiste',txt:'Tissus africains, wax, pagnes, coiffures congolaises et défilés.',dossiers:[
   {id:'m1',titre:'Tissus et coiffures',intro:'La mode congolaise est riche de couleurs et de savoir-faire.',qs:[
    Q('Comment appelle-t-on le tissu de coton coloré très répandu en Afrique ?',['Le wax','Le jean','La soie sauvage','Le cuir'],0,'Le wax (pagne) est un tissu imprimé coloré.'),
