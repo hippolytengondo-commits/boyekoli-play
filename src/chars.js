@@ -170,13 +170,13 @@ export function makeHuman(look){
     const gl=ball(eyeR*.16,glint,1,1,1,8);gl.position.set(ex+s*.0035,ey+.004,.087+eyeR*.8);headJ.add(gl);
     eyes.push(w,ir,pu);
     // paupières
-    const lid=new THREE.Mesh(new THREE.SphereGeometry(eyeR*1.28,16,8,0,Math.PI*2,0,Math.PI*.46),skinDark);
+    const lid=new THREE.Mesh(new THREE.SphereGeometry(eyeR*1.28,16,8,0,Math.PI*2,0,Math.PI*.3),skinDark);
     lid.scale.set(1.2,.9,.8);lid.position.set(ex,ey+.001,.088);lid.rotation.x=-.15;headJ.add(lid);
     if(female){const lash=new THREE.Mesh(new THREE.BoxGeometry(eyeR*2.5,.003,.006),hairM);lash.position.set(ex,ey+eyeR*1.0,.097);lash.rotation.z=-s*.1;headJ.add(lash)}
     // sourcils
-    const bw=.036,bh=L.brow===1?.011:.0055;
+    const bw=.032,bh=L.brow===1?.009:.004;
     const br=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,.008),hairM);
-    br.position.set(ex,.176+(L.brow===2?.004:0),.092);br.rotation.z=-s*(L.brow===2?.22:.08);headJ.add(br);
+    br.position.set(ex,.188+(L.brow===2?.004:0),.092);br.rotation.z=-s*(L.brow===2?.22:.08);headJ.add(br);
     if(L.brow===2){const b2=br.clone();b2.position.x=ex+s*.014;b2.position.y=.172;b2.rotation.z=s*.12;headJ.add(b2)}
   });
   // nez
@@ -191,7 +191,7 @@ export function makeHuman(look){
   const up=ball(1,lipM,lw,lt,.009,14);up.position.set(0,.0745,.1);headJ.add(up);
   const lo=ball(1,lipM,lw*.92,lt*1.35,.01,14);lo.position.set(0,.0635,.099);headJ.add(lo);
   const mouth=new THREE.Group();mouth.position.set(0,.069,.099);headJ.add(mouth); // pour l'animation de parole
-  const mline=new THREE.Mesh(new THREE.TorusGeometry(lw*1.05,.0026,6,14,Math.PI),M('#7a2a2a',.5));mline.rotation.z=Math.PI;mline.position.y=.012;mline.scale.set(1,.55,1);mouth.add(mline);
+  const mline=new THREE.Mesh(new THREE.TorusGeometry(lw*1.25,.0032,6,16,Math.PI),M('#8a2f33',.5));mline.rotation.z=Math.PI;mline.position.y=.016;mline.scale.set(1,.7,1);mouth.add(mline);
 
   if(face){const rm=headJ.children.slice(facial0);rm.forEach(c=>headJ.remove(c))}
   // barbe
