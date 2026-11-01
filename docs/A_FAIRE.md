@@ -103,3 +103,9 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Données de l'enfant dans `adv.mus` : cours, jeux, défis d'instruments, créations (12 max, jamais exportées), badges (attribués uniquement quand les exercices correspondants sont validés).
 - À tester sur téléphone : son (volume, latence), fluidité de la 3D (mode économique via `kelas_quality`), lisibilité de la grille de composition.
 - À relire par un enseignant de musique : textes des cours et des instruments. Les sons sont synthétiques, non des enregistrements d'instruments réels.
+
+## Panneau des directions et réseau routier (01/11/2026)
+- Le panneau « CARTE » est remplacé par un panneau de directions au rond-point (aéroport, studio, école, centre commercial, aménagement des routes, gare, missions d'exploration, nouvelle cité). Le point d'action « Carte des lieux » reste à côté.
+- Route de l'aéroport à 1+1, 2+2, 3+3 puis 4+4 voies (`routeVoies` dans `src/routes.js`). Le studio de musique a été déplacé à x=64.
+- Bureau d'aménagement des routes (x=60, z=17) : `src/reseau.js`. 3 emplacements de routes (2 avenues nord-sud et une rocade) : construire, déplacer (3 positions), élargir (1 à 4 voies par sens). Coût en pièces + bitume ; démolir rembourse 60 %.
+- Limites : la route d'entrée de la nouvelle cité et les anneaux gardent leur largeur actuelle (des bâtiments les bordent) ; des arbres décoratifs peuvent apparaître sur les routes construites dans la zone Est ; les véhicules ne sont pas contraints de suivre les routes.

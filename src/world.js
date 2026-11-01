@@ -143,7 +143,7 @@ export function buildVille(opts){
     const BD=[['✈ AÉROPORT','#1f5f9e','D'],['🎵 STUDIO MUSIQUE','#7d3fd1','D'],['🏫 ÉCOLE','#2e7d32','D'],['🛒 CENTRE COMMERCIAL','#c0392b','D'],['📐 AMÉNAGEMENT DES ROUTES','#4a4a52','D'],['🚂 GARE','#8e5a2b','G'],['🧭 MISSIONS D’EXPLORATION','#2e9e4a','B'],['🏘 NOUVELLE CITÉ À RACHETER','#e67e22','B']];
     cyl(g,.09,.11,6,std('#4a3320',.9),-9,3,-3.9,8);
     BD.forEach((b,i)=>{
-      const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.4,.73),new THREE.MeshStandardMaterial({map:mkBoard(b[0],b[1],b[2]),transparent:true,alphaTest:.3,roughness:.6,side:THREE.DoubleSide}));
+      const pl=new THREE.Mesh(new THREE.PlaneGeometry(3.4,.73),new THREE.MeshStandardMaterial({map:mkBoard(b[0],b[1],b[2]),transparent:true,alphaTest:.3,roughness:.6}));
       pl.position.set(-9+(b[2]==='D'?1.2:b[2]==='G'?-1.2:0),5.5-i*.68,-3.78);pl.castShadow=true;g.add(pl)});
     const dl=new THREE.Mesh(new THREE.SphereGeometry(.2,10,8),std('#e0a526',.4,{metalness:.5}));dl.position.set(-9,6.15,-3.9);g.add(dl);
     colliders.push({x:-9,z:-3.9,r:.4});
