@@ -77,6 +77,24 @@ export const MODELES={
     box(g,.12,2.4,.12,M('#555'),4.2,1.2,D/2+4.4);box(g,1.1,1.1,.08,M('#c0392b'),4.2,2.7,D/2+4.4);
     enseigneToit(g,H,'AUTO-ÉCOLE','Permis · Conduite · Sécurité','#1f5f9e','🚦');
   },
+  agence(g){
+    // agence de détectives : façade bleu nuit, store beige, grande loupe et chapeau sur le toit
+    const BW=9,BD=7,H=4.2;
+    box(g,BW,H,BD,M('#2b3f6b'),0,H/2,0);box(g,BW+.5,.4,BD+.5,M('#1b2744'),0,H+.2,0);
+    box(g,BW*.9,.15,BD*.9,M('#d9d2c2'),0,H+.5,0);
+    box(g,1.4,2.4,.15,M('#4a2f1b'),-1.6,1.2,BD/2+.02);box(g,1.6,1.4,.12,new THREE.MeshStandardMaterial({color:0x9fd3f5,transparent:true,opacity:.6}),2,1.8,BD/2+.02);
+    box(g,5.2,.35,1.3,M('#e0c07a'),0,2.9,BD/2+.7);
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(7.6,1.5),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🕵️ AGENCE DE DÉTECTIVES',s:70,y:.42},{t:'BOYEKOLI · Enquêtes pour jeunes détectives',s:34,y:.78,b:false,c:'#ffe9a8'}],1024,200,'#1b2744','#ffffff'),roughness:.6}));
+    pl.position.set(0,H+1.4,BD/2-.2);g.add(pl);
+    // loupe géante
+    const lp=new THREE.Mesh(new THREE.TorusGeometry(.7,.1,10,24),M('#caa24a',.3,.6));lp.position.set(3.2,H+1.6,BD/2-.3);g.add(lp);
+    const lv=new THREE.Mesh(new THREE.CircleGeometry(.62,20),new THREE.MeshStandardMaterial({color:0x9fd3f5,transparent:true,opacity:.45}));lv.position.set(3.2,H+1.6,BD/2-.28);g.add(lv);
+    const mn=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,1.1,8),M('#6b4423'));mn.position.set(3.75,H+.95,BD/2-.3);mn.rotation.z=.7;g.add(mn);
+    // chapeau de détective
+    box(g,1.1,.12,1.1,M('#3a2a1a'),-3,H+.6,BD/2-.5);box(g,.7,.35,.7,M('#3a2a1a'),-3,H+.8,BD/2-.5);
+    // véhicule d'enquête garé
+    box(g,1.8,.7,3.4,M('#d6302b'),-5.8,.55,2.2);box(g,1.5,.6,1.7,M('#b02820'),-5.8,1.2,2.4);box(g,.5,.2,.8,M('#2c7fb8'),-5.8,1.6,2.4);
+  },
   centre(g){
     // grand centre commercial moderne : façade vitrée, ossature blanche, enseigne lumineuse, trois niveaux
     const BW=16,BD=7.5,H=12.5;
@@ -125,6 +143,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'agence',x:-40.5,z:0,ry:Math.PI/2,w:9,d:7,nom:'l’Agence de détectives',coul:'#2b3f6b',norot:true},
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},
   {id:'supermarche',x:-24,z:30,ry:0,interieur:'supermarche',nom:'le Supermarché',coul:'#1f7a4d'},
   {id:'musee',x:28,z:31,ry:0,interieur:'musee',nom:'le Musée du Congo',coul:'#8c5a2b'},
@@ -135,11 +154,11 @@ export function construireReperes(w,ov){
   const g=new THREE.Group();w.group.add(g);
   const portes=[];
   REPERES.map(r0=>Object.assign({},r0,(ov&&ov[r0.id])||{})).forEach(r=>{
-    const b=new THREE.Group();b.position.set(r.x,0,r.z);b.rotation.y=r.ry;g.add(b);b.userData.edit={type:'rep',id:r.id,nom:r.nom,w:r.w||W,d:r.d||D};
+    const b=new THREE.Group();b.position.set(r.x,0,r.z);b.rotation.y=r.ry;g.add(b);const rot90=Math.abs(Math.sin(r.ry))>.5;b.userData.edit={type:'rep',id:r.id,nom:r.nom,w:rot90?(r.d||D):(r.w||W),d:rot90?(r.w||W):(r.d||D),norot:!!r.norot};
     MODELES[r.id==='police'?'police':r.id==='univ'?'univ':r.id==='sante'?'sante':r.id==='biblio'?'biblio':r.id](b);
     const cs=Math.cos(r.ry),sn=Math.sin(r.ry);
     // emprise (le véhicule garé devant reste traversable)
-    const bw=r.w||W,bd=r.d||D;w.boxes.push({x0:r.x-bw/2,x1:r.x+bw/2,z0:r.z-bd/2,z1:r.z+bd/2});
+    const bw=r.w||W,bd=r.d||D,ex=rot90?bd:bw,ez=rot90?bw:bd;w.boxes.push({x0:r.x-ex/2,x1:r.x+ex/2,z0:r.z-ez/2,z1:r.z+ez/2});
     const dz=bd/2+1.4;
     portes.push(Object.assign({},r,{px:r.x+dz*sn,pz:r.z+dz*cs}));
   });

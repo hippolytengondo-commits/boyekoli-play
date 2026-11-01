@@ -67,7 +67,7 @@ export function creerAmenager(D){
     const o=sel.o,u=o.userData.edit,v=valide(o),c=coutSel();
     h+=`<b>${esc(nomObj(o))}</b>${u.type==='route'?' · '+routeCfg().len+' m · '+routeCfg().voies+'+'+routeCfg().voies+' voies':''}<br>`;
     h+='<div style="display:flex;align-items:center;flex-wrap:wrap">'+bt('◀','amDep(-1,0)')+bt('▲','amDep(0,-1)')+bt('▼','amDep(0,1)')+bt('▶','amDep(1,0)');
-    if(u.type==='rep')h+=bt('⟳','amTourner()');
+    if(u.type==='rep'&&!u.norot)h+=bt('⟳','amTourner()');
     if(u.type==='route')h+=bt('↔↕','amSens()')+bt('−','amLong(-4)')+bt('+','amLong(4)')+bt('1-4','amVoies()');
     h+='</div>';
     h+=`<small style="color:${v.ok?'#a5d6a7':'#ff8a80'}">${v.ok?'✔ Emplacement valide':'✖ '+esc(v.raison)}</small><br><small>Coût : ${c.pieces} 🪙${c.bitume?' + '+c.bitume+' 🛣️':''}</small><br>`;

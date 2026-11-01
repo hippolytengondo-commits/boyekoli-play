@@ -12,19 +12,9 @@ export const GUIDES={
   exploratrice:{ico:'🧭',nom:'Exploratrice Aimée',role:'Exploratrice'}
 };
 export const MODULES=[
- {id:'detective',ico:'🕵️',nom:'Agence de détectives',guide:'detective',txt:'Résous des enquêtes avec des indices de français, de logique et de calcul.',dossiers:[
-  {id:'d1',titre:'Le cahier disparu',intro:'Le cahier de la classe a disparu ! Lis les indices et trouve la logique de l’enquête.',qs:[
-   Q('Indice 1 : « Le voleur a laissé des traces de boue. » Quel est le mot au pluriel ?',['traces','boue','voleur','laissé'],0,'« traces » est au pluriel (une trace, des traces).'),
-   Q('Trois élèves sont suspects. Paul était à la bibliothèque, Léa au marché, Jo dans la cour. Le cahier est tombé dans la cour. Qui peut l’avoir pris ?',['Paul','Léa','Jo','Personne'],2,'Seul Jo était dans la cour, là où le cahier est tombé.'),
-   Q('Il y avait 24 cahiers. Il en reste 19. Combien en manque-t-il ?',['4','5','6','43'],1,'24 − 19 = 5 cahiers.'),
-   Q('Le témoin dit : « Il est parti hier. » Quel temps est utilisé ?',['Le présent','Le passé','Le futur','L’impératif'],1,'« est parti » indique une action passée.'),
-   Q('Quel mot est le contraire de « coupable » ?',['Faux','Innocent','Voleur','Juge'],1,'Le contraire de coupable est innocent.')]},
-  {id:'d2',titre:'Le trésor du marché',intro:'Une caisse du marché a été vidée. Observe, déduis, conclus.',qs:[
-   Q('La caisse contenait 500 FC. On a retrouvé 3 billets de 100 FC. Combien manque-t-il ?',['100 FC','200 FC','300 FC','500 FC'],1,'500 − 300 = 200 FC.'),
-   Q('Quel est le féminin de « voleur » ?',['Voleuse','Voleure','Volère','Volante'],0,'Voleur → voleuse.'),
-   Q('Les empreintes sont celles d’un pied de 30 cm. Le suspect A mesure 1 m, la suspecte B porte du 30. Qui est le plus probable ?',['A','B','Aucun','Les deux'],1,'La pointure correspond à B : c’est un indice, pas une preuve.'),
-   Q('Complète la suite logique : 2, 4, 8, 16, ...',['18','24','32','20'],2,'On double à chaque fois : 16 × 2 = 32.'),
-   Q('Pourquoi un enquêteur doit-il écouter plusieurs témoins ?',['Pour perdre du temps','Pour comparer les récits','Pour accuser vite','Pour avoir peur'],1,'Comparer les récits permet de trouver la vérité.')]}]},
+ {id:'detective',ico:'🕵️',nom:'Agence de détectives',guide:'detective',txt:'Deviens détective : visite l’agence, mène deux grandes enquêtes en 3D (le musée et l’école), analyse les indices au laboratoire.',dossiers:[
+  {id:'d1',titre:'Le mystère du musée',jeu:'musee',intro:'',qs:[]},
+  {id:'d2',titre:'Le mystère de l’école',jeu:'ecole',intro:'',qs:[]}]},
  {id:'laboratoire',ico:'🔬',nom:'Laboratoire scientifique',guide:'scientifique',txt:'Corps humain, cellules, plantes, animaux, système solaire et expériences.',dossiers:[
   {id:'l1',titre:'Le corps humain',intro:'Bienvenue au laboratoire ! Explorons le corps humain.',qs:[
    Q('Quel organe pompe le sang dans tout le corps ?',['Le cœur','Le foie','Le poumon','L’estomac'],0,'Le cœur est une pompe qui envoie le sang partout.'),

@@ -65,6 +65,7 @@ export function creerMetiers(D){
     metHub:()=>{const d=G.dialog;if(d&&d.kind==='metiers'){d.vue='hub';d.msg='';renderDialog()}else{openBox({kind:'metiers',vue:'hub',msg:''});parler('Pôle des métiers. Choisis un métier à découvrir.')}},
     metOuvrir:id=>{const d=G.dialog;d.vue='module';d.m=id;d.msg='';renderDialog();const m=mod(id);parler(GUIDES[m.guide].nom+' : '+m.txt)},
     metLancer:(mid,did)=>{const m=mod(mid),x=m.dossiers.find(z=>z.id===did),g=GUIDES[m.guide];
+      if(x.jeu){if(window.detOuvrir)window.detOuvrir(x.jeu);return}
       
       quiz3D({cle:'met:'+x.id,titre:m.nom+' · '+x.titre,intro:g.nom+' : '+x.intro,qs:x.qs,mat:'geo'})},
     metFerme:()=>{const d=G.dialog;if(d&&d.kind==='metiers'){d.vue='ferme';d.msg='';renderDialog()}else openBox({kind:'metiers',vue:'ferme',msg:''})},
