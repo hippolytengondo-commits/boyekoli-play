@@ -113,7 +113,7 @@ export function makeHuman(look){
   const face=fi?{rect:fi,cy:.5,kx:1.12,ky:1.08,y0:-.2}:null;
   if(face&&fi.skin)L.skin=fi.skin;
   const sk=new THREE.Color(L.skin);
-  const skinM=new THREE.MeshPhysicalMaterial({color:sk,roughness:.55,emissive:sk.clone().multiplyScalar(.09),sheen:.5,sheenRoughness:.5,sheenColor:sk.clone().multiplyScalar(1.5)});
+  const skinM=new THREE.MeshPhysicalMaterial({color:sk,roughness:.55,emissive:sk.clone().multiplyScalar(.16),sheen:.6,sheenRoughness:.5,sheenColor:sk.clone().multiplyScalar(1.5)});
   const skinDark=M(sk.clone().multiplyScalar(.7),.6);
   const hairM=M(L.hairHex,.5,.08);
   const cloth=M(L.c,.85,0,{normalMap:foldNormal(),normalScale:new THREE.Vector2(.5,.5)});
@@ -142,7 +142,7 @@ export function makeHuman(look){
   // cou et tête
   const neckJ=jnt(0,.6,0);spine.add(neckJ);
   const neck=caps(.045,.06,skinM);neck.position.y=.04;neckJ.add(neck);
-  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.12);neckJ.add(headJ);
+  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.5);neckJ.add(headJ);
   let headM=skinM;
   if(face){
     headM=new THREE.MeshStandardMaterial({color:sk,map:faceTexture(L.faceKey,L.faceUrl),roughness:.62,emissive:sk.clone().multiplyScalar(.05)});
@@ -157,9 +157,9 @@ export function makeHuman(look){
   [-1,1].forEach(s=>{const e=ball(.026,skinM,.5,1,.8);e.position.set(s*(W+.004),.125,-.005);headJ.add(e)});
   const facial0=headJ.children.length;
   // joues (fard léger)
-  if(L.blush>.05){[-1,1].forEach(s=>{const c=ball(.03,M('#d4607a',.9,0,{transparent:true,opacity:.18*L.blush*2}),1,.8,.3);c.position.set(s*.05,.095,.088);headJ.add(c)})}
+  if(L.blush>.05){[-1,1].forEach(s=>{const c=ball(.03,M('#d4607a',.9,0,{transparent:true,opacity:.3*L.blush*2}),1,.8,.3);c.position.set(s*.05,.095,.088);headJ.add(c)})}
   // yeux
-  const eyeR=.0175*(.85+L.eyeS*.5);
+  const eyeR=.0175*(.85+L.eyeS*.5)*1.32;
   const eyeWhite=M('#f7f3ec',.35),iris=M(L.eyeC,.25),pupil=M('#050302',.2),glint=new THREE.MeshBasicMaterial({color:0xffffff});
   const eyes=[];
   [-1,1].forEach(s=>{
@@ -191,7 +191,7 @@ export function makeHuman(look){
   const up=ball(1,lipM,lw,lt,.009,14);up.position.set(0,.0745,.1);headJ.add(up);
   const lo=ball(1,lipM,lw*.92,lt*1.35,.01,14);lo.position.set(0,.0635,.099);headJ.add(lo);
   const mouth=new THREE.Group();mouth.position.set(0,.069,.099);headJ.add(mouth); // pour l'animation de parole
-  const mline=new THREE.Mesh(new THREE.BoxGeometry(lw*1.7,.002,.004),M('#2a1210',.5));mouth.add(mline);
+  const mline=new THREE.Mesh(new THREE.TorusGeometry(lw*1.05,.0026,6,14,Math.PI),M('#7a2a2a',.5));mline.rotation.z=Math.PI;mline.position.y=.012;mline.scale.set(1,.55,1);mouth.add(mline);
 
   if(face){const rm=headJ.children.slice(facial0);rm.forEach(c=>headJ.remove(c))}
   // barbe
