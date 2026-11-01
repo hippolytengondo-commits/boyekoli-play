@@ -206,20 +206,20 @@ export function construireRes(w,etat,cb){
   const flat=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);o.receiveShadow=true;g.add(o);return o};
   const yMin=Z0-(Math.ceil(NB_TERRAINS/2)-1)*PAS-9;
   // route centrale vers le nord
-  flat(new THREE.PlaneGeometry(5.2,-14-yMin),dirt,CX,.02,(-14+yMin)/2);
-  trottoirsDroit(g,CX,-14,yMin,5.2,1.6);
-  if(etat.rond){trottoirsDroit(g,CX,-14,-8.6,5.2,1.6);trottoirsDroit(g,CX,8.6,13,5.2,1.6)}else trottoirsDroit(g,CX,-14,13,5.2,1.6);
+  flat(new THREE.PlaneGeometry(7,-14-yMin),dirt,CX,.02,(-14+yMin)/2);
+  trottoirsDroit(g,CX,-14,yMin,7,1.6);
+  if(etat.rond){trottoirsDroit(g,CX,-14,-8.6,7,1.6);trottoirsDroit(g,CX,8.6,13,7,1.6)}else trottoirsDroit(g,CX,-14,13,7,1.6);
   // tronçons bitumés (un par rangée de terrains) et points d'action pour bitumer les autres
   const NSEG=Math.ceil((-14-yMin)/PAS),spots=[],parkings=[];
   for(let i=0;i<NSEG;i++){
     const z1=-14-i*PAS,z2=Math.max(yMin,z1-PAS),id='res'+i;
-    if(etat.pave&&etat.pave.has(id))bitumeDroit(g,CX,z1,z2,5.2);
+    if(etat.pave&&etat.pave.has(id))bitumeDroit(g,CX,z1,z2,7);
     else spots.push({x:CX,z:z1-PAS/2,r:2.6,label:'Bitumer la route (tronçon '+(i+1)+')',run:()=>cb.route(id,'res',i)});
   }
   // liaison à travers le village : relie le quartier résidentiel aux quartiers de missions ; rond-point possible au centre
-  flat(new THREE.PlaneGeometry(5.2,27),dirt,CX,.02,-.5);
-  if(etat.pave&&etat.pave.has('liaison'))bitumeDroit(g,CX,-14,13,5.2);
-  else spots.push({x:CX+3.2,z:-8,r:2.6,label:'Bitumer la route du village (liaison)',run:()=>cb.route('liaison','liaison',0)});
+  flat(new THREE.PlaneGeometry(7,27),dirt,CX,.02,-.5);
+  if(etat.pave&&etat.pave.has('liaison'))bitumeDroit(g,CX,-14,13,7);
+  else spots.push({x:CX+4.4,z:-8,r:2.6,label:'Bitumer la route du village (liaison)',run:()=>cb.route('liaison','liaison',0)});
   if(etat.rond){rondPoint(g,CX,0);cols.push({x:CX,z:0,r:1.9})}
   else if(etat.pave&&etat.pave.has('liaison'))spots.push({x:CX,z:0,r:3,label:'Construire un rond-point au centre du village',run:()=>cb.rond()});
   // panneau d'entrée, côté village
@@ -227,7 +227,7 @@ export function construireRes(w,etat,cb){
   const en=new THREE.Mesh(new THREE.PlaneGeometry(3,1.6),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'QUARTIER',s:60,y:.25},{t:'RÉSIDENTIEL ↑',s:50,y:.52},{t:'Terrains à acheter',s:26,y:.78}],1024,546,'#0f2f6b','#ffffff'),roughness:.6}));
   en.position.set(CX+4,2.55,-11.9);g.add(en);cols.push({x:CX+4,z:-12,r:.4});
   // lampadaires le long de la route
-  for(let z=-20;z>yMin;z-=12)[-3.4,3.4].forEach(dx=>{cyl(g,.05,.07,3,std('#444',.5,{metalness:.5}),CX+dx,1.5,z,6);const a=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),new THREE.MeshBasicMaterial({color:0xfff0b0}));a.position.set(CX+dx,3.1,z);g.add(a);cols.push({x:CX+dx,z:z,r:.25})});
+  for(let z=-20;z>yMin;z-=12)[-4.8,4.8].forEach(dx=>{cyl(g,.05,.07,3,std('#444',.5,{metalness:.5}),CX+dx,1.5,z,6);const a=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),new THREE.MeshBasicMaterial({color:0xfff0b0}));a.position.set(CX+dx,3.1,z);g.add(a);cols.push({x:CX+dx,z:z,r:.25})});
 
   for(let k=0;k<NB_TERRAINS;k++){
     const p=posTerrain(k),t=new THREE.Group();t.position.set(p.x,0,p.z);t.rotation.y=p.ry;g.add(t);

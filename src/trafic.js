@@ -55,7 +55,7 @@ export function creerTrafic(parent,opt){
       const dir=i%2?1:-1;                    // -1 : vers le nord
       const v=voiture(kind,COL[i%COL.length]);
       Object.assign(v.userData,{dir:dir,v:(kind==='bus'||kind==='camion'?3.2:4.2)+r()*1.8,z:zS+(zN-zS)*r(),pause:0});
-      v.rotation.y=dir<0?Math.PI:0;v.position.set(cx+(dir<0?-1.3:1.3),0,v.userData.z);
+      v.rotation.y=dir<0?Math.PI:0;v.position.set(cx+(dir<0?-1.8:1.8),0,v.userData.z);
       g.add(v);agents.push({o:v,veh:true});
     }
   }
@@ -65,7 +65,7 @@ export function creerTrafic(parent,opt){
   for(let i=0;i<np;i++){
     const sx=i%2?'f':'h';
     const h=opt.makeHuman({s:sx,h:sx==='h'?1:.96,skin:PEAUX[i%PEAUX.length],c:TEINTES[(i*3)%TEINTES.length],k:i%3===0?'boubou':'pagne',co:sx==='h'?'courtes':'tresses'});
-    const dir=i%2?1:-1,x=cx+(i%4<2?-3.4:3.4);
+    const dir=i%2?1:-1,x=cx+(i%4<2?-4.4:4.4);
     h.userData.m={dir:dir,v:1.0+r()*.7,x:x};
     h.position.set(x,0,zS+(zN-zS)*r());h.rotation.y=dir<0?Math.PI:0;
     g.add(h);agents.push({o:h,veh:false});
@@ -78,15 +78,15 @@ export function creerTrafic(parent,opt){
           const d=a.o.userData;
           if(d.pause>0){d.pause-=dt;if(!joueur||!joueur.ok||d.pause>0)return}
           d.z+=d.dir*d.v*dt;
-          if(d.z<zN){d.z=zN;d.dir=1;a.o.rotation.y=0;a.o.position.x=cx+1.3}
-          else if(d.z>zS){d.z=zS;d.dir=-1;a.o.rotation.y=Math.PI;a.o.position.x=cx-1.3}
+          if(d.z<zN){d.z=zN;d.dir=1;a.o.rotation.y=0;a.o.position.x=cx+1.8}
+          else if(d.z>zS){d.z=zS;d.dir=-1;a.o.rotation.y=Math.PI;a.o.position.x=cx-1.8}
           a.o.position.z=d.z;
           // le véhicule heurte le joueur s'il est sur sa trajectoire
           if(joueur&&joueur.ok&&onHit){
             const dm=d.dim||{l:2.2,w:1};
             if(Math.abs(joueur.x-a.o.position.x)<dm.w+.2&&Math.abs(joueur.z-d.z)<dm.l+.3){d.pause=2.4;onHit({dir:d.dir,kind:dm.l>3?'camion':'véhicule',x:a.o.position.x,z:d.z})}
           }
-          if(opt.rond&&Math.abs(d.z)<6.65)a.o.position.x=cx+(d.dir<0?-1:1)*Math.max(1.3,Math.sqrt(6.65*6.65-d.z*d.z));
+          if(opt.rond&&Math.abs(d.z)<6.65)a.o.position.x=cx+(d.dir<0?-1:1)*Math.max(1.8,Math.sqrt(6.65*6.65-d.z*d.z));
         }else{
           const m=a.o.userData.m;let z=a.o.position.z+m.dir*m.v*dt;
           if(z<zN){z=zN;m.dir=1}else if(z>zS){z=zS;m.dir=-1}

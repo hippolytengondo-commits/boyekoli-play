@@ -1,31 +1,76 @@
-// Aventures scénarisées : un objectif, un parcours, des indices, des défis et une récompense. Contenu modifiable sans toucher au programme.
-// Chaque chapitre : lieu, scène racontée, question. Une bonne réponse révèle un indice ; l'aventure terminée offre un souvenir de collection.
+// Aventures en exploration libre : pas de route tracée. Le joueur rencontre des personnages, discute avec eux, récolte des pièces flottantes
+// et trouve des cachettes (derrière un buisson, sous un arbre, dans un tronc creux, sous une pierre). Contenu modifiable sans toucher au programme.
+// Dialogue : [{q:'pnj'|'toi', t:'…'}] ; choix : questions que le joueur peut poser ; x, z : position dans le monde (en mètres).
+const L=(...a)=>a.map(([q,t])=>({q,t}));
 export const AVENTURES=[
- {id:'tresor',decor:'savane',ico:'💎',titre:'À la recherche du trésor congolais',guide:'Mbuta Kasongo',
-  intro:'Le vieux Mbuta Kasongo t’a confié les morceaux d’une carte ancienne. Elle mène à un trésor caché quelque part en RDC. Pour retrouver chaque morceau, il faut voyager de province en province et résoudre les énigmes. Prêt, explorateur ?',
+ {id:'tresor',decor:'savane',ico:'💎',titre:'À la recherche du trésor congolais',guide:'mbuta',rayon:56,depart:{x:0,z:12},
+  intro:'Une carte ancienne a été déchirée en quatre morceaux. Ils sont cachés dans la savane et près de la rivière. Parle aux habitants, ramasse les pièces dorées qui flottent et fouille la nature pour retrouver le trésor !',
+  objet:'morceaux de la carte',pieces:14,
+  riviere:{z0:-30,z1:-22,gue:[9,21]},
   souvenir:{id:'av_coffre',ico:'🪙',nom:'Le coffre du trésor',txt:'Tu as retrouvé le trésor congolais : le vrai trésor, c’est tout ce que tu as appris en voyageant.'},
-  chapitres:[
-  {lieu:'Matadi · Kongo-Central',scene:'Le premier morceau de la carte est caché près du port de Matadi, là où le grand fleuve approche de la mer. Un pêcheur te dit : « Mon fleuve finit sa route dans un immense océan. »',q:'Dans quel océan le fleuve Congo se jette-t-il ?',o:['L’océan Atlantique','L’océan Indien','L’océan Pacifique','L’océan Arctique'],a:0,e:'Le fleuve Congo se jette dans l’océan Atlantique.',indice:'Premier morceau de la carte trouvé : une croix rouge marque le bord de l’eau.'},
-  {lieu:'Kisangani · Tshopo',scene:'Le deuxième indice parle d’une ville sur le fleuve, chef-lieu d’une province de la forêt : « Je suis le chef-lieu de la province de la Tshopo. »',q:'Quelle ville est le chef-lieu de la province de la Tshopo ?',o:['Kisangani','Goma','Matadi','Kikwit'],a:0,e:'Kisangani est le chef-lieu de la Tshopo, sur le fleuve Congo.',indice:'Deuxième morceau trouvé : une flèche indique l’est.'},
-  {lieu:'Goma · Nord-Kivu',scene:'À Goma, au bord du lac Kivu, un guide montre un grand volcan fumant : « Le troisième morceau est caché à ses pieds. Mais d’abord, dis-moi son nom ! »',q:'Quel volcan domine la ville de Goma ?',o:['Le Nyiragongo','Le Kilimandjaro','Le mont Cameroun','Le Vésuve'],a:0,e:'Le Nyiragongo est un volcan des Virunga, près de Goma.',indice:'Troisième morceau trouvé : un dessin de montagne.'},
-  {lieu:'Lubumbashi · Haut-Katanga',scene:'Au Katanga, un mineur t’explique que la région est célèbre pour un métal rouge-orangé qui conduit très bien l’électricité : « Nomme-le et je te donne le quatrième morceau. »',q:'Quel métal rouge-orangé est très présent au Katanga et sert à fabriquer des fils électriques ?',o:['Le cuivre','Le plomb','L’aluminium','Le fer blanc'],a:0,e:'Le cuivre est extrait au Katanga et sert à fabriquer des fils électriques.',indice:'Quatrième morceau trouvé : une étoile jaune.'},
-  {lieu:'Kinshasa · la capitale',scene:'Les quatre morceaux s’assemblent : l’étoile jaune, la montagne, la flèche, la croix… Ils pointent vers un musée de Kinshasa. Sur le coffre, une date est gravée : celle où le pays est devenu libre.',q:'Quel événement a eu lieu le 30 juin 1960 ?',o:['L’indépendance du Congo','La création du parc des Virunga','L’invention de la rumba','La construction du pont Maréchal'],a:0,e:'Le 30 juin 1960, le Congo est devenu indépendant.',indice:'Le coffre s’ouvre !'}]},
- {id:'foret',decor:'foret',ico:'🌳',titre:'Sauvons la forêt',guide:'Maman Zawadi',
-  intro:'La grande forêt du bassin du Congo est en danger. Maman Zawadi, gardienne de la forêt, a besoin de ton aide : il faut comprendre ce qui l’abîme, découvrir ceux qui y vivent et agir pour la protéger.',
+  pnj:[
+   {id:'mbuta',nom:'Mbuta Kasongo',x:8,z:3,ry:Math.PI*.9,look:{s:'h',h:1,skin:'#5a3319',c:'#8c5a2b',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Bonjour, petit explorateur ! Je suis Mbuta Kasongo. Ma grand-mère m’a confié une carte au trésor, mais le vent l’a déchirée en quatre morceaux.'],['toi','Un trésor ? Et où sont les morceaux ?'],['pnj','Cachés dans la nature, près de la rivière et dans la savane. Parle aux gens du coin : chacun connaît un bout de l’histoire. Et ramasse les pièces dorées qui flottent : elles brillent là où il y a du mystère !']),
+    choix:[{t:'Pourquoi ce trésor est-il important ?',rep:L(['pnj','Parce qu’il rappelle que le vrai trésor, c’est ce que l’on apprend en voyageant. Le Congo est immense : 26 provinces et 145 territoires !'])},
+           {t:'Que dois-je faire des morceaux ?',rep:L(['pnj','Rapporte-les-moi. Quand tu auras les quatre, je te dirai où ouvrir le coffre.'])}],
+    apres:'Alors, ces morceaux ? Il en manque encore. Écoute les habitants et fouille la nature !',
+    bilan:L(['pnj','Tu les as tous les quatre ! Regarde : les morceaux s’assemblent… et une date apparaît : le 30 juin 1960, le jour où le Congo est devenu indépendant.'],['toi','Et le coffre, où est-il ?'],['pnj','Il était sous mes yeux depuis le début : le voici ! Le vrai trésor, c’est tout ce que tu as appris en voyageant. Bravo, explorateur !'])},
+   {id:'pecheur',nom:'Pêcheur Lunda',x:-12,z:-18,ry:-Math.PI/2,look:{s:'h',h:.98,skin:'#6b4028',c:'#1f5f9e',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Salut ! Tu regardes mon fleuve ? Il finit sa route dans un immense océan : l’océan Atlantique.'],['toi','Vous avez vu quelqu’un cacher quelque chose ?'],['pnj','Oui ! Quelqu’un a glissé un petit coffre derrière un buisson d’épines, à l’ouest, le long de la rive.']),
+    choix:[{t:'Où traverse-t-on la rivière ?',rep:L(['pnj','Là-bas, à l’est : il y a un gué, un endroit peu profond où l’on passe à pied sans se mouiller.'])}],apres:'Bonne pêche… et bonne chasse au trésor !'},
+   {id:'voyageuse',nom:'Maman Mwamba',x:28,z:-2,ry:Math.PI,look:{s:'f',h:.97,skin:'#7a4a2e',c:'#e0a526',k:'pagne',co:'tresses'},
+    lignes:L(['pnj','Je viens de Kisangani, la grande ville sur le fleuve Congo : c’est le chef-lieu de la province de la Tshopo.'],['toi','Vous connaissez l’histoire de la carte ?'],['pnj','J’ai vu la terre fraîchement remuée sous le grand arbre, ici près. Va regarder : on dirait que quelqu’un a creusé.']),
+    apres:'Bonne route, petit explorateur !'},
+   {id:'mineur',nom:'Tata Mulumba',x:8,z:-42,ry:Math.PI/2,look:{s:'h',h:1,skin:'#5a3319',c:'#c0392b',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Moi, je travaillais au Katanga. Là-bas, on extrait le cuivre : un métal rouge-orangé qui conduit très bien l’électricité.'],['toi','Vous avez aussi un morceau de la carte ?'],['pnj','Moi, non… mais j’ai vu quelqu’un glisser un papier dans un tronc creux, de ce côté de la rivière, vers l’ouest. Et aussi sous une grosse pierre, à l’est.']),
+    apres:'Le cuivre sert à fabriquer des fils électriques. Retiens-le !'}],
+  cachettes:[
+   {id:'c1',type:'buisson',x:-32,z:-13,label:'Fouiller derrière le buisson d’épines',titre:'Derrière le buisson d’épines',txt:'Tu écartes les épines avec précaution… un petit coffre ! Dedans, le premier morceau de la carte.'},
+   {id:'c2',type:'arbre',x:26,z:-8,label:'Creuser sous le grand arbre',titre:'Sous le grand arbre',txt:'La terre est meuble. Tu creuses… et tu sors une boîte de métal avec le deuxième morceau de la carte.'},
+   {id:'c3',type:'tronc',x:-22,z:-44,label:'Regarder dans le tronc creux',titre:'Dans le tronc creux',txt:'Tu glisses la main dans le tronc creux : un papier plié ! C’est le troisième morceau de la carte.'},
+   {id:'c4',type:'pierre',x:34,z:-46,label:'Soulever la grosse pierre',titre:'Sous la grosse pierre',txt:'Tu soulèves la pierre à deux mains : dessous, le quatrième morceau de la carte !'}]},
+ {id:'foret',decor:'foret',ico:'🌳',titre:'Sauvons la forêt',guide:'zawadi',rayon:52,depart:{x:0,z:12},
+  intro:'La grande forêt est en danger : des arbres ont été coupés sans être replantés. Rencontre ceux qui y vivent, ramasse les pièces dorées et retrouve les graines rares cachées dans la forêt pour la replanter !',
+  objet:'graines rares',pieces:14,riviere:{z0:-28,z1:-23,gue:[-4,8]},
   souvenir:{id:'av_graine',ico:'🌱',nom:'La graine de la forêt',txt:'Tu as aidé à sauver la forêt. Plante, protège, et partage ce que tu sais !'},
-  chapitres:[
-  {lieu:'Lisière de la forêt',scene:'Des arbres géants sont tombés. Maman Zawadi te montre une zone vide : « Autrefois, il y avait ici une forêt dense. Que s’est-il passé ? »',q:'Laquelle de ces actions abîme le plus la forêt ?',o:['Couper trop d’arbres sans en replanter','Cueillir quelques fruits','Observer les oiseaux','Marcher sur les sentiers'],a:0,e:'Couper trop d’arbres sans en replanter fait disparaître la forêt et les animaux qui y vivent.',indice:'Cause trouvée : la coupe excessive des arbres.'},
-  {lieu:'Forêt de l’Ituri',scene:'Dans l’épaisseur de la forêt de l’Ituri, un animal discret apparaît entre les feuilles. Ses pattes sont rayées comme celles d’un zèbre, mais il est cousin de la girafe.',q:'Comment s’appelle cet animal ?',o:['L’okapi','Le zèbre','Le buffle','Le lion'],a:0,e:'L’okapi vit dans la forêt de l’Ituri. Si la forêt disparaît, il perd sa maison.',indice:'Habitant de la forêt rencontré : l’okapi.'},
-  {lieu:'Sous la canopée',scene:'Maman Zawadi lève les yeux vers les cimes : « La forêt est un grand poumon pour notre planète. Sais-tu pourquoi ? »',q:'Que font les arbres pour le climat ?',o:['Ils absorbent du dioxyde de carbone et rejettent de l’oxygène','Ils fabriquent du plastique','Ils chauffent l’air','Ils produisent de la fumée'],a:0,e:'Les arbres absorbent du dioxyde de carbone et rejettent de l’oxygène : c’est la photosynthèse.',indice:'Rôle des arbres compris : ils nous aident à respirer.'},
-  {lieu:'Village de lisière',scene:'Dans un village, des enfants demandent comment réparer ce qui a été abîmé. Maman Zawadi sort de petits plants d’arbres.',q:'Que peut-on faire pour aider la forêt à se reconstituer ?',o:['Replanter des arbres','Brûler les herbes','Jeter des déchets','Couper plus vite'],a:0,e:'Replanter des arbres aide la forêt à repousser.',indice:'Solution trouvée : replanter.'},
-  {lieu:'Place du village',scene:'Pour finir, tous les habitants se réunissent. Maman Zawadi demande : « Qu’est-ce que chacun peut faire, chaque jour, pour protéger la forêt ? »',q:'Quelle habitude protège la forêt ?',o:['Ne pas gaspiller le bois et le papier, et replanter','Laisser un feu allumé','Chasser tous les animaux','Abandonner ses déchets en forêt'],a:0,e:'Économiser le bois et le papier et replanter sont de petits gestes qui protègent la forêt.',indice:'La forêt est sauvée grâce à vous !'}]},
- {id:'virunga',decor:'volcans',ico:'🦍',titre:'Expédition au Virunga',guide:'Ranger Baraka',
-  intro:'Le ranger Baraka t’emmène dans le parc national des Virunga, le plus ancien parc d’Afrique, pour découvrir ses volcans, ses lacs et ses gorilles. Ouvre grands tes yeux et ton cahier !',
+  pnj:[
+   {id:'zawadi',nom:'Maman Zawadi',x:7,z:4,ry:Math.PI*.8,look:{s:'f',h:.97,skin:'#6b4028',c:'#2e7d32',k:'pagne',co:'tresses'},
+    lignes:L(['pnj','Bonjour mon enfant. Regarde autour de nous : autrefois, ici, il y avait une forêt dense. Des arbres ont été coupés sans être replantés.'],['toi','Comment peut-on la sauver ?'],['pnj','En replantant ! Il me faut quatre graines rares, cachées dans la forêt. Discute avec ceux qui y vivent : ils t’aideront à les retrouver.']),
+    choix:[{t:'Pourquoi la forêt est-elle si importante ?',rep:L(['pnj','Les arbres absorbent du dioxyde de carbone et rejettent de l’oxygène : c’est la photosynthèse. Cette forêt est la deuxième plus grande forêt tropicale du monde, après l’Amazonie.'])},
+           {t:'Qui vit dans la forêt ?',rep:L(['pnj','L’okapi, par exemple : cousin de la girafe, avec des pattes rayées. Dans la forêt de l’Ituri, il se cache dans les feuillages. Si la forêt disparaît, il perd sa maison.'])}],
+    apres:'Il me manque encore des graines. Cherche sous les arbres, dans les troncs et derrière les buissons !',
+    bilan:L(['pnj','Quatre graines rares ! Viens, nous allons les planter ensemble.'],['toi','Et après, la forêt va repousser ?'],['pnj','Oui, avec le temps. Économiser le bois et le papier, replanter et ne pas laisser de déchets : ce sont de petits gestes qui protègent la forêt. Merci, gardien de la forêt !'])},
+   {id:'charbonnier',nom:'Papa Charles',x:-14,z:-10,ry:Math.PI/2,look:{s:'h',h:1,skin:'#5a3319',c:'#6b4a2a',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Moi, je faisais du charbon de bois. J’ai coupé beaucoup d’arbres… j’ai compris que ce n’était pas bien sans en replanter.'],['toi','Vous avez vu des graines ?'],['pnj','Une petite fille en a caché sous le grand arbre, au nord-est. Va voir !']),
+    apres:'Maintenant, je replante autant d’arbres que j’en coupe.'},
+   {id:'amani',nom:'Petite Amani',x:20,z:-16,ry:-Math.PI/2,look:{s:'f',h:.8,skin:'#7a4a2e',c:'#e67e22',k:'pagne',co:'tresses'},
+    lignes:L(['pnj','Coucou ! Moi, je plante des petits arbres avec maman Zawadi. J’ai caché des graines dans un tronc creux, près du ruisseau.'],['toi','Et d’autres cachettes ?'],['pnj','Il y en a derrière un buisson, très loin à l’ouest, et sous une pierre au bord de l’eau, au nord !']),
+    apres:'Les graines germent après quelques jours si on les arrose !'}],
+  cachettes:[
+   {id:'c1',type:'arbre',x:26,z:-20,label:'Creuser sous le grand arbre',titre:'Sous le grand arbre',txt:'Tu creuses au pied de l’arbre : un petit sac de toile avec une graine rare !'},
+   {id:'c2',type:'tronc',x:14,z:-18,label:'Regarder dans le tronc creux',titre:'Dans le tronc creux',txt:'Au fond du tronc creux : une graine rare, bien emballée dans une feuille.'},
+   {id:'c3',type:'buisson',x:-34,z:-18,label:'Fouiller derrière le buisson',titre:'Derrière le buisson',txt:'Derrière le buisson, un petit coffret : une graine rare s’y cache !'},
+   {id:'c4',type:'pierre',x:-8,z:-40,label:'Soulever la pierre',titre:'Sous la pierre',txt:'Sous la pierre, au frais : une quatrième graine rare !'}]},
+ {id:'virunga',decor:'volcans',ico:'🦍',titre:'Expédition au Virunga',guide:'baraka',rayon:56,depart:{x:0,z:12},
+  intro:'Le parc national des Virunga abrite des volcans, un grand lac et des gorilles. Rencontre les gens du parc, ramasse les pièces dorées et retrouve les quatre objets laissés par les rangers pour découvrir où vit la famille de gorilles !',
+  objet:'objets des rangers',pieces:14,
   souvenir:{id:'av_plume',ico:'🪶',nom:'La plume du ranger',txt:'Tu as terminé l’expédition au Virunga. Les rangers protègent ce trésor de la nature.'},
-  chapitres:[
-  {lieu:'Entrée du parc',scene:'Baraka t’accueille à l’entrée du parc : « Bienvenue ! Nous sommes dans l’est du pays, dans une province du Kivu. »',q:'Dans quelle province se trouve la plus grande partie du parc des Virunga ?',o:['Le Nord-Kivu','Le Kongo-Central','Le Haut-Katanga','Le Kasaï'],a:0,e:'Le parc des Virunga se trouve surtout au Nord-Kivu.',indice:'Position repérée : le Nord-Kivu, à l’est du pays.'},
-  {lieu:'Forêt de montagne',scene:'Après une marche silencieuse, une famille de gorilles apparaît. Un grand mâle surveille le groupe, son dos couvert de poils gris.',q:'Comment appelle-t-on le grand mâle qui guide la famille de gorilles ?',o:['Le dos argenté','Le chef rouge','Le roi noir','Le museau blanc'],a:0,e:'Le mâle dominant est appelé « dos argenté » à cause de ses poils gris sur le dos.',indice:'Rencontre faite : la famille de gorilles de montagne.'},
-  {lieu:'Au pied des volcans',scene:'Baraka montre un cratère fumant : « Ce volcan contient un lac de lave brûlante, l’un des plus célèbres du monde. »',q:'Comment s’appelle ce volcan des Virunga, près de Goma ?',o:['Le Nyiragongo','Le Fuji','L’Etna','Le Stromboli'],a:0,e:'Le Nyiragongo possède un lac de lave dans son cratère.',indice:'Volcan identifié : le Nyiragongo.'},
-  {lieu:'Rives du lac',scene:'Vous descendez jusqu’à un grand lac aux eaux calmes qui borde la ville de Goma. Des pêcheurs y rentrent leurs pirogues.',q:'Quel lac borde la ville de Goma ?',o:['Le lac Kivu','Le lac Tchad','Le lac Victoria','Le lac Malawi'],a:0,e:'Goma est située au bord du lac Kivu.',indice:'Lac repéré : le lac Kivu.'},
-  {lieu:'Poste de rangers',scene:'Pour finir, Baraka te présente ses collègues, en uniforme vert, qui surveillent le parc jour et nuit : « Sans eux, les animaux seraient en danger. »',q:'Comment appelle-t-on les gardes qui protègent les animaux du parc ?',o:['Les rangers','Les pêcheurs','Les chauffeurs','Les marchands'],a:0,e:'Les rangers protègent les animaux et la forêt du parc.',indice:'Expédition réussie : le parc a besoin de ses protecteurs !'}]}
+  media:'img/musee/gorille.jpg',
+  pnj:[
+   {id:'baraka',nom:'Ranger Baraka',x:8,z:3,ry:Math.PI*.9,look:{s:'h',h:1,skin:'#5a3319',c:'#2e7d32',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Bienvenue dans le parc national des Virunga, créé en 1925 : c’est le plus ancien parc d’Afrique. Je suis le ranger Baraka.'],['toi','Qu’est-ce qu’un ranger ?'],['pnj','Un garde qui protège les animaux et la forêt, jour et nuit. Mes collègues ont laissé quatre objets cachés dans le parc : retrouve-les et je t’emmènerai voir les gorilles !']),
+    choix:[{t:'Où se trouve le parc ?',rep:L(['pnj','Surtout au Nord-Kivu, dans l’est du pays. Devant nous, tu vois le volcan Nyiragongo : son cratère contient un lac de lave !'])}],
+    apres:'Il te manque encore des objets. Parle aux gens du parc et fouille la nature !',
+    bilan:L(['pnj','Tu as retrouvé les quatre objets ! Bravo. Suis-moi doucement, sans faire de bruit…'],['pnj','Regarde : la famille de gorilles de montagne ! Le grand mâle qui la guide s’appelle le « dos argenté », à cause de ses poils gris sur le dos.'],['toi','Ils sont magnifiques !'],['pnj','Les rangers les protègent. Avec ton aide, ils auront toujours une forêt où vivre.'])},
+   {id:'pisteur',nom:'Pisteur Sébastien',x:-14,z:-12,ry:Math.PI/2,look:{s:'h',h:1,skin:'#6b4028',c:'#6b4a2a',k:'uniforme',co:'courtes'},
+    lignes:L(['pnj','Je suis pisteur : je suis les traces des gorilles. Ils vivent en famille, guidés par un grand mâle au dos argenté.'],['toi','Vous avez vu des objets des rangers ?'],['pnj','J’ai vu un carnet dans un tronc creux, à l’ouest, et une plume sous un grand arbre, au nord-est.']),
+    apres:'Marche doucement : les gorilles n’aiment pas le bruit.'},
+   {id:'pecheurk',nom:'Pêcheuse Neema',x:30,z:-6,ry:-Math.PI/2,look:{s:'f',h:.97,skin:'#7a4a2e',c:'#1f5f9e',k:'pagne',co:'tresses'},
+    lignes:L(['pnj','Je pêche au bord du lac Kivu, le lac qui borde la ville de Goma.'],['toi','Avez-vous trouvé quelque chose ?'],['pnj','Des jumelles sont cachées derrière un buisson, près du lac, et une carte du parc sous une pierre, plus au nord.']),
+    apres:'Le lac est calme, le matin. Les oiseaux y viennent boire.'}],
+  cachettes:[
+   {id:'c1',type:'arbre',x:26,z:-30,label:'Chercher sous le grand arbre',titre:'Sous le grand arbre',txt:'Sous l’arbre, tu trouves une plume verte : celle d’un ranger !'},
+   {id:'c2',type:'tronc',x:-28,z:-16,label:'Regarder dans le tronc creux',titre:'Dans le tronc creux',txt:'Dans le tronc creux, un carnet de notes du ranger : des dessins de gorilles !'},
+   {id:'c3',type:'buisson',x:34,z:-14,label:'Fouiller derrière le buisson',titre:'Derrière le buisson',txt:'Derrière le buisson : des jumelles de ranger !'},
+   {id:'c4',type:'pierre',x:-10,z:-40,label:'Soulever la pierre',titre:'Sous la pierre',txt:'Sous la pierre, une carte du parc des Virunga !'}]}
 ];

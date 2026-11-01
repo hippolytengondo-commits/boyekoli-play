@@ -160,7 +160,7 @@ export function construireStation(parent,cols,bxs,x,z,nom){
 
 // ---------- Gare : un train, un quai et un petit bâtiment. On y prend le train pour partir à l'aventure.
 export function construireGare(parent,cols,bxs,x,z){
-  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=Math.PI/2;parent.add(g);   // la voie longe le mur ouest du village
   box(g,12,.08,1.8,M('#5a5a5a',.95),0,.04,-1.8);                                  // ballast
   [-.7,.7].forEach(dz=>box(g,12,.06,.08,M('#8a8a8a',.4),0,.1,-1.8+dz));           // rails
   for(let i=-5;i<=5;i++)box(g,.18,.05,1.7,M('#5a3a22'),i*1.05,.07,-1.8);            // traverses
@@ -177,14 +177,14 @@ export function construireGare(parent,cols,bxs,x,z){
     cx+=l+.15;
   });
   box(g,1.1,.6,1.2,M('#222'),-4.9+.5,2.65,-1.8);cyl(g,.18,.22,.6,M('#222'),-4.9+2.4,2.75,-1.8,10);   // cabine et cheminée
-  bxs.push({x0:x-5.5,x1:x+5.4,z0:z-2.7,z1:z-.9});
+  bxs.push({x0:x-2.7,x1:x-.9,z0:z-5.4,z1:z+5.5});                              // train (repère tourné de 90°)
   // bâtiment de la gare
   box(g,4.2,3.2,2.2,M('#f4d9a0'),-3.2,1.6,3.6);box(g,4.6,.35,2.6,M('#8c2f2f'),-3.2,3.35,3.6);
   box(g,.9,1.9,.1,M('#4a2f1b'),-3.2,.95,2.48);[-4.4,-2.0].forEach(dx=>box(g,.7,.8,.1,M('#cfeaff',.2),dx,1.6,2.48));
-  bxs.push({x0:x-5.3,x1:x-1.1,z0:z+2.5,z1:z+4.7});
+  bxs.push({x0:x+2.5,x1:x+4.7,z0:z+1.1,z1:z+5.3});                             // bâtiment
   const pl=new THREE.Mesh(new THREE.PlaneGeometry(4.2,1.1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🚂 GARE',s:96,y:.38},{t:'Départ pour l’aventure',s:44,y:.8,b:false,c:'#ffe9a8'}],1024,268,'#1d4f91','#ffffff'),roughness:.6}));
   pl.position.set(-3.2,4.4,2.45);g.add(pl);cyl(g,.06,.06,1.2,M('#333'),-4.9,3.8,2.45,6);cyl(g,.06,.06,1.2,M('#333'),-1.5,3.8,2.45,6);
   // abri du quai
   [-.5,4.5].forEach(dx=>cyl(g,.1,.1,2.6,M('#555'),dx,1.5,.6,8));box(g,6,.15,2.2,M('#c0392b'),2,2.85,1.3);
-  return {x:x+2,z:z+1.2};
+  return {x:x+1.2,z:z-2};
 }

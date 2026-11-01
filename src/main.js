@@ -352,8 +352,8 @@ function construireVille(){
     });
   }
   SCENES.ville.spots=qr.spots;
-  // gare, juste à côté de la maison du joueur : le train mène aux aventures
-  {const gp=construireGare(w.group,w.colliders,w.boxes,-11.5,-8.3);
+  // gare, contre le mur ouest, juste à côté de la maison du joueur (celle de la maman) : le train mène aux aventures
+  {const gp=construireGare(w.group,w.colliders,w.boxes,-30.8,0);
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
@@ -400,6 +400,7 @@ function buildScene(){
   Object.keys(NPC).filter(k=>NPC[k].sc===G.sc).forEach(id=>addNpc(id,NPC[id]));
   Object.keys(AUTOP).filter(k=>AUTOP[k].sc===G.sc).forEach(id=>addNpc(id,AUTOP[id]));
   if(G.sc==='interieur')occupants().forEach(o=>addNpc(o.id,o));
+  if(G.sc==='aventure')AV.pnj().forEach(o=>addNpc(o.id,o));
   if(G.sc==='arene'){
     const gid=NPC[G.areneGuide]?G.areneGuide:'ilunga',gl=Object.assign({},NPC[gid].look);
     if(window.__FACES&&window.__FACES['portraits/'+gid])gl.faceKey='portraits/'+gid;
@@ -508,6 +509,7 @@ function updateCamera(dt){
 
 // ---------- HUD ----------
 function objective(){
+  if(G.sc==='aventure'&&AV)return AV.journal();
   const a=G.adv.done;
   if(!a.lola)return 'Objectif : va à l’école et parle à Mama Lola, la gardienne du portail.';
   if(!a.ilunga)return 'Objectif : entre dans l’école et va voir la Professeure Ilunga.';
@@ -650,7 +652,7 @@ function renderDialog(){
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='rayon'||d.kind==='caisse'||d.kind==='prov')h=SUP.html(d);
   else if(d.kind==='expo'||d.kind==='credits')h=MUSEE.html(d);
-  else if(d.kind==='avent'||d.kind==='recit'||d.kind==='avfin')h=AV.html(d);
+  else if(d.kind==='avent'||d.kind==='conv'||d.kind==='trouv'||d.kind==='avfin')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
