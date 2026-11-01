@@ -150,3 +150,8 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - `src/fashion.js` + `src/fashion/data.js` : mannequin 3D procédural (6 carnations, 3 morphologies, 7 coiffures, maquillage fictif), 9 modèles de tenues, 5 tissus (wax, bazin…), motifs, couture en 5 étapes, studio photo (4 fonds, 4 poses), défilé jouable (jauge de pose), portfolio (8 max), 7 missions (4 suffisent pour valider l'atelier → `done['met:m1']`, certificat), quiz de culture. `adv.mode2`. Bouton menu « Fashion Studio ».
 - L'ancien quiz « Tissus et coiffures » est repris dans l'onglet Accueil (Culture de la mode). Le mini-jeu « Salon de mode » (simMode) reste inchangé.
 - Limites : mannequin stylisé (formes simples), pas de bâtiment d'entrée dans le village, pas de test smartphone réel ; hook de test `fsTestDefile`.
+
+## Accès par bâtiments dans le village (demande : tous les jeux accessibles par un bâtiment, y compris en véhicule)
+- Quartier des métiers, à l'ouest du village (x -47, façades à l'est, aire de stationnement devant chaque porte) : Science Lab (z -12), Fashion Studio (z -24), Design Studio (z 12), Hôpital (z 26), Agence de détectives (z 0). Les points d'action (rayon 4,4 m) fonctionnent à pied ET au volant (`nearby()` utilise la position du véhicule).
+- Déjà accessibles avant : Studio de musique, Aéroport (simulateur de vol), Gare.
+- À faire pour les jeux suivants : Smart City (hôtel de ville, p.ex. x -47 z -36) et Space Explorer (cité de l'espace, p.ex. x -47 z 40) : ajouter un modèle dans `MODELES` (reperes.js), une entrée REPERES et une entrée dans l'objet `ACCES` de main.js.

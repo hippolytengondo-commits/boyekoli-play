@@ -141,6 +141,37 @@ export const MODELES={
     [3.2,4.4].forEach((x,i)=>box(g,.9,.8,.9,M(i?'#e0a526':'#c0392b'),x,.4,D/2+2.8));                                         // cageots de fruits
     enseigneToit(g,H,'SUPERMARCHÉ','Tout pour la maison · Bons prix','#1f7a4d','🛒');
   },
+  labo(g){
+    const H=6;box(g,W,H,D,M('#e8f1f2'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#1b9aa8'),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.3,D/2+.06);g.add(vi);porte(g,'#1b9aa8');
+    // flacon d'Erlenmeyer géant sur le toit et cheminée
+    const fl=new THREE.Mesh(new THREE.ConeGeometry(1.1,1.8,20),new THREE.MeshStandardMaterial({color:0x7fe0a8,transparent:true,opacity:.75}));fl.position.set(-3.2,H+1.4,-1);g.add(fl);cyl(g,.3,.3,1,M('#cfeaff',.2),-3.2,H+2.7,-1,12);
+    box(g,.6,1.8,.6,M('#8a8d91'),3.4,H+1.2,-1.5);
+    [-1,1].forEach(x=>{const c=cyl(g,.5,.5,.2,M('#ffffff'),x*3.3,.1,D/2+3.4,16)});
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'SCIENCE LAB','Chimie · Biologie · Physique','#1b9aa8','🔬');
+  },
+  design(g){
+    const H=6;box(g,W,H,D,M('#d9b48a'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#7a4a1e'),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.3,D/2+.06);g.add(vi);porte(g,'#c9733d');
+    // maquette de maison sur le toit : murs et toit en pyramide
+    box(g,2.2,1.3,1.8,M('#f2e3c6'),-3,H+1.15,-1);const py=new THREE.Mesh(new THREE.ConeGeometry(1.9,1,4),M('#b5503c'));py.rotation.y=Math.PI/4;py.position.set(-3,H+1.8+.35,-1);g.add(py);
+    box(g,.12,1.8,.12,M('#444'),3,H+1,-1);box(g,1.6,.9,.08,M('#f4d35e'),3.7,H+1.5,-1);
+    [-3.3,3.3].forEach(x=>box(g,.9,.5,.9,M('#a5532f'),x,.25,D/2+2.2));
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'DESIGN STUDIO','Architecture · Décoration','#c9733d','🏠');
+  },
+  modestudio(g){
+    const H=6;box(g,W,H,D,M('#f3d9e8'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#6a1b9a'),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.3,D/2+.06);g.add(vi);porte(g,'#e84393');
+    // deux mannequins de vitrine
+    [[-2.4,'#e84393'],[2.4,'#1b9aa8']].forEach(([x,c])=>{const k=new THREE.Mesh(new THREE.ConeGeometry(.55,1.4,14),M(c));k.position.set(x,.8,D/2-.8);g.add(k);const h=new THREE.Mesh(new THREE.SphereGeometry(.2,12,10),M('#7a4a2e'));h.position.set(x,1.7,D/2-.8);g.add(h)});
+    // ruban de couturière géant au-dessus de la porte
+    box(g,4.5,.25,.08,M('#f4c20d'),0,3.4,D/2+.1);for(let i=-4;i<=4;i++)box(g,.05,.25,.1,M('#222'),i*.5,3.4,D/2+.12);
+    [-3.3,3.3].forEach(x=>box(g,.7,2.2,.7,M(x<0?'#e84393':'#6a1b9a'),x,1.1,D/2+2.2));
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'FASHION STUDIO','Mode · Couture · Coiffure','#6a1b9a','👗');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -155,6 +186,9 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'labo',x:-47,z:-12,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
+  {id:'design',x:-47,z:12,ry:Math.PI/2,w:10,d:7,nom:'le Design Studio',coul:'#c9733d',norot:true},
+  {id:'modestudio',x:-47,z:-24,ry:Math.PI/2,w:10,d:7,nom:'le Fashion Studio',coul:'#6a1b9a',norot:true},
   {id:'hopital',x:-47,z:26,ry:Math.PI/2,w:14,d:9,nom:'l’Hôpital',coul:'#1b6ca8',norot:true},
   {id:'agence',x:-40.5,z:0,ry:Math.PI/2,w:9,d:7,nom:'l’Agence de détectives',coul:'#2b3f6b',norot:true},
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},

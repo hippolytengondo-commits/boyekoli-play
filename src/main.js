@@ -208,7 +208,7 @@ function resize(){
 window.addEventListener('resize',resize);
 
 // ---------- Scènes ----------
-let W=null;            // scène courante {group,colliders,boxes,bounds,update,...}
+window.__W=()=>W;let W=null;            // scène courante {group,colliders,boxes,bounds,update,...}
 let playerObj=null;
 let npcObjs={};let vehObjs={},vehT=0;
 let mangoGroup=null;
@@ -356,8 +356,8 @@ function construireVille(){
   {
     const rp=construireReperes(w,AMEN.AM().rep);
     rp.portes.forEach(r=>{
-      if(r.id==='hopital'){spotsExtra.push({x:r.px,z:r.pz,r:3,label:'🏥 BOYEKOLI MEDICAL CENTER : entrer',run:()=>HOPI.actions.medOuvrir()});return}
-      if(r.id==='agence'){spotAgence={x:r.px,z:r.pz,r:2.8,label:'🕵️ Agence de détectives : entrer',run:()=>DETEC.actions.detOuvrir()};return}
+      {const ACCES={hopital:['🏥 BOYEKOLI MEDICAL CENTER : entrer',()=>HOPI.actions.medOuvrir()],agence:['🕵️ Agence de détectives : entrer',()=>DETEC.actions.detOuvrir()],labo:['🔬 BOYEKOLI SCIENCE LAB : entrer',()=>SCIE.actions.sciOuvrir()],design:['🏠 BOYEKOLI DESIGN STUDIO : entrer',()=>DESI.actions.dsOuvrir()],modestudio:['👗 BOYEKOLI FASHION STUDIO : entrer',()=>FASH.actions.fsOuvrir()]};
+       if(ACCES[r.id]){spotsExtra.push({x:r.px,z:r.pz,r:4.4,label:ACCES[r.id][0],run:ACCES[r.id][1]});return}}
       const retour={x:r.px+(r.ry?0:0),z:r.pz+(r.ry?-1.6:1.6),phi:r.ry?-Math.PI/2:Math.PI/2};
       if(r.stage){
         const i=STAGES.findIndex(s=>s.id===r.stage),st=STAGES[i];
