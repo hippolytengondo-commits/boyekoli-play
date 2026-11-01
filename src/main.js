@@ -30,6 +30,8 @@ import {creerTrafic,voiture,moto,voitureJoueur,motoJoueur} from './trafic.js';
 import {creerEnrichissement} from './enrichissement.js';
 import {creerSupermarche} from './supermarche.js';
 import {creerMusee} from './musee.js';
+import {NIVEAUX as NIVEAUX_MUSEE} from './contenu/musee.js';
+const NB_NIVEAUX_MUSEE=NIVEAUX_MUSEE.length;
 import {creerAventures} from './aventures.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation} from './reperes.js';
@@ -1545,7 +1547,7 @@ function lancerQuiz3D(o){
   // pas de texte lettre par lettre : on lit l'introduction à voix haute et on entre directement dans la salle de réponses
   if(m3d){parlerFr(o.intro);G.dialog.i=1;lancerMission3D(G.dialog)}
 }
-function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(G.int.t==='supermarche'?3:5,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
+function changerEtageMusee(delta){const k=(G.int.n||1)+delta;G.int.n=Math.max(1,Math.min(G.int.t==='supermarche'?3:NB_NIVEAUX_MUSEE,k));goTo({to:'interieur',tx:0,tz:0,phi:-Math.PI/2});}
 const MUSEE=creerMusee({G,esc,save,gain,SFX,toast:t=>toast(t),openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,changerEtage:changerEtageMusee});
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;

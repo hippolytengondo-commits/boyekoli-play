@@ -64,7 +64,7 @@ function ilot(g,B,x,z,kinds){
 export function emplacementTableau(i,W,D){
   const back=[-6.6,-4,-1.4,1.4,4,6.6];
   if(i<6)return {x:back[i],z:-D/2+.08,ry:0};
-  return {x:-W/2+.08,z:-1.5+(i-6)*2.8,ry:Math.PI/2};
+  return {x:-W/2+.08,z:-2.2+(i-6)*3,ry:Math.PI/2};
 }
 const cacheTex={};
 function tableauPhoto(g,x,z,ry,e,couleur){

@@ -47,15 +47,37 @@ export const NIVEAUX=[
   {q:'Quel métal rouge-orangé est extrait au Katanga et sert à fabriquer des fils électriques ?',c:['Le cuivre','Le plomb','L’or','Le fer'],a:0,exp:'Le cuivre conduit très bien l’électricité.'},
   {q:'À quoi sert notamment le cobalt ?',c:['À fabriquer des batteries','À faire du pain','À fabriquer du papier','À nourrir les animaux'],a:0,exp:'Le cobalt entre dans la fabrication des batteries.'},
   {q:'Quel grand singe ne vit à l’état sauvage qu’en RDC ?',c:['Le bonobo','Le gorille de plaine','Le chimpanzé de l’Ouest','L’orang-outan'],a:0,exp:'Le bonobo ne vit à l’état sauvage qu’en RDC.'}]},
- {id:'arts',ico:'🎭',nom:'Arts, musique et traditions',couleur:'#c0392b',expos:[
+ {id:'arts',ico:'🎭',nom:'Arts et traditions',couleur:'#c0392b',expos:[
+  {id:'peuples',pasdephoto:true,ico:'🌍',titre:'Un pays aux mille visages',txt:'La RDC est le deuxième plus grand pays d’Afrique. On y compte plus de 200 groupes ethniques, chacun avec ses langues, ses traditions et ses coutumes.'},
   {id:'masque',ico:'🎭',titre:'Le masque kuba',img:'img/musee/masque.jpg',txt:'Les Kuba, au Kasaï, portent des masques lors des cérémonies importantes.'},
   {id:'nkisi',ico:'🗿',titre:'La statue nkisi',img:'img/musee/nkisi.jpg',txt:'Statue du peuple kongo à laquelle on associait des pouvoirs de protection.'},
   {id:'lukasa',ico:'🧭',titre:'Le lukasa',img:'img/musee/lukasa.jpg',txt:'Planchette ornée du peuple luba qui aidait à se rappeler l’histoire du royaume.'},
-  {id:'likembe',ico:'🎹',titre:'La likembe',img:'img/musee/likembe.jpg',txt:'Petit instrument à lamelles de métal que l’on joue avec les pouces.'},
-  {id:'langues',pasdephoto:true,ico:'🗣',titre:'Les langues et les plats',txt:'Le français est la langue officielle. Le lingala, le swahili, le kikongo et le tshiluba sont les quatre langues nationales. Le pondu (feuilles de manioc) et la chikwangue sont des plats très répandus.'},
-  {id:'rumba',pasdephoto:true,ico:'🎸',titre:'La rumba congolaise',txt:'La rumba congolaise est inscrite au patrimoine culturel immatériel de l’humanité par l’UNESCO depuis 2021. En 1960, Grand Kallé chante « Indépendance Cha Cha ».'}],
+  {id:'langues',pasdephoto:true,ico:'🗣',titre:'Les langues',txt:'Le français est la langue officielle. Le lingala, le swahili, le kikongo et le tshiluba sont les quatre langues nationales.'}],
   quiz:[
   {q:'Combien de langues nationales la RDC a-t-elle ?',c:['Quatre','Deux','Dix','Cent'],a:0,exp:'Le lingala, le swahili, le kikongo et le tshiluba : quatre langues nationales.'},
-  {q:'Quelle organisation a inscrit la rumba congolaise au patrimoine de l’humanité ?',c:['L’UNESCO','La FIFA','L’OMS','La Banque mondiale'],a:0,exp:'L’UNESCO a inscrit la rumba congolaise en 2021.'},
-  {q:'Quel plat est préparé avec des feuilles de manioc ?',c:['Le pondu','Le gâteau','La soupe de pâtes','La glace'],a:0,exp:'Le pondu est fait avec des feuilles de manioc pilées.'}]}
+  {q:'Environ combien de groupes ethniques compte la RDC ?',c:['Plus de 200','Deux','Une dizaine','Exactement 50'],a:0,exp:'La RDC compte plus de 200 groupes ethniques.'},
+  {q:'Quel peuple du Kasaï porte des masques lors des cérémonies importantes ?',c:['Les Kuba','Les Pygmées','Les Swahili','Les Lingala'],a:0,exp:'Les Kuba portent des masques lors des cérémonies importantes.'}]},
+ {id:'musique',ico:'🎶',nom:'Musique et danse',couleur:'#d35400',expos:[
+  {id:'rumba',pasdephoto:true,ico:'🎸',titre:'La rumba congolaise',txt:'Symbole de la musique congolaise, la rumba mêle rythmes africains, mélodies latines et instruments modernes. Grands artistes : Papa Wemba, Tabu Ley Rochereau, Franco Luambo, Koffi Olomidé, Mbilia Bel, Fally Ipupa, Ferré Gola. Elle est inscrite au patrimoine de l’humanité par l’UNESCO depuis 2021.'},
+  {id:'soukous',pasdephoto:true,ico:'💃',titre:'Le soukous',txt:'Variante dansante de la rumba, il a dominé les années 1980 et 1990. Artistes phares : Abeti Masikini et Zaïko Langa Langa.'},
+  {id:'ndombolo',pasdephoto:true,ico:'🕺',titre:'Le ndombolo',txt:'Évolution moderne du soukous, très populaire avec des artistes comme Werrason et JB Mpiana.'},
+  {id:'mutuashi',pasdephoto:true,ico:'🥁',titre:'Le mutuashi',txt:'Genre traditionnel du peuple luba du Kasaï, rythmé et très dansant, joué avec des percussions. Son icône : Tshala Muana.'},
+  {id:'likembe',ico:'🎹',titre:'La likembe',img:'img/musee/likembe.jpg',txt:'Petit instrument à lamelles de métal que l’on joue avec les pouces.'}],
+  quiz:[
+  {q:'Quel genre musical est considéré comme le symbole de la musique congolaise ?',c:['La rumba','Le jazz','Le rock','Le reggae'],a:0,exp:'La rumba congolaise, inscrite au patrimoine de l’humanité par l’UNESCO.'},
+  {q:'Quel genre est l’évolution moderne du soukous ?',c:['Le ndombolo','Le mutuashi','La rumba','Le slow'],a:0,exp:'Le ndombolo est l’évolution moderne du soukous.'},
+  {q:'Quelle artiste est l’icône du mutuashi, genre traditionnel luba du Kasaï ?',c:['Tshala Muana','Mbilia Bel','Abeti Masikini','Koffi Olomidé'],a:0,exp:'Tshala Muana est l’icône du mutuashi.'}]},
+ {id:'cuisine',ico:'🍲',nom:'Gastronomie',couleur:'#2e7d32',expos:[
+  {id:'pondu',ico:'🍲',titre:'Le pondu',txt:'Feuilles de manioc pilées et longuement cuites avec de l’huile de palme, des oignons et des poivrons, parfois avec des arachides ou du poisson fumé. C’est l’un des plats les plus répandus du pays ; il accompagne souvent le fufu.'},
+  {id:'fufu',ico:'🥣',titre:'Le fufu',txt:'Bouillie épaisse de farine de manioc ou de maïs, servie en boulettes. C’est l’accompagnement de base du pondu, de la viande ou du poisson.'},
+  {id:'mosaka',ico:'🍗',titre:'Le mosaka',txt:'Sauce à base de pulpe de noix de palme, servie avec du poulet ou du poisson. Plat très apprécié en RDC et dans d’autres pays de la région, comme le Gabon.'},
+  {id:'liboke',ico:'🐟',titre:'Le liboke',txt:'Poisson ou viande en papillote : enveloppé dans des feuilles de bananier ou de manioc, puis cuit à la vapeur. Très populaire près des eaux, comme à l’Équateur et à Kinshasa.'},
+  {id:'ndakala',ico:'🐠',titre:'Le ndakala',txt:'Petits poissons séchés et fumés, frits ou cuits en sauce avec des tomates et des épices. Plat populaire le long du fleuve Congo.'},
+  {id:'mikate',ico:'🍩',titre:'Les mikate',txt:'Beignets sucrés de pâte frite, souvent mangés au petit-déjeuner ou en collation. Spécialité de rue très prisée à Kinshasa.'},
+  {id:'mbika',ico:'🥘',titre:'Le mbika',txt:'Sauce épaisse de graines de courge broyées, cuite avec de la viande ou du poisson. Très consommée dans le centre du pays, notamment chez les Luba.'},
+  {id:'kwanga',ico:'🍃',titre:'La kwanga (chikwangue)',txt:'Manioc fermenté et cuit à la vapeur, emballé dans des feuilles. Aliment de base dans plusieurs régions, surtout dans l’ouest. On la sert avec du poisson, de la viande ou du pondu.'}],
+  quiz:[
+  {q:'Quel plat est fait de feuilles de manioc pilées, cuites avec de l’huile de palme ?',c:['Le pondu','Le gâteau','La soupe de pâtes','La glace'],a:0,exp:'Le pondu est fait de feuilles de manioc pilées.'},
+  {q:'Comment appelle-t-on le poisson ou la viande cuits à la vapeur dans des feuilles ?',c:['Le liboke','Le mikate','Le fufu','Le mbika'],a:0,exp:'Le liboke est cuit à la vapeur dans des feuilles de bananier ou de manioc.'},
+  {q:'Quelle spécialité de rue de Kinshasa est un beignet sucré ?',c:['Les mikate','Le pondu','Le ndakala','La kwanga'],a:0,exp:'Les mikate sont des beignets sucrés, très prisés à Kinshasa.'}]}
 ];

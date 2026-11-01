@@ -62,7 +62,29 @@ export const COLLECTIONS=[
   {id:'tr_moto',ico:'🏍',nom:'La moto-taxi',txt:'Rapide dans les embouteillages. Le casque est indispensable.'},
   {id:'tr_tshukudu',ico:'🛴',nom:'Le tshukudu',txt:'Trottinette en bois de la région de Goma, qui transporte de lourdes charges.'},
   {id:'tr_bus',ico:'🚌',nom:'Le bus',txt:'Il transporte beaucoup de personnes à la fois dans les grandes villes.'},
-  {id:'tr_avion',ico:'✈',nom:'L’avion',txt:'Il relie en quelques heures des villes très éloignées dans ce vaste pays.'}]}
+  {id:'tr_avion',ico:'✈',nom:'L’avion',txt:'Il relie en quelques heures des villes très éloignées dans ce vaste pays.'}]},
+ {id:'plats',nom:'Plats congolais',ico:'🍲',objets:[
+  {id:'pl_pondu',ico:'🍲',nom:'Le pondu',txt:'Feuilles de manioc pilées cuites à l’huile de palme : l’un des plats les plus répandus du pays.'},
+  {id:'pl_fufu',ico:'🥣',nom:'Le fufu',txt:'Bouillie épaisse de manioc ou de maïs, accompagnement de base de nombreux plats.'},
+  {id:'pl_mosaka',ico:'🍗',nom:'Le mosaka',txt:'Sauce de pulpe de noix de palme servie avec du poulet ou du poisson.'},
+  {id:'pl_liboke',ico:'🐟',nom:'Le liboke',txt:'Poisson ou viande cuits à la vapeur dans des feuilles de bananier ou de manioc.'},
+  {id:'pl_ndakala',ico:'🐠',nom:'Le ndakala',txt:'Petits poissons séchés et fumés, populaires le long du fleuve Congo.'},
+  {id:'pl_mikate',ico:'🍩',nom:'Les mikate',txt:'Beignets sucrés, spécialité de rue de Kinshasa.'},
+  {id:'pl_mbika',ico:'🥘',nom:'Le mbika',txt:'Sauce de graines de courge broyées, très consommée dans le centre du pays.'},
+  {id:'pl_kwanga',ico:'🍃',nom:'La kwanga',txt:'Manioc fermenté cuit à la vapeur dans des feuilles, aliment de base dans l’ouest du pays.'}]},
+ {id:'musiciens',nom:'Grands noms de la musique',ico:'🎤',objets:[
+  {id:'mu_wemba',ico:'🎤',nom:'Papa Wemba',txt:'Grand chanteur de la rumba congolaise (1949-2016), figure de l’élégance.'},
+  {id:'mu_tabuley',ico:'🎶',nom:'Tabu Ley Rochereau',txt:'Grand nom de la rumba congolaise.'},
+  {id:'mu_franco',ico:'🎸',nom:'Franco Luambo',txt:'Guitariste et chanteur majeur de la rumba congolaise.'},
+  {id:'mu_koffi',ico:'🎤',nom:'Koffi Olomidé',txt:'Chanteur congolais célèbre de la rumba.'},
+  {id:'mu_mbilia',ico:'🎶',nom:'Mbilia Bel',txt:'Grande voix féminine de la rumba congolaise.'},
+  {id:'mu_fally',ico:'🎤',nom:'Fally Ipupa',txt:'Chanteur congolais très populaire, qui remplit les grandes salles et les stades.'},
+  {id:'mu_ferre',ico:'🎤',nom:'Ferré Gola',txt:'Artiste de la rumba congolaise.'},
+  {id:'mu_abeti',ico:'💃',nom:'Abeti Masikini',txt:'Artiste phare du soukous, la variante dansante de la rumba.'},
+  {id:'mu_zaiko',ico:'🎶',nom:'Zaïko Langa Langa',txt:'Groupe phare du soukous.'},
+  {id:'mu_werrason',ico:'🕺',nom:'Werrason',txt:'Artiste très populaire du ndombolo.'},
+  {id:'mu_jbmpiana',ico:'🕺',nom:'JB Mpiana',txt:'Artiste très populaire du ndombolo.'},
+  {id:'mu_tshala',ico:'🥁',nom:'Tshala Muana',txt:'Icône du mutuashi, genre traditionnel luba du Kasaï.'}]}
   ,{id:'aventures',nom:'Souvenirs d’aventure',ico:'🧭',objets:[
   {id:'av_coffre',ico:'🪙',nom:'Le coffre du trésor',txt:'Tu as retrouvé le trésor congolais : le vrai trésor, c’est tout ce que tu as appris en voyageant.',special:true},
   {id:'av_graine',ico:'🌱',nom:'La graine de la forêt',txt:'Tu as aidé à sauver la forêt. Plante, protège, et partage ce que tu sais !',special:true},
