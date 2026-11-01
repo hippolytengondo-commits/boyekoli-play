@@ -142,7 +142,7 @@ export function makeHuman(look){
   // cou et tête
   const neckJ=jnt(0,.6,0);spine.add(neckJ);
   const neck=caps(.045,.06,skinM);neck.position.y=.04;neckJ.add(neck);
-  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.5);neckJ.add(headJ);
+  const headJ=jnt(0,.1,0);headJ.scale.setScalar(1.32);neckJ.add(headJ);
   let headM=skinM;
   if(face){
     headM=new THREE.MeshStandardMaterial({color:sk,map:faceTexture(L.faceKey,L.faceUrl),roughness:.62,emissive:sk.clone().multiplyScalar(.05)});
