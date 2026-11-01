@@ -1,7 +1,7 @@
 // Musée virtuel du Congo : cinq niveaux reliés par un escalator. Chaque niveau expose des tableaux (photos libres de droits ou illustrations),
 // lus à voix haute, et propose un quiz dans la salle de réponses. Les cinq quiz réussis donnent le « Passeport du musée ».
 import {NIVEAUX} from './contenu/musee.js';
-import {emplacementTableau} from './interieurs.js';
+import {emplacementTableau,bouts} from './interieurs.js';
 
 export function creerMusee(D){
   const {G,esc,toast,openBox,parler,quiz3D,changerEtage}=D;
@@ -18,9 +18,9 @@ export function creerMusee(D){
       L.push({x:p.x+sx,z:p.z+sz,r:1.5,label:(e.ico||'🏛')+' Voir : '+e.titre,run:()=>{openBox({kind:'expo',nid:niv.id,eid:e.id});parler(e.titre+'. '+e.txt)}});
     });
     L.push({x:0,z:.6,r:1.9,label:'🎯 Quiz du niveau : '+niv.nom+(faitQuiz(niv)?' (réussi ✔)':''),run:()=>lancerQuiz(niv)});
-    const ex=W/2-1.7;
-    if(k<NIVEAUX.length)L.push({x:ex,z:D2/2-1.4,r:1.5,label:'🔼 Escalator : monter au niveau '+(k+1)+' · '+NIVEAUX[k].nom,run:()=>changerEtage(+1)});
-    if(k>1)L.push({x:ex,z:D2/2-3.6,r:1.5,label:'🔽 Escalator : descendre au niveau '+(k-1),run:()=>changerEtage(-1)});
+    const bt=bouts(W,D2);
+    if(k<NIVEAUX.length)L.push({x:bt.monter.x,z:bt.monter.z,r:1.6,label:'🔼 Escalator : monter au niveau '+(k+1)+' · '+NIVEAUX[k].nom,run:()=>changerEtage(+1)});
+    if(k>1)L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre au niveau '+(k-1),run:()=>changerEtage(-1)});
     if(k===1)L.push({x:-W/2+1.8,z:D2/2-2,r:1.8,label:'📷 Crédits des photos',run:()=>openBox({kind:'credits'})});
     passeport();
     return L;

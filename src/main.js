@@ -34,7 +34,7 @@ import {NIVEAUX as NIVEAUX_MUSEE} from './contenu/musee.js';
 const NB_NIVEAUX_MUSEE=NIVEAUX_MUSEE.length;
 import {creerAventures} from './aventures.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
-import {construireReperes,construireStation} from './reperes.js';
+import {construireReperes,construireStation,construireGare} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
 import {buildChambre,buildCuisine,buildEtage} from './maisonplus.js';
 
@@ -352,6 +352,9 @@ function construireVille(){
     });
   }
   SCENES.ville.spots=qr.spots;
+  // gare, juste à côté de la maison du joueur : le train mène aux aventures
+  {const gp=construireGare(w.group,w.colliders,w.boxes,-11.5,-8.3);
+   SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);

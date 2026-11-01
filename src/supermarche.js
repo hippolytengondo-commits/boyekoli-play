@@ -24,6 +24,7 @@ export function questionsDe(sc,idx){
   ];
 }
 
+import {bouts} from './interieurs.js';
 export function creerSupermarche(D){
   const {G,esc,openBox,parler,quiz3D,depenser,toast,SFX,renderDialog,changerEtage}=D;
   const A=()=>{const a=G.adv;if(!a.panier)a.panier={};if(!a.provisions)a.provisions={};return a};
@@ -78,9 +79,9 @@ export function creerSupermarche(D){
       const k=Math.max(1,Math.min(NIVEAUX_SUPER.length,G.int.n||1)),niv=NIVEAUX_SUPER[k-1],W=dim.W,D2=dim.D,L=[];
       niv.rayons.forEach((r,i)=>L.push({x:-6.8+i*6.8,z:-D2/2+2.9,r:2.3,label:'Rayon '+r.nom+' : voir et acheter',run:()=>actions.supRayon(r.id)}));
       if(k===1)L.push({x:-.6,z:1.9,r:2.6,label:'Caisse : payer mes achats',run:()=>{openBox({kind:'caisse'})}});
-      const ex=W/2-1.7;
-      if(k<NIVEAUX_SUPER.length)L.push({x:ex,z:D2/2-1.4,r:1.5,label:'🔼 Escalator : monter au niveau '+(k+1)+' · '+NIVEAUX_SUPER[k].nom,run:()=>changerEtage(+1)});
-      if(k>1)L.push({x:ex,z:D2/2-3.6,r:1.5,label:'🔽 Escalator : descendre au niveau '+(k-1),run:()=>changerEtage(-1)});
+      const bt=bouts(W,D2);
+      if(k<NIVEAUX_SUPER.length)L.push({x:bt.monter.x,z:bt.monter.z,r:1.6,label:'🔼 Escalator : monter au niveau '+(k+1)+' · '+NIVEAUX_SUPER[k].nom,run:()=>changerEtage(+1)});
+      if(k>1)L.push({x:bt.descendre.x,z:bt.descendre.z,r:1.6,label:'🔽 Escalator : descendre au niveau '+(k-1),run:()=>changerEtage(-1)});
       return L;
     }
   };

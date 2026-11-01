@@ -157,3 +157,34 @@ export function construireStation(parent,cols,bxs,x,z,nom){
   [[5.2,3.2],[5.8,3.2]].forEach(([px,pz],i)=>cyl(g,.28,.28,.8,M(i?'#d6232c':'#1f5f9e'),px,.4,pz,10));
   return {pompes:pompes,x:x,z:z};
 }
+
+// ---------- Gare : un train, un quai et un petit bâtiment. On y prend le train pour partir à l'aventure.
+export function construireGare(parent,cols,bxs,x,z){
+  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  box(g,12,.08,1.8,M('#5a5a5a',.95),0,.04,-1.8);                                  // ballast
+  [-.7,.7].forEach(dz=>box(g,12,.06,.08,M('#8a8a8a',.4),0,.1,-1.8+dz));           // rails
+  for(let i=-5;i<=5;i++)box(g,.18,.05,1.7,M('#5a3a22'),i*1.05,.07,-1.8);            // traverses
+  box(g,11,.3,2.4,M('#b9b9b9',.9),0,.15,1.5);                                       // quai
+  box(g,11,.06,.2,M('#f1c40f'),0,.31,.4);                                           // ligne jaune
+  // train : locomotive verte et deux wagons
+  const corps=[['#1f7a4d',3.2,2.0],['#e0a526',3.0,1.7],['#1d4f91',3.0,1.7]];
+  let cx=-4.9;
+  corps.forEach(([c,l,h],i)=>{
+    box(g,l,h,1.6,M(c,.5),cx+l/2,h/2+.45,-1.8);
+    box(g,l-.2,.12,1.7,M('#3a3a3a'),cx+l/2,.5,-1.8);
+    [-l/2+.5,l/2-.5].forEach(dx=>[-.8,.8].forEach(dz=>{const r=cyl(g,.34,.34,.16,M('#222'),cx+l/2+dx,.38,-1.8+dz,14);r.rotation.x=Math.PI/2}));
+    for(let k=0;k<(i?3:2);k++)box(g,.55,.5,.04,M('#cfeaff',.2),cx+.7+k*.85,h*.65+.45,-.99);
+    cx+=l+.15;
+  });
+  box(g,1.1,.6,1.2,M('#222'),-4.9+.5,2.65,-1.8);cyl(g,.18,.22,.6,M('#222'),-4.9+2.4,2.75,-1.8,10);   // cabine et cheminée
+  bxs.push({x0:x-5.5,x1:x+5.4,z0:z-2.7,z1:z-.9});
+  // bâtiment de la gare
+  box(g,4.2,3.2,2.2,M('#f4d9a0'),-3.2,1.6,3.6);box(g,4.6,.35,2.6,M('#8c2f2f'),-3.2,3.35,3.6);
+  box(g,.9,1.9,.1,M('#4a2f1b'),-3.2,.95,2.48);[-4.4,-2.0].forEach(dx=>box(g,.7,.8,.1,M('#cfeaff',.2),dx,1.6,2.48));
+  bxs.push({x0:x-5.3,x1:x-1.1,z0:z+2.5,z1:z+4.7});
+  const pl=new THREE.Mesh(new THREE.PlaneGeometry(4.2,1.1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'🚂 GARE',s:96,y:.38},{t:'Départ pour l’aventure',s:44,y:.8,b:false,c:'#ffe9a8'}],1024,268,'#1d4f91','#ffffff'),roughness:.6}));
+  pl.position.set(-3.2,4.4,2.45);g.add(pl);cyl(g,.06,.06,1.2,M('#333'),-4.9,3.8,2.45,6);cyl(g,.06,.06,1.2,M('#333'),-1.5,3.8,2.45,6);
+  // abri du quai
+  [-.5,4.5].forEach(dx=>cyl(g,.1,.1,2.6,M('#555'),dx,1.5,.6,8));box(g,6,.15,2.2,M('#c0392b'),2,2.85,1.3);
+  return {x:x+2,z:z+1.2};
+}

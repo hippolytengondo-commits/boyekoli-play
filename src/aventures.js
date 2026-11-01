@@ -10,8 +10,8 @@ export function creerAventures(D){
   const courant=()=>find(G.av&&G.av.id);
   const texte=(c)=>c.scene+' '+c.e;
   const etat={ch:()=>{const a=courant();return a?st(a.id).ch:0},fini:()=>{const a=courant();return a?st(a.id).fini:false}};
-  function vueListe(){
-    let h='<h3>🧭 Aventures</h3><p style="font-size:13px">De vraies explorations : tu te promènes en 3D, tu suis le faisceau lumineux de lieu en lieu et tu écoutes l’histoire de chaque endroit. Tu peux reprendre là où tu t’es arrêté.</p>';
+  function vueListe(d){
+    let h=(d&&d.gare?'<h3>🚂 Gare · Destinations d’aventure</h3><p style="font-size:13px">Le train t’emmène vers des lieux à explorer à pied. Choisis ta destination !</p>':'<h3>🧭 Aventures</h3>')+'<p style="font-size:13px">De vraies explorations : tu te promènes en 3D, tu suis le faisceau lumineux de lieu en lieu et tu écoutes l’histoire de chaque endroit. Tu peux reprendre là où tu t’es arrêté.</p>';
     AVENTURES.forEach(a=>{const s=st(a.id);
       h+=`<button class="${s.fini?'':'p'}" onclick="avOuvrir('${a.id}')">${a.ico} ${esc(a.titre)}<br><small>${s.fini?'✔ Terminée':s.ch?'Étape '+(s.ch+1)+' sur '+a.chapitres.length:'À commencer'}</small></button>`});
     return h+'<button class="s" onclick="enMenu()">← Menu</button>';
@@ -30,7 +30,7 @@ export function creerAventures(D){
       const a=find(d.aid),s=st(a.id);
       return `<h3>${a.ico} ${esc(a.titre)}</h3><p>${esc(a.intro)}</p><p style="font-size:13px">Guide : <b>${esc(a.guide)}</b> · ${a.chapitres.length} étapes · marche jusqu’à la lumière dorée</p><button class="p" onclick="avGo()">${s.ch&&!s.fini?'Reprendre l’aventure':'Partir à l’aventure'}</button><button class="s" onclick="avListe()">← Aventures</button>`;
     }
-    return vueListe();
+    return vueListe(d);
   }
   function portes(){
     const r=G.avRet;if(G.sc!=='aventure'||!r)return [];
@@ -56,6 +56,7 @@ export function creerAventures(D){
     bouton:()=>{const n=AVENTURES.filter(a=>st(a.id).fini).length;return `<button onclick="avListe()">🧭 Aventures · ${n} sur ${AVENTURES.length} terminées</button>`},
     actions:{
       avListe:()=>openBox({kind:'avent'}),
+      avGare:()=>{openBox({kind:'avent',gare:true});parler('Bienvenue à la gare ! Choisis ta destination : le trésor congolais, la forêt à sauver ou le parc des Virunga.')},
       avOuvrir:id=>openBox({kind:'avent',aid:id}),
       avGo:()=>entrer(G.dialog.aid),
       avLire:()=>{const d=G.dialog;if(d&&d.kind==='recit'){const c=find(d.aid).chapitres[d.i];parler(texte(c),true)}},

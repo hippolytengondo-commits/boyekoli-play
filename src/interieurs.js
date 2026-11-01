@@ -38,6 +38,16 @@ function etagere(g,boxes,x,z,w,h,cols){
   for(let r=0;r<3;r++)for(let i=0;i<Math.floor(w/.35);i++)box(g,.22,.4,.25,std(cols[(i+r)%cols.length],.8),x-w/2+.3+i*.35,.6+r*.6,z+.05);
   boxes.push({x0:x-w/2,x1:x+w/2,z0:z-.25,z1:z+.25});
 }
+// escalator : on monte par l'extrémité basse (côté entrée), on descend par l'extrémité haute (côté mur du fond)
+export const bouts=(W,D)=>({x:W/2-1.7,monter:{x:W/2-1.7,z:D/2-.9},descendre:{x:W/2-1.7,z:D/2-7.1}});
+function escalator(g,B,W,D){
+  const ex=W/2-1.7;box(g,1.5,.1,6,std('#444',.6),ex,.05,D/2-3.6);
+  for(let i=0;i<10;i++)box(g,1.3,.12,.4,std(i%2?'#9aa3ad':'#c8ced4',.5),ex,.2+i*.1,D/2-1.0-i*.42);
+  [-.72,.72].forEach(dx=>box(g,.06,.9,5.2,std('#222',.5),ex+dx,.8,D/2-3.4));
+  B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
+  tableau(g,ex,2.3,D/2-.05,1.7,.5,[{t:'⬆ MONTER',s:44,y:.5}],'#1f7a4d');
+  tableau(g,ex,2.3,D/2-6.9,1.7,.5,[{t:'⬇ DESCENDRE',s:36,y:.5}],'#c0392b');
+}
 // ---- rayons garnis de produits en 3D ----
 const NOMS_SAC={'Farine de maïs (5 kg)':['FARINE','#f5efe3'],'Riz (2 kg)':['RIZ','#fff8e0'],'Sucre (1 kg)':['SUCRE','#ffffff'],'Haricots (1 kg)':['HARICOTS','#e6d2b0']};
 function rayonGarni(g,B,x,z,w,r){
@@ -110,11 +120,7 @@ const DECOR={
     // pupitre central du quiz
     box(g,1.2,.9,1.2,wood('#6b4226'),0,.45,-.6);box(g,.7,.18,.7,std(niv.couleur,.5),0,1.0,-.6);B.push({x0:-.8,x1:.8,z0:-1.2,z1:0});
     tableau(g,0,2.2,-D/2+.05,5,.9,[{t:niv.ico+' '+niv.nom.toUpperCase(),s:46,y:.5}],niv.couleur);
-    // escalator
-    const ex=W/2-1.7;box(g,1.5,.1,6,std('#444',.6),ex,.05,D/2-3.6);
-    for(let i=0;i<10;i++)box(g,1.3,.12,.4,std(i%2?'#9aa3ad':'#c8ced4',.5),ex,.2+i*.1,D/2-1.0-i*.42);
-    [-.72,.72].forEach(dx=>{box(g,.06,.9,5.2,std('#222',.5),ex+dx,.8,D/2-3.4)});
-    B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
+    escalator(g,B,W,D);
     banc(g,B,-3.2,1.6);banc(g,B,3.2,1.6);
   },
   supermarche(g,B,W,D,n){
@@ -129,11 +135,7 @@ const DECOR={
       [[-2.4,3.4],[1.2,3.4]].forEach(([x,z])=>{box(g,2.4,1.0,.9,wood('#3d4a5a'),x,.5,z);box(g,.5,.38,.04,std('#1b1b1b'),x-.5,1.2,z);B.push({x0:x-1.2,x1:x+1.2,z0:z-.5,z1:z+.5});
         tableau(g,x,2.5,D/2-.05,2.2,.6,[{t:'CAISSE',s:56,y:.5}],'#1f7a4d')});
     }else ilot(g,B,-4.5,-.6,k===2?['bouteille','jus','brique','boite']:['ballon','cartable','seau','casserole']);
-    // escalator
-    const ex=W/2-1.7;box(g,1.5,.1,6,std('#444',.6),ex,.05,D/2-3.6);
-    for(let i=0;i<10;i++)box(g,1.3,.12,.4,std(i%2?'#9aa3ad':'#c8ced4',.5),ex,.2+i*.1,D/2-1.0-i*.42);
-    [-.72,.72].forEach(dx=>box(g,.06,.9,5.2,std('#222',.5),ex+dx,.8,D/2-3.4));
-    B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
+    escalator(g,B,W,D);
     [[-8.6,3.4],[-7.9,3.4],[-7.2,3.4]].forEach(([x,z])=>{box(g,.6,.5,.9,std('#9aa3ad'),x,.55,z);box(g,.6,.04,.9,std('#c8ced4'),x,.9,z)});
   },
   autoecole(g,B,W,D,n){
