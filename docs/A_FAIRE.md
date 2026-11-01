@@ -27,7 +27,8 @@ Au début de la prochaine session : relire ce fichier et rappeler la liste à l'
 - Prendre contact avec le bureau de l'UNICEF à Kinshasa (section Éducation) ; s'enregistrer sur le portail des partenaires si la structure le permet.
 
 ## 5. Développement de BOYEKOLI PLAY
-- **Étape 1 de l'enrichissement réalisée (01/11/2026)** : collections et badges, surprise du jour, événement du jour (contenus dans `src/contenu/`). Prochaine étape : supermarché puis musée du Congo (`docs/FEUILLE_DE_ROUTE_ENRICHISSEMENT.md`).
+- **Étape 1 de l'enrichissement réalisée (01/11/2026)** : collections et badges, surprise du jour, événement du jour (contenus dans `src/contenu/`). 
+- **Étape 2 réalisée (01/11/2026)** : supermarché (rayons, défi des courses avec budget) et musée virtuel du Congo (6 salles, passeport du musée), placés à l'entrée sud de la cité. Textes du musée et des collections à faire relire par un enseignant. Prochaine étape : missions scénarisées (trésor congolais, expédition au Virunga, sauvons la forêt) (`docs/FEUILLE_DE_ROUTE_ENRICHISSEMENT.md`).
 - Hébergement : l'utilisateur n'a pas pu faire la connexion Cloudflare Pages le 01/11 (le projet est prêt : `npm run site`, branche de production `claude/new-session-h3plsh`). À reprendre quand il est disponible.
 - Test de bout en bout avec de vrais comptes : évaluations, classes, erreurs, communiqués avec fichier, rappel de communiqué non lu.
 - Vérifier sur téléphone : conduite avec volant, pédales, klaxon, carburant, stations-service, réponses d'auto-école.

@@ -45,7 +45,8 @@ export const COLLECTIONS=[
   {id:'hi_nkisi',ico:'🗿',nom:'La statue nkisi',txt:'Statue du peuple kongo à laquelle on associait des pouvoirs de protection.'},
   {id:'hi_lukasa',ico:'🧭',nom:'Le lukasa',txt:'Planchette ornée du peuple luba qui aidait à se rappeler l’histoire du royaume.'},
   {id:'hi_croix',ico:'✝',nom:'La croix de cuivre du Katanga',txt:'Ces croix de cuivre ont longtemps servi de monnaie dans la région du Katanga.'},
-  {id:'hi_raphia',ico:'🧵',nom:'Le tissu de raphia kuba',txt:'Tissu tressé à la main en fibres de raphia, brodé de motifs géométriques.'}]},
+  {id:'hi_raphia',ico:'🧵',nom:'Le tissu de raphia kuba',txt:'Tissu tressé à la main en fibres de raphia, brodé de motifs géométriques.'},
+  {id:'hi_passeport',ico:'🎫',nom:'Le passeport du musée',txt:'Tu as visité les six salles du musée virtuel du Congo.'}]},
  {id:'decouvertes',nom:'Découvertes scientifiques',ico:'🔬',objets:[
   {id:'de_okapi',ico:'🦓',nom:'L’okapi décrit en 1901',txt:'Les peuples de la forêt le connaissaient depuis toujours ; les scientifiques l’ont décrit en 1901.'},
   {id:'de_ebola',ico:'🧪',nom:'Le virus Ebola',txt:'Identifié en 1976 en RDC, près de la rivière Ebola. Des chercheurs congolais, dont le docteur Muyembe, y ont participé.'},

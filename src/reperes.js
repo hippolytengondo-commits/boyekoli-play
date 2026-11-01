@@ -76,6 +76,23 @@ export const MODELES={
     box(g,.12,2.4,.12,M('#555'),4.2,1.2,D/2+4.4);box(g,1.1,1.1,.08,M('#c0392b'),4.2,2.7,D/2+4.4);
     enseigneToit(g,H,'AUTO-ÉCOLE','Permis · Conduite · Sécurité','#1f5f9e','🚦');
   },
+  musee(g){
+    const H=7;box(g,W,H,D,M('#e9dcc0'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#8c5a2b'),0,H+.25,0);
+    fenetres(g,H,2);porte(g,'#8c5a2b');
+    [-3.6,-1.2,1.2,3.6].forEach(x=>cyl(g,.3,.34,H-1.2,M('#f7f1e1'),x,(H-1.2)/2+.3,D/2+1.9,12));
+    box(g,9,.4,2.6,M('#f7f1e1'),0,H-.7,D/2+1.6);
+    [[-6,'#c0392b'],[6,'#2e86de']].forEach(([x,c])=>{cyl(g,.06,.06,5,M('#777'),x,2.5,D/2+4.2,6);box(g,1.1,.7,.04,M(c),x+(x<0?.6:-.6),4.7,D/2+4.2)});
+    enseigneToit(g,H,'MUSÉE DU CONGO','Histoire · Cultures · Nature','#8c5a2b','🏺');
+  },
+  supermarche(g){
+    const H=6;box(g,W,H,D,M('#f4f1e8'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#1f7a4d'),0,H+.25,0);
+    box(g,W,1,.2,M('#1f7a4d'),0,H*.55,D/2+.06);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.1,D/2+.06);g.add(vi);
+    porte(g,'#1f7a4d');
+    [-3.8,-3.1,-2.4].forEach(x=>{box(g,.6,.5,.9,M('#9aa3ad'),x,.55,D/2+2.9);box(g,.6,.04,.9,M('#c8ced4'),x,.9,D/2+2.9)});   // chariots
+    [3.2,4.4].forEach((x,i)=>box(g,.9,.8,.9,M(i?'#e0a526':'#c0392b'),x,.4,D/2+2.8));                                         // cageots de fruits
+    enseigneToit(g,H,'SUPERMARCHÉ','Tout pour la maison · Bons prix','#1f7a4d','🛒');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -90,6 +107,8 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'concession',x:-22.2,z:9.6,ry:Math.PI,interieur:'concession',nom:'la Concession',coul:'#b8860b'},
+  {id:'supermarche',x:-24,z:30,ry:0,interieur:'supermarche',nom:'le Supermarché',coul:'#1f7a4d'},
+  {id:'musee',x:28,z:31,ry:0,interieur:'musee',nom:'le Musée du Congo',coul:'#8c5a2b'},
   {id:'autoecole',x:8.2,z:9.6,ry:Math.PI,interieur:'autoecole',nom:'l’Auto-école',coul:'#1f5f9e'}
 ];
 

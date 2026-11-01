@@ -13,7 +13,7 @@ const dalle=c=>std(c||'#d9dcd9',.6);
 
 // dimensions (largeur, profondeur, hauteur) selon le type et le niveau
 export const TAILLE=(t,n)=>{
-  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
+  const base={case:[5,4.5,2.8],maison:[7,5.5,3.2],villa:[9,6.5,3.6],ecole:[11,7,3.6],sante:[9,6.5,3.4],culture:[10,7,4.2],police:[8,6,3.2],autoecole:[10,7,3.4],concession:[10,7,3.6],supermarche:[14,9,3.8],musee:[16,10,4.2],pompiers:[10,7,4.2],sport:[10,8,4]}[t];
   const f=1+.12*(n-1);return [base[0]*f,base[1]*f,base[2]];
 };
 
@@ -55,6 +55,26 @@ const DECOR={
     box(g,2.6,1.05,.8,wood('#3d4a5a'),W/2-2.6,.52,-D/2+2.3);B.push({x0:W/2-3.9,x1:W/2-1.3,z0:-D/2+1.9,z1:-D/2+2.7});
     tableau(g,W/2-2.6,2.4,-D/2+.05,3.2,.8,[{t:'NOS VÉHICULES',s:60,y:.5}],'#b8860b');
     tableau(g,0,2.6,-D/2+.05,4.4,1,[{t:'🏍 MOTOS  ·  🚗 VOITURES',s:58,y:.5}],'#2b2b2b');
+  },
+  musee(g,B,W,D,n){
+    // six vitrines contre le mur du fond, chacune avec son panneau ; un banc au centre
+    const V=[['HISTOIRE','#8c5a2b'],['PERSONNALITÉS','#6a3d9a'],['MONUMENTS','#1f5f9e'],['RESSOURCES','#b8860b'],['CULTURES','#c0392b'],['NATURE','#2e7d32']];
+    V.forEach((v,i)=>{const x=-6.2+i*2.48;
+      box(g,1.9,.9,.9,wood('#6b4226'),x,.45,-D/2+1.2);box(g,1.9,1.1,.9,new THREE.MeshStandardMaterial({color:0x9fd6ff,transparent:true,opacity:.35,roughness:.1}),x,1.45,-D/2+1.2);
+      box(g,.5,.45,.4,std(v[1],.7),x,1.2,-D/2+1.2);B.push({x0:x-1,x1:x+1,z0:-D/2+.7,z1:-D/2+1.7});
+      tableau(g,x,3.1,-D/2+.05,2.3,.7,[{t:v[0],s:40,y:.5}],v[1])});
+    banc(g,B,-2,.8);banc(g,B,2,.8);
+    box(g,.9,.9,.9,wood('#6b4226'),0,.45,-1.3);box(g,.5,1.3,.5,std('#b8860b',.5),0,1.5,-1.3);B.push({x0:-.6,x1:.6,z0:-1.8,z1:-.8});
+  },
+  supermarche(g,B,W,D,n){
+    // 4 rayons contre le mur du fond, deux îlots au centre, une caisse près de l'entrée
+    const R=[['FRUITS ET LÉGUMES','#2e7d32',['#c0392b','#e0a526','#6aa84f','#d35400']],['ÉPICERIE','#8d5a3b',['#f5efe3','#c9a27a','#e0a526','#ffffff']],['BOISSONS','#1f5f9e',['#2e86de','#e0a526','#ffffff','#8e44ad']],['ÉCOLE ET MAISON','#6a3d9a',['#2e86de','#c0392b','#ffffff','#e0a526']]];
+    R.forEach((r,i)=>{const x=-4.8+i*3.2;etagere(g,B,x,-D/2+1.1,2.8,2.2,r[2]);tableau(g,x,2.9,-D/2+.05,2.8,.7,[{t:r[0],s:44,y:.5}],r[1])});
+    [-3.2,3.2].forEach((x,i)=>{etagere(g,B,x,-.5,2.6,1.2,R[i===0?0:2][2])});
+    box(g,2.8,1.05,.9,wood('#3d4a5a'),W/2-2.2,.52,D/2-3.2);B.push({x0:W/2-3.6,x1:W/2-.8,z0:D/2-3.7,z1:D/2-2.7});
+    box(g,.5,.4,.04,std('#1b1b1b'),W/2-2.6,1.2,D/2-3.2);
+    tableau(g,W/2-2.2,2.4,D/2-.05,2.4,.7,[{t:'CAISSE',s:60,y:.5}],'#1f7a4d');
+    [[-5.3,2.3],[-4.6,2.3],[-3.9,2.3]].forEach(([x,z])=>{box(g,.55,.5,.85,std('#9aa3ad'),x,.55,z)});
   },
   autoecole(g,B,W,D,n){
     // accueil : comptoir d'inscription à gauche, salle de cours à droite
@@ -133,8 +153,8 @@ const H3=n=>3.6;
 export function buildInterieur(t,n){
   const [W,D,H]=TAILLE(t,n);
   const g=new THREE.Group(),colliders=[],boxes=[];
-  const murs={case:'#d8b78a',maison:'#efe3c8',villa:'#f4efe4',ecole:'#f1e7cf',sante:'#eef3f3',culture:'#f0d9a8',autoecole:'#f6efc9',concession:'#ece7da',police:'#d6dde8',pompiers:'#e8d4cf',sport:'#e6e6e6'}[t];
-  room(g,W,D,H,paint(murs),(t==='sante'||t==='pompiers'||t==='police'||t==='autoecole')?dalle(t==='pompiers'?'#b9b9b9':'#d9e3e3'):sol(t==='case'?'#a8855a':'#a8744a'));
+  const murs={case:'#d8b78a',maison:'#efe3c8',villa:'#f4efe4',ecole:'#f1e7cf',sante:'#eef3f3',culture:'#f0d9a8',autoecole:'#f6efc9',concession:'#ece7da',supermarche:'#f2f2ea',musee:'#efe6d2',police:'#d6dde8',pompiers:'#e8d4cf',sport:'#e6e6e6'}[t];
+  room(g,W,D,H,paint(murs),(t==='sante'||t==='pompiers'||t==='police'||t==='autoecole'||t==='supermarche')?dalle(t==='pompiers'?'#b9b9b9':'#d9e3e3'):sol(t==='case'?'#a8855a':'#a8744a'));
   g.children.forEach(c=>{if(c.geometry&&c.geometry.type==='PlaneGeometry'&&c.rotation.x===-Math.PI/2&&c.material.map){c.material=c.material.clone();c.material.map=c.material.map.clone();c.material.map.repeat.set(W/2,D/2);c.material.map.needsUpdate=true}});
   fenetres(g,W,H,D,Math.max(1,Math.round(D/2.4)));
   DECOR[t](g,boxes,W,D,n);

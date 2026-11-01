@@ -28,6 +28,9 @@ import {coutRoute,COUT_ROND} from './routes.js';
 import {buildInterieur} from './interieurs.js';
 import {creerTrafic,voiture,moto,voitureJoueur,motoJoueur} from './trafic.js';
 import {creerEnrichissement} from './enrichissement.js';
+import {creerSupermarche} from './supermarche.js';
+import {creerMusee} from './musee.js';
+import {SALLES} from './contenu/musee.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
@@ -193,6 +196,11 @@ const SCENES={
  interieur:{build:()=>{const w=buildInterieur(G.int.t,G.int.n),r=G.int.ret;SCENES.interieur.doors=[{x:0,z:w.dim.D/2-.9,r:1.6,to:'ville',label:'Sortir',tx:r.x,tz:r.z,phi:r.phi}];
    SCENES.interieur.spots=G.int.k>=0?[{x:w.dim.W/2-1.4,z:w.dim.D/2-1.3,r:1.6,label:'Gérer ou améliorer cette construction',run:()=>openBox({kind:'terrain',k:G.int.k,msg:'',retInt:true})}]:[];
    if(G.int.t==='concession')SCENES.interieur.spots.push({x:w.dim.W/2-2.6,z:-w.dim.D/2+3.2,r:2,label:'Vendeur : acheter une moto ou une voiture',run:()=>openBox({kind:'conc',msg:''})});
+   if(G.int.t==='supermarche'){const W3=w.dim.W,D3=w.dim.D;
+     [['fruits','Fruits et légumes'],['epicerie','Épicerie'],['boissons','Boissons'],['ecole','École et maison']].forEach(([id,nom],i)=>SCENES.interieur.spots.push({x:-4.8+i*3.2,z:-D3/2+2.7,r:1.9,label:'Rayon '+nom+' : voir les prix',run:()=>SUP.actions.supRayon(id)}));
+     SCENES.interieur.spots.push({x:W3/2-2.2,z:D3/2-4.5,r:2,label:'Caisse : défi des courses (budget)',run:()=>SUP.actions.supCaisse()})}
+   if(G.int.t==='musee'){const D4=w.dim.D;
+     SALLES.forEach((sl,i)=>SCENES.interieur.spots.push({x:-6.2+i*2.48,z:-D4/2+2.6,r:1.5,label:sl.ico+' Salle : '+sl.nom,run:()=>MUSEE.actions.museeSalle(sl.id)}))}
    if(G.int.t==='autoecole'){const W2=w.dim.W,D2=w.dim.D;
      SCENES.interieur.spots.push({x:-W2/2+2.7,z:-D2/2+3.5,r:1.9,label:'Accueil : s’inscrire à l’auto-école',run:()=>openBox({kind:'insc',msg:'',etape:'accueil',prix:FRAIS_AE})},
        {x:W2/2-2.6,z:-D2/2+3.3,r:1.9,label:'Moniteur : leçons de conduite',run:()=>{if(G.adv.inscrit)openBox({kind:'ae'});else{toast('Inscris-toi d’abord à l’accueil.');SFX.ko()}}})}
@@ -372,6 +380,17 @@ function occupants(){
     const {W:Wd,D:Dd}=W.dim;
     return [{id:'vendeur',x:Wd/2-2.6,z:-Dd/2+1.6,ry:0,look:{s:'h',h:1,skin:'#5a3319',c:'#2c3e50',k:'uniforme',co:'courtes'}},
       {id:'client0',x:-1,z:.6,ry:Math.PI/2,look:{s:'f',h:.97,skin:'#7a4a2e',c:'#e0a526',k:'pagne',co:'tresses'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
+  }
+  if(I.t==='musee'){
+    const {W:Wd,D:Dd}=W.dim;
+    return [{id:'guide',x:2.5,z:Dd/2-3,ry:Math.PI,look:{s:'f',h:.97,skin:'#6b4028',c:'#8c5a2b',k:'pagne',co:'tresses'}},
+      {id:'visiteur0',x:-1.5,z:0,ry:Math.PI,look:{s:'h',h:.95,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
+  }
+  if(I.t==='supermarche'){
+    const {W:Wd,D:Dd}=W.dim;
+    return [{id:'caissiere',x:Wd/2-2.2,z:Dd/2-4.4,ry:0,look:{s:'f',h:.97,skin:'#6b4028',c:'#1f7a4d',k:'uniforme',co:'tresses'}},
+      {id:'client0',x:-3.2,z:1.2,ry:Math.PI,look:{s:'h',h:1,skin:'#7a4a2e',c:'#2e86de',k:'uniforme',co:'courtes'}},
+      {id:'client1',x:1.4,z:2.4,ry:Math.PI/2,look:{s:'f',h:.95,skin:'#5a3319',c:'#e0a526',k:'pagne',co:'tresses'}}].map(o=>Object.assign({sc:'interieur',name:'',short:''},o));
   }
   if(I.t==='autoecole'){
     const {W:Wd,D:Dd}=W.dim;
@@ -592,6 +611,8 @@ function renderDialog(){
   else if(d.kind==='menu')h=htmlMenu(d);
   else if(d.kind==='pompe')h=htmlPompe(d);
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
+  else if(d.kind==='rayon'||d.kind==='caisse')h=SUP.html(d);
+  else if(d.kind==='salle')h=MUSEE.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
@@ -1476,6 +1497,8 @@ function appliquerSave(s){
 const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w},PROGRAMME,CONTENU,missionCle,startMission:(a,b,c,o)=>startMission(a,b,c,o),getSave,applySave:appliquerSave,aProgression});
 // collections, surprise du jour et événement du jour
 const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
+const MUSEE=creerMusee({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
+const SUP=creerSupermarche({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
 let surpriseProposee=false;
 setInterval(()=>{
   if(surpriseProposee||G.mode!=='play'||G.dialog||G.monte||G.sc==='arene')return;
@@ -2451,7 +2474,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;
