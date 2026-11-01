@@ -77,9 +77,9 @@ export const MODELES={
     enseigneToit(g,H,'AUTO-ÉCOLE','Permis · Conduite · Sécurité','#1f5f9e','🚦');
   },
   musee(g){
-    const H=21;box(g,W,H,D,M('#e9dcc0'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#8c5a2b'),0,H+.25,0);
-    [3,6,9,12,15,18].forEach(y=>box(g,W+.2,.18,D+.2,M('#b8956a'),0,y,0));          // plateaux des étages
-    fenetres(g,H,7);porte(g,'#8c5a2b');
+    const H=24;box(g,W,H,D,M('#e9dcc0'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#8c5a2b'),0,H+.25,0);
+    [3,6,9,12,15,18,21].forEach(y=>box(g,W+.2,.18,D+.2,M('#b8956a'),0,y,0));          // plateaux des étages
+    fenetres(g,H,8);porte(g,'#8c5a2b');
     [-3.6,-1.2,1.2,3.6].forEach(x=>cyl(g,.3,.34,H-1.2,M('#f7f1e1'),x,(H-1.2)/2+.3,D/2+1.9,12));
     box(g,9,.4,2.6,M('#f7f1e1'),0,4.6,D/2+1.6);
     [[-6,'#c0392b'],[6,'#2e86de']].forEach(([x,c])=>{cyl(g,.06,.06,5,M('#777'),x,2.5,D/2+4.2,6);box(g,1.1,.7,.04,M(c),x+(x<0?.6:-.6),4.7,D/2+4.2)});

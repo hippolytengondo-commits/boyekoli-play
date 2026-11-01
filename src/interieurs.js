@@ -70,7 +70,7 @@ const cacheTex={};
 function tableauPhoto(g,x,z,ry,e,couleur){
   const gr=new THREE.Group();gr.position.set(x,0,z);gr.rotation.y=ry;g.add(gr);
   const W=1.7,H=2.1;
-  box(gr,W+.2,H+.2,.08,wood('#5a3a22'),0,1.95,0);
+  const cad=box(gr,W+.2,H+.2,.08,wood('#5a3a22'),0,1.95,0);
   const mat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7});
   const plan=new THREE.Mesh(new THREE.PlaneGeometry(W,H),mat);plan.position.set(0,1.95,.05);gr.add(plan);
   // illustration de secours (emoji) tant que la photo n'est pas disponible
@@ -78,7 +78,7 @@ function tableauPhoto(g,x,z,ry,e,couleur){
   if(e.img){
     if(cacheTex[e.img]&&cacheTex[e.img].image){mat.map=cacheTex[e.img];mat.needsUpdate=true}
     else new THREE.TextureLoader().load(e.img,t=>{t.colorSpace=THREE.SRGBColorSpace;cacheTex[e.img]=t;mat.map=t;mat.needsUpdate=true;
-      const a=t.image.width/t.image.height;plan.scale.set(Math.min(1,a*H/W),Math.min(1,W/(a*H)),1)},undefined,secours);
+      const a=t.image.width/t.image.height,w=a>=1?Math.min(2.2,1.45*a):2.1*a,h=a>=1?w/a:2.1;plan.scale.set(w/W,h/H,1);cad.scale.set((w+.2)/(W+.2),(h+.2)/(H+.2),1)},undefined,secours);
   }else secours();
   tableau(gr,0,.72,.05,1.9,.42,[{t:String(e.titre).slice(0,26),s:34,y:.5}],couleur);
 }
