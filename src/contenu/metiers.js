@@ -25,13 +25,8 @@ export const MODULES=[
  {id:'decoration',ico:'🏠',nom:'Atelier de décoration',guide:'architecte',txt:'BOYEKOLI DESIGN STUDIO : dessine une maison en 3D, aménage-la et décore-la.',dossiers:[
   {id:'a1',titre:'Ma première maison',deco:true,intro:'',qs:[]},
   {id:'a2',titre:'La villa familiale',deco:true,intro:'',qs:[]}]},
- {id:'mode',ico:'👗',nom:'Atelier mode et coiffure',guide:'artiste',txt:'Tissus africains, wax, pagnes, coiffures congolaises et défilés.',dossiers:[
-  {id:'m1',titre:'Tissus et coiffures',intro:'La mode congolaise est riche de couleurs et de savoir-faire.',qs:[
-   Q('Comment appelle-t-on le tissu de coton coloré très répandu en Afrique ?',['Le wax','Le jean','La soie sauvage','Le cuir'],0,'Le wax (pagne) est un tissu imprimé coloré.'),
-   Q('Au Congo, le grand mouvement d’élégance des « sapeurs » signifie…',['Société des Ambianceurs et des Personnes Élégantes','Société des Artisans Peintres','Service de Pompiers','Sport et Plein air'],0,'La SAPE : Société des Ambianceurs et des Personnes Élégantes.'),
-   Q('Pour un pagne de 2 m à 3 000 FC le mètre, le prix est…',['5 000 FC','6 000 FC','3 000 FC','9 000 FC'],1,'2 × 3 000 = 6 000 FC.'),
-   Q('Pourquoi se laver et peigner ses cheveux régulièrement ?',['Pour l’hygiène et la santé','Pour rien','Pour perdre du temps','Pour faire peur'],0,'L’hygiène évite poux et infections.'),
-   Q('Un défilé de mode sert à…',['présenter des créations','vendre du riz','réparer des vélos','compter des chèvres'],0,'Les mannequins présentent les créations.')]}]},
+ {id:'mode',ico:'👗',nom:'Atelier mode et coiffure',guide:'artiste',txt:'BOYEKOLI FASHION STUDIO : crée, couds et présente des tenues, coiffe ton mannequin.',dossiers:[
+  {id:'m1',titre:'Atelier mode et coiffure',fash:true,intro:'',qs:[]}]},
  {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'Aménage la ville : écoles, routes, énergie, eau et espaces verts.',dossiers:[
   {id:'v1',titre:'Aménager la ville',intro:'Une ville bien pensée est agréable pour tous. À toi de choisir !',qs:[
    Q('Où construire un nouvel hôpital ?',['Près des habitants, accessible par la route','Au milieu d’une décharge','Sur une rivière','Loin de tout'],0,'Un hôpital doit être accessible à tous.'),
