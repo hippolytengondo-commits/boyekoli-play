@@ -200,7 +200,7 @@ export function creerMusique(D){
     musCerFin:go=>{const w=document.getElementById('cerem');if(w)w.remove();if(go){V={ong:'profil'};dessineOnglets();rendre()}if(cer.length)setTimeout(cerSuite,300);else cerOn=false},
     musOuvrir:o=>ouvrir(o||'instr')
   };
-  window.__mus=()=>({V,MUS:MUS(),draft});
+  window.__mus=()=>({V,MUS:MUS(),draft,verif:verifBadges});
   return {actions,vues,JEUX,ouvrir,fermerCadre,verifBadges,son,audio,jouerSuite,jouerSon,fiche,rendre,maj,dessineOnglets,
     get V(){return V},set V(v){V=v},get hook(){return hook},set hook(h){hook=h},get studio(){return studio},get ctx(){return ctx},get syn(){return syn},get lecteur(){return lecteur},set lecteur(l){lecteur=l},
     get visu(){return visu},lanceVisu,stopLecture,btn,rot,$,MUS,A,jouable,noteNom,allumer,pratDevine,applaudir,ceremonie,cerSuite,get cer(){return cer},
