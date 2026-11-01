@@ -214,6 +214,7 @@ export function makeEspace(x){
     const r=await C.lireSauvegarde();
     if(!r.ok){maj({vue:'',msg:'Connecté. La progression sera envoyée plus tard.',erreur:false});return}
     if(r.data&&r.data.data&&r.data.data.nom){
+      C.fixerPlancher(Object.keys((r.data.data.adv&&r.data.data.adv.done)||{}).length);
       if(!x.aProgression()){x.applySave(r.data.data);maj({vue:'',msg:'Bienvenue ! Ta progression a été récupérée.',erreur:false});return}
       maj({vue:'choix',distant:r.data.data});return;
     }
@@ -230,7 +231,7 @@ export function makeEspace(x){
   function choisir(w){
     const d=D();
     if(w==='compte'){x.applySave(d.distant);maj({vue:'',distant:null,msg:'Ta progression a été récupérée.',erreur:false})}
-    else{C.envoyerSauvegarde(x.getSave());maj({vue:'',distant:null,msg:'Ta progression de cet appareil est sauvegardée.',erreur:false})}
+    else{C.fixerPlancher(0);C.envoyerSauvegarde(x.getSave());maj({vue:'',distant:null,msg:'Ta progression de cet appareil est sauvegardée.',erreur:false})}
   }
 
   // ---------- compte connecté ----------

@@ -30,6 +30,7 @@ import {creerTrafic,voiture,moto,voitureJoueur,motoJoueur} from './trafic.js';
 import {creerEnrichissement} from './enrichissement.js';
 import {creerSupermarche} from './supermarche.js';
 import {creerMusee} from './musee.js';
+import {creerAventures} from './aventures.js';
 import {SALLES} from './contenu/musee.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation} from './reperes.js';
@@ -47,9 +48,42 @@ const dist=(ax,az,bx,bz)=>Math.hypot(ax-bx,az-bz);
 const newAdv=()=>({done:{},stars:{},good:0,total:0,pieces:0,tissu:0,mangues:0,stock:{},maison:{},rev:{},xp:0,items:{},bought:{},fin:false});
 const G={ui:'photo',nom:'',photo:null,real:'pf1',voice:true,sexe:'f',look:Object.assign({},DEFAULT_LOOK,{acc:[]}),sound:true,music:true,mjBonus:null,sc:'ville',x:-13,z:0.5,ry:0,phi:0,pitch:.3,mode:'start',dialog:null,
   joy:{x:0,y:0},key:{x:0,y:0},speed:0,near:null,greeted:{},adv:newAdv(),mini:null,cine:null};
-function readSave(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+// ---------- Sauvegarde locale protégée : copies de secours, jamais de recul silencieux ----------
+const KB='kelas_game_v12_bak';
+const lireBrut=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+const nbFaites=x=>Object.keys((x&&x.adv&&x.adv.done)||{}).length;
+// copies de secours : 3 tournantes (une toutes les 90 s au plus), plus des copies protégées (avant un recul de progression, avant « nouvelle partie »)
+function copies(){
+  return [KB+'1',KB+'2',KB+'3',KB+'X',KB+'R'].map(k=>lireBrut(k)).filter(c=>c&&c.s&&c.s.nom)
+    .sort((a,b)=>nbFaites(b.s)-nbFaites(a.s)||b.t-a.t);
+}
+function ecrireCopie(k,s){try{localStorage.setItem(k,JSON.stringify({t:Date.now(),s:Object.assign({},s,{photo:null})}))}catch(e){}}
+let derniereCopie=0;
+function sauverLocal(){
+  try{
+    const nouv=getSave(),ancien=lireBrut(KEY);
+    if(ancien&&ancien.nom&&nbFaites(ancien)>nbFaites(nouv))ecrireCopie(KB+'X',ancien);   // la progression recule : on garde l'ancienne
+    localStorage.setItem(KEY,JSON.stringify(nouv));
+    if(Date.now()-derniereCopie>90000&&nouv.nom){
+      derniereCopie=Date.now();
+      const b2=localStorage.getItem(KB+'2'),b1=localStorage.getItem(KB+'1');
+      try{if(b2)localStorage.setItem(KB+'3',b2);if(b1)localStorage.setItem(KB+'2',b1)}catch(e){}
+      ecrireCopie(KB+'1',nouv);
+    }
+  }catch(e){}
+}
+// si la sauvegarde principale a disparu ou est illisible, on reprend la meilleure copie de secours
+function readSave(){
+  const s=lireBrut(KEY);if(s&&s.nom)return s;
+  const c=copies()[0];return c?c.s:s;
+}
+// à la fermeture ou quand l'application passe en arrière-plan : tout enregistrer tout de suite
+let sansFlush=false;   // vrai juste avant un rechargement voulu (restauration, nouvelle partie) : on n'écrase rien
+function flush(){if(G.nom&&!sansFlush){sauverLocal();CLOUD.envoyerVite&&CLOUD.envoyerVite(getSave)}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+addEventListener('pagehide',flush);
 const getSave=()=>({ui:G.ui,nom:G.nom,photo:G.photo,real:G.real,voice:G.voice,look:G.look,sound:G.sound,music:G.music,adv:G.adv});
-function save(){try{localStorage.setItem(KEY,JSON.stringify(getSave()))}catch(e){}CLOUD.planifierSauvegarde(getSave)}
+function save(){sauverLocal();CLOUD.planifierSauvegarde(getSave)}
 const doneNpc=id=>!!G.adv.done[id];
 const locked=id=>{const n=NPC[id];return !!(n.needs&&!doneNpc(n.needs))};
 // provinces et territoires : dans le cursus mais toujours accessibles ; missions scolaires du cursus : une ou deux à réussir avant certaines missions
@@ -613,6 +647,7 @@ function renderDialog(){
   else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='rayon'||d.kind==='caisse')h=SUP.html(d);
   else if(d.kind==='salle')h=MUSEE.html(d);
+  else if(d.kind==='avent')h=AV.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
@@ -1054,7 +1089,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+EN.boutons()
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1080,7 +1115,8 @@ window.quitterJeu=quitterJeu;
 let resetArmed=false;
 function resetGame(){
   if(!resetArmed){resetArmed=true;G.dialog.confirmReset=true;renderDialog();return}
-  try{localStorage.removeItem(KEY)}catch(e){}
+  sansFlush=true;
+  try{const a=lireBrut(KEY);if(a&&a.nom)ecrireCopie(KB+'R',a);localStorage.removeItem(KEY)}catch(e){}
   location.reload();
 }
 
@@ -1497,6 +1533,7 @@ function appliquerSave(s){
 const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w},PROGRAMME,CONTENU,missionCle,startMission:(a,b,c,o)=>startMission(a,b,c,o),getSave,applySave:appliquerSave,aProgression});
 // collections, surprise du jour et événement du jour
 const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
+const AV=creerAventures({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
 const MUSEE=creerMusee({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
 const SUP=creerSupermarche({G,esc,save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d)});
 let surpriseProposee=false;
@@ -1996,7 +2033,7 @@ function condQuestion(){
   ajusterReponses();
   majCq();condEcouter(false);
 }
-function ajusterReponses(){if(W.boards)disposerReponses(W.boards,innerWidth/innerHeight,camera.fov,(G.camOverride||11)+3.2)}
+function ajusterReponses(){if(W&&W.boards)disposerReponses(W.boards,innerWidth/innerHeight,camera.fov,(G.camOverride||11)+3.2)}
 addEventListener('resize',ajusterReponses);
 function majCq(){
   const c=G.cond,m=AE[c.m],s=sCond(),box=$('cq');
@@ -2429,7 +2466,17 @@ $('notifcom').onclick=()=>{
   else toast('Tu pourras lire ton communiqué après cette activité : ☰ puis Mon compte.');
 };
 // ---------- page d'accueil : présentation puis vraie page d'accueil ----------
+function majRestauration(){
+  let b=document.getElementById('hrestore');
+  const sv=lireBrut(KEY),c=copies()[0];
+  const utile=c&&nbFaites(c.s)>nbFaites(sv);
+  if(!utile){if(b)b.remove();return}
+  if(!b){b=document.createElement('button');b.id='hrestore';b.style.cssText='margin:8px 0;padding:10px;border-radius:12px;border:2px solid #e0a526;background:#fff8e1;font-weight:700;width:100%';$('cont').insertAdjacentElement('afterend',b)}
+  b.textContent='🛟 Récupérer ma progression sauvegardée ('+nbFaites(c.s)+' missions)';
+  b.onclick=()=>{if(confirm('Restaurer la copie de secours de '+(c.s.nom||'ta partie')+' avec '+nbFaites(c.s)+' missions accomplies ?')){sansFlush=true;try{localStorage.setItem(KEY,JSON.stringify(c.s))}catch(e){}location.reload()}};
+}
 function majAccueil(){
+  majRestauration();
   const s=CLOUD.session(),sv=readSave(),a=!!(sv&&sv.nom);
   $('hreprise').classList.toggle('hide',!a);
   $('cont').classList.toggle('hide',!a);
@@ -2474,7 +2521,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

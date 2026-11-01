@@ -1,6 +1,8 @@
 // Musée virtuel du Congo : salles à visiter (fiches illustrées) et deux questions par salle.
 // Première visite d'une salle : 1 pièce par bonne réponse + 1 pièce. Les six salles visitées donnent le « Passeport du musée » (collection).
 import {SALLES} from './contenu/musee.js';
+import {melanger,graine} from './melange.js';
+const vue=q=>melanger(q,graine(q.q));
 
 export function creerMusee(D){
   const {G,esc,save,gain,SFX,renderDialog,openBox}=D;
@@ -16,8 +18,8 @@ export function creerMusee(D){
     if(d.etat==='q'){
       const q=s.questions[d.k];
       h+=`<p style="font-size:12px;opacity:.7">Question ${d.k+1} sur ${s.questions.length}</p><p><b>${esc(q.q)}</b></p>`;
-      if(d.rep===undefined)q.o.forEach((t,i)=>{h+=`<button onclick="museeRep(${i})">${'ABCD'[i]} · ${esc(t)}</button>`});
-      else{h+=d.rep===q.a?`<p class="ok">✔ Bonne réponse ! ${esc(q.e)}</p>`:`<p class="ko">✖ Pas tout à fait. ${esc(q.e)}</p>`;h+=`<button class="p" onclick="museeSuiv()">${d.k+1<s.questions.length?'Question suivante ▶':'Terminer'}</button>`}
+      if(d.rep===undefined)vue(q).o.forEach((t,i)=>{h+=`<button onclick="museeRep(${i})">${'ABCD'[i]} · ${esc(t)}</button>`});
+      else{h+=d.rep===vue(q).a?`<p class="ok">✔ Bonne réponse ! ${esc(q.e)}</p>`:`<p class="ko">✖ Pas tout à fait. ${esc(q.e)}</p>`;h+=`<button class="p" onclick="museeSuiv()">${d.k+1<s.questions.length?'Question suivante ▶':'Terminer'}</button>`}
       return h;
     }
     h+=`<div style="font-size:48px;text-align:center">${d.nouveau?'🎉':'👍'}</div><p style="text-align:center"><b>${d.bon} bonne${d.bon>1?'s':''} réponse${d.bon>1?'s':''} sur ${s.questions.length}</b>`;
@@ -32,7 +34,7 @@ export function creerMusee(D){
     actions:{
       museeSalle:id=>openBox({kind:'salle',sid:id,etat:'fiches'}),
       museeGo:()=>{const d=G.dialog;d.etat='q';d.k=0;d.bon=0;d.rep=undefined;renderDialog()},
-      museeRep:i=>{const d=G.dialog,q=SALLES.find(x=>x.id===d.sid).questions[d.k];if(d.rep!==undefined)return;d.rep=i;if(i===q.a){d.bon++;SFX.ok()}else SFX.ko();renderDialog()},
+      museeRep:i=>{const d=G.dialog,q=SALLES.find(x=>x.id===d.sid).questions[d.k];if(d.rep!==undefined)return;d.rep=i;if(i===vue(q).a){d.bon++;SFX.ok()}else SFX.ko();renderDialog()},
       museeSuiv:()=>{
         const d=G.dialog,s=SALLES.find(x=>x.id===d.sid);
         if(d.k+1<s.questions.length){d.k++;d.rep=undefined;renderDialog();return}

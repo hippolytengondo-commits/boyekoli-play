@@ -46,7 +46,7 @@ export const COLLECTIONS=[
   {id:'hi_lukasa',ico:'🧭',nom:'Le lukasa',txt:'Planchette ornée du peuple luba qui aidait à se rappeler l’histoire du royaume.'},
   {id:'hi_croix',ico:'✝',nom:'La croix de cuivre du Katanga',txt:'Ces croix de cuivre ont longtemps servi de monnaie dans la région du Katanga.'},
   {id:'hi_raphia',ico:'🧵',nom:'Le tissu de raphia kuba',txt:'Tissu tressé à la main en fibres de raphia, brodé de motifs géométriques.'},
-  {id:'hi_passeport',ico:'🎫',nom:'Le passeport du musée',txt:'Tu as visité les six salles du musée virtuel du Congo.'}]},
+  {id:'hi_passeport',ico:'🎫',nom:'Le passeport du musée',txt:'Tu as visité les six salles du musée virtuel du Congo.',special:true}]},
  {id:'decouvertes',nom:'Découvertes scientifiques',ico:'🔬',objets:[
   {id:'de_okapi',ico:'🦓',nom:'L’okapi décrit en 1901',txt:'Les peuples de la forêt le connaissaient depuis toujours ; les scientifiques l’ont décrit en 1901.'},
   {id:'de_ebola',ico:'🧪',nom:'Le virus Ebola',txt:'Identifié en 1976 en RDC, près de la rivière Ebola. Des chercheurs congolais, dont le docteur Muyembe, y ont participé.'},
@@ -63,4 +63,8 @@ export const COLLECTIONS=[
   {id:'tr_tshukudu',ico:'🛴',nom:'Le tshukudu',txt:'Trottinette en bois de la région de Goma, qui transporte de lourdes charges.'},
   {id:'tr_bus',ico:'🚌',nom:'Le bus',txt:'Il transporte beaucoup de personnes à la fois dans les grandes villes.'},
   {id:'tr_avion',ico:'✈',nom:'L’avion',txt:'Il relie en quelques heures des villes très éloignées dans ce vaste pays.'}]}
+  ,{id:'aventures',nom:'Souvenirs d’aventure',ico:'🧭',objets:[
+  {id:'av_coffre',ico:'🪙',nom:'Le coffre du trésor',txt:'Tu as retrouvé le trésor congolais : le vrai trésor, c’est tout ce que tu as appris en voyageant.',special:true},
+  {id:'av_graine',ico:'🌱',nom:'La graine de la forêt',txt:'Tu as aidé à sauver la forêt. Plante, protège, et partage ce que tu sais !',special:true},
+  {id:'av_plume',ico:'🪶',nom:'La plume du ranger',txt:'Tu as terminé l’expédition au Virunga. Les rangers protègent ce trésor de la nature.',special:true}]}
 ];

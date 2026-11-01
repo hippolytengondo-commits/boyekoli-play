@@ -93,7 +93,7 @@
   </div>
   <div id="load">Chargement du village…<i><b id="lb"></b></i></div>
 </div>
-<div id="errbox" style="display:none;position:fixed;left:0;right:0;top:0;z-index:99999;background:#b3261e;color:#fff;font:13px/1.4 system-ui,sans-serif;padding:10px 14px"><b>Une erreur est survenue.</b> <span id="errtxt"></span><br><button onclick="location.reload()" style="margin:6px 6px 0 0;padding:6px 12px">Recharger</button><button onclick="try{localStorage.clear()}catch(e){}location.reload()" style="padding:6px 12px">Effacer la sauvegarde et recharger</button></div>
+<div id="errbox" style="display:none;position:fixed;left:0;right:0;top:0;z-index:99999;background:#b3261e;color:#fff;font:13px/1.4 system-ui,sans-serif;padding:10px 14px"><b>Un petit souci est survenu.</b> Ta progression est conservée.<br><span id="errtxt" style="font-size:11px;opacity:.8"></span><br><button onclick="location.reload()" style="margin:6px 6px 0 0;padding:6px 12px">Recharger</button><button onclick="document.getElementById('errbox').style.display='none'" style="padding:6px 12px">Fermer</button></div>
 <script>window.addEventListener('error',function(e){var b=document.getElementById('errbox'),t=document.getElementById('errtxt');if(!b)return;t.textContent=(e.message||'erreur')+' ('+String(e.filename||'').split('/').pop()+':'+(e.lineno||'?')+')';b.style.display='block'});window.addEventListener('unhandledrejection',function(e){var b=document.getElementById('errbox'),t=document.getElementById('errtxt');if(b){t.textContent=String(e.reason&&e.reason.message||e.reason);b.style.display='block'}});</script>
 <script src="dist/game.js"></script>
 </body>

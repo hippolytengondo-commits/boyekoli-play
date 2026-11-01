@@ -6,7 +6,7 @@ import {SURPRISES} from './contenu/surprises.js';
 
 // ordre dans lequel les missions réussies débloquent les objets (un objet toutes les 3 missions) : on alterne les collections
 const SEQ=[];
-{const max=Math.max(...COLLECTIONS.map(c=>c.objets.length));for(let i=0;i<max;i++)COLLECTIONS.forEach(c=>{if(c.objets[i])SEQ.push(c.objets[i].id)})}
+{const max=Math.max(...COLLECTIONS.map(c=>c.objets.length));for(let i=0;i<max;i++)COLLECTIONS.forEach(c=>{if(c.objets[i]&&!c.objets[i].special)SEQ.push(c.objets[i].id)})}
 const TOUS={};COLLECTIONS.forEach(c=>c.objets.forEach(o=>{TOUS[o.id]=o}));
 const p2=n=>String(n).padStart(2,'0');
 

@@ -164,10 +164,24 @@ export async function lireSauvegarde(){
   return {ok:true,data:r.data&&r.data[0]||null};
 }
 let minuteur=null;
+// plancher : nombre de missions déjà connues sur le serveur ; on n'envoie jamais une progression plus pauvre (évite d'écraser le compte)
+let plancher=0;
+const nbFaites=d=>Object.keys((d&&d.adv&&d.adv.done)||{}).length;
+export const fixerPlancher=n=>{plancher=n||0};
 export function planifierSauvegarde(getData){
   if(!connecte())return;
   clearTimeout(minuteur);
-  minuteur=setTimeout(()=>{envoyerSauvegarde(getData())},6000);
+  minuteur=setTimeout(()=>{const d=getData();if(nbFaites(d)>=plancher)envoyerSauvegarde(d)},6000);
+}
+// envoi immédiat à la fermeture de l'application (requête qui survit à la fermeture de la page)
+export async function envoyerVite(getData){
+  try{
+    const s=session();if(!s||s.exp-Date.now()<5000)return;
+    const d=getData();if(nbFaites(d)<plancher)return;
+    const corps=JSON.stringify({user_id:s.uid,data:Object.assign({},d,{photo:null}),updated_at:new Date().toISOString()});
+    if(corps.length>60000)return;
+    fetch(URL+'/rest/v1/save_games?on_conflict=user_id',{method:'POST',keepalive:true,headers:{apikey:KEY,'Content-Type':'application/json',Authorization:'Bearer '+s.access,Prefer:'resolution=merge-duplicates'},body:corps});
+  }catch(e){}
 }
 
 // ---- résultats de missions : file d'attente locale, envoyée dès que possible ----
