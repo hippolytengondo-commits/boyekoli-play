@@ -1,15 +1,22 @@
 // Supermarché : rayons (catégories de produits et prix) et défis de courses. Les prix sont ceux du jeu, en pièces.
 // Ajouter un produit ou un défi = ajouter une ligne ici ; les réponses sont calculées par le programme.
-export const RAYONS=[
- {id:'fruits',nom:'Fruits et légumes',ico:'🍅',modeles:['mangue','banane','tomate','oignon','feuilles','ananas'],txt:'Des produits frais, souvent cultivés près de chez nous.',produits:[
-  {n:'Mangues (3)',p:6},{n:'Bananes (le régime)',p:8},{n:'Tomates (1 kg)',p:5},{n:'Oignons (1 kg)',p:4},{n:'Feuilles de manioc (la botte)',p:2},{n:'Ananas',p:3}]},
- {id:'epicerie',nom:'Épicerie',ico:'🌾',modeles:['sac','sac','huile','boite','sac','sac'],txt:'Les aliments qui se conservent longtemps : farine, riz, huile, sel, sucre.',produits:[
-  {n:'Farine de maïs (5 kg)',p:20},{n:'Riz (2 kg)',p:9},{n:'Huile de palme (1 L)',p:7},{n:'Sel (1 kg)',p:1},{n:'Sucre (1 kg)',p:5},{n:'Haricots (1 kg)',p:6}]},
- {id:'boissons',nom:'Boissons',ico:'🥤',modeles:['bouteille','jus','brique','boite'],txt:'Eau, jus et lait. Regarde bien le prix au litre avant de choisir !',produits:[
-  {n:'Eau (1,5 L)',p:2},{n:'Jus d’ananas (1 L)',p:4},{n:'Lait (1 L)',p:5},{n:'Thé (la boîte)',p:3}]},
- {id:'ecole',nom:'École et maison',ico:'✏️',modeles:['cahier','stylo','savon','torche'],txt:'Cahiers, stylos et produits pour la maison.',produits:[
-  {n:'Cahier (96 pages)',p:2},{n:'Stylo bleu',p:1},{n:'Savon',p:2},{n:'Torche',p:6}]}
+const P=(n,p,m)=>({n,p,m});
+// trois niveaux, neuf rayons, une cinquantaine de produits. m : modèle 3D (voir produits.js). Les prix sont ceux du jeu, en pièces.
+export const NIVEAUX_SUPER=[
+ {nom:'Produits frais',ico:'🥬',couleur:'#2e7d32',rayons:[
+  {id:'fruits',nom:'Fruits',ico:'🍌',txt:'Des fruits frais, souvent cultivés près de chez nous.',produits:[P('Mangues (3)',6,'mangue'),P('Bananes (le régime)',8,'banane'),P('Ananas',3,'ananas'),P('Oranges (le sachet)',4,'orange'),P('Avocats (3)',5,'avocat')]},
+  {id:'legumes',nom:'Légumes',ico:'🥬',txt:'Des légumes pour la cuisine de tous les jours.',produits:[P('Tomates (1 kg)',5,'tomate'),P('Oignons (1 kg)',4,'oignon'),P('Feuilles de manioc (la botte)',2,'feuilles'),P('Aubergines (1 kg)',4,'aubergine'),P('Carottes (1 kg)',3,'carotte')]},
+  {id:'viandes',nom:'Viandes, poissons et œufs',ico:'🍗',txt:'Des aliments riches en protéines, qui aident à grandir.',produits:[P('Poulet',18,'poulet'),P('Poisson fumé',15,'poisson'),P('Œufs (la douzaine)',9,'oeuf'),P('Viande de bœuf (1 kg)',22,'viande')]}]},
+ {nom:'Épicerie et boissons',ico:'🌾',couleur:'#8d5a3b',rayons:[
+  {id:'epicerie',nom:'Épicerie',ico:'🌾',txt:'Les aliments qui se conservent longtemps : farine, riz, huile, sel, sucre.',produits:[P('Farine de maïs (5 kg)',20,'sac'),P('Riz (2 kg)',9,'sac'),P('Haricots (1 kg)',6,'sac'),P('Sucre (1 kg)',5,'sac'),P('Sel (1 kg)',1,'boite'),P('Huile de palme (1 L)',7,'huile')]},
+  {id:'boissons',nom:'Boissons',ico:'🥤',txt:'Eau, jus et lait. Regarde bien le prix au litre avant de choisir !',produits:[P('Eau (1,5 L)',2,'bouteille'),P('Jus d’ananas (1 L)',4,'jus'),P('Lait (1 L)',5,'brique'),P('Thé (la boîte)',3,'boite'),P('Café (250 g)',6,'boite')]},
+  {id:'boulangerie',nom:'Boulangerie',ico:'🍞',txt:'Du pain et des gâteaux.',produits:[P('Pain',1,'pain'),P('Gâteau',12,'gateau'),P('Biscuits',3,'boite'),P('Beignets (le sachet)',2,'pain')]}]},
+ {nom:'Maison, école et loisirs',ico:'🏠',couleur:'#6a3d9a',rayons:[
+  {id:'ecole',nom:'École',ico:'✏️',txt:'Tout pour bien travailler en classe.',produits:[P('Cahier (96 pages)',2,'cahier'),P('Stylo bleu',1,'stylo'),P('Cartable',12,'cartable'),P('Règle',2,'regle'),P('Craie (la boîte)',3,'boite')]},
+  {id:'maison',nom:'Maison',ico:'🏠',txt:'Des objets utiles pour la maison.',produits:[P('Savon',2,'savon'),P('Torche',6,'torche'),P('Seau',5,'seau'),P('Casserole',10,'casserole'),P('Eau de Javel (1 L)',4,'bouteille')]},
+  {id:'loisirs',nom:'Jeux et loisirs',ico:'⚽',txt:'Pour jouer pendant les moments de repos.',produits:[P('Ballon',8,'ballon'),P('Corde à sauter',3,'corde'),P('Jeu de dames',7,'boite')]}]}
 ];
+export const RAYONS=NIVEAUX_SUPER.flatMap(n=>n.rayons);
 // budget : pièces dont tu disposes ; articles : [nom, prix à l'unité, quantité] ; comp : [nom, prix, quantité, unité] pour les deux offres à comparer
 export const COURSES=[
  {t:'Le petit-déjeuner',b:20,a:[['Pain',1,4],['Lait (1 L)',5,2],['Sucre (1 kg)',5,1]],comp:[['Sucre 1 kg',5,1,'kg'],['Sucre 5 kg',22,5,'kg']]},

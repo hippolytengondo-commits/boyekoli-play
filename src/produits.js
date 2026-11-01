@@ -37,6 +37,18 @@ export const MODELES={
   torche(){const g=new THREE.Group();const t=add(g,new THREE.CylinderGeometry(.03,.035,.2,10),M('#c0392b'),0,.1,0);add(g,new THREE.CylinderGeometry(.055,.035,.06,10),M('#444'),0,.23,0);add(g,new THREE.CylinderGeometry(.045,.045,.01,10),new THREE.MeshStandardMaterial({color:'#fff6b0',emissive:'#fff6b0',emissiveIntensity:.5}),0,.261,0);return g},
   poulet(){const g=new THREE.Group();const c=add(g,new THREE.SphereGeometry(.11,12,10),M('#e3b27a',.6),0,.1,0);c.scale.set(1.2,.8,.9);add(g,new THREE.CylinderGeometry(.02,.02,.1,6),M('#e3b27a'),.12,.12,.04);add(g,new THREE.CylinderGeometry(.02,.02,.1,6),M('#e3b27a'),.12,.12,-.04);return g},
   poisson(){const g=new THREE.Group();const c=add(g,new THREE.SphereGeometry(.1,12,10),M('#8d9aa6',.4),0,.07,0);c.scale.set(1.6,.6,.7);add(g,new THREE.ConeGeometry(.05,.1,4),M('#8d9aa6'),.17,.07,0).rotation.z=-Math.PI/2;return g},
+  orange(){const g=new THREE.Group();[[0,0],[.13,.02],[-.1,.05]].forEach(([x,z])=>add(g,new THREE.SphereGeometry(.065,12,10),M('#f08a1c',.5),x,.065,z));return g},
+  avocat(){const g=new THREE.Group();[[0,0],[.13,.03]].forEach(([x,z])=>{const a=add(g,new THREE.SphereGeometry(.07,12,10),M('#2f5d2a',.5),x,.08,z);a.scale.set(.85,1.2,.85)});return g},
+  aubergine(){const g=new THREE.Group();[[0,0],[.12,.04]].forEach(([x,z])=>{const a=add(g,new THREE.SphereGeometry(.07,12,10),M('#5b2a6e',.4),x,.08,z);a.scale.set(.75,1.4,.75);add(g,new THREE.ConeGeometry(.03,.04,6),M('#3b7a2a'),x,.18,z)});return g},
+  carotte(){const g=new THREE.Group();for(let i=0;i<4;i++){const c=add(g,new THREE.ConeGeometry(.03,.22,8),M('#e8761c',.6),(i-1.5)*.05,.11,0);c.rotation.z=Math.PI;c.position.y=.12}return g},
+  oeuf(){const g=new THREE.Group();[[0,0],[.1,0],[.05,.09],[-.05,.09]].forEach(([x,z])=>{const e=add(g,new THREE.SphereGeometry(.045,10,8),M('#f4ead2',.5),x,.05,z);e.scale.set(.8,1.1,.8)});return g},
+  viande(){const g=new THREE.Group();add(g,new THREE.BoxGeometry(.2,.06,.14),M('#b8323a',.6),0,.04,0);add(g,new THREE.BoxGeometry(.18,.02,.12),M('#e9d8d0',.6),0,.075,0);return g},
+  cartable(){const g=new THREE.Group();add(g,new THREE.BoxGeometry(.22,.3,.1),M('#c0392b',.6),0,.15,0);add(g,new THREE.BoxGeometry(.18,.1,.11),M('#922b21',.6),0,.1,0);add(g,new THREE.BoxGeometry(.04,.2,.02),M('#222'),-.06,.17,-.06);return g},
+  regle(){const g=new THREE.Group();add(g,new THREE.BoxGeometry(.3,.01,.04),M('#f1d02a',.5),0,.01,0);return g},
+  seau(){const g=new THREE.Group();add(g,new THREE.CylinderGeometry(.11,.08,.2,14,1,true),new THREE.MeshStandardMaterial({color:'#2e86de',side:THREE.DoubleSide,roughness:.5}),0,.1,0);add(g,new THREE.CylinderGeometry(.08,.08,.01,14),M('#2e86de'),0,.005,0);return g},
+  casserole(){const g=new THREE.Group();add(g,new THREE.CylinderGeometry(.1,.1,.1,16),M('#9aa3ad',.3),0,.05,0);add(g,new THREE.CylinderGeometry(.01,.01,.12,6),M('#222'),.15,.07,0).rotation.z=Math.PI/2;return g},
+  ballon(){const g=new THREE.Group();add(g,new THREE.SphereGeometry(.11,16,12),lab('','#f5f5f5','#222'),0,.11,0);add(g,new THREE.SphereGeometry(.112,8,6),new THREE.MeshStandardMaterial({color:'#222',wireframe:true}),0,.11,0);return g},
+  corde(){const g=new THREE.Group();const t=add(g,new THREE.TorusGeometry(.09,.012,6,16),M('#e0a526',.6),0,.03,0);t.rotation.x=Math.PI/2;[-.09,.09].forEach(x=>add(g,new THREE.CylinderGeometry(.015,.015,.1,6),M('#c0392b'),x,.06,0));return g},
   gateau(){const g=new THREE.Group();add(g,new THREE.CylinderGeometry(.11,.11,.08,16),M('#f0d9a8'),0,.04,0);add(g,new THREE.CylinderGeometry(.1,.1,.05,16),M('#d65f8d'),0,.1,0);add(g,new THREE.SphereGeometry(.02,8,6),M('#c0392b'),0,.15,0);return g}
 };
 export function produit(kind,opt){const f=MODELES[kind]||MODELES.boite;const g=f(opt&&opt.a,opt&&opt.b);g.userData.kind=kind;return g}

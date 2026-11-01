@@ -6,7 +6,7 @@ import {std,box,cyl,room} from './world.js';
 import {voiture,voitureJoueur,motoJoueur} from './trafic.js';
 import {CATALOGUE} from './quartier_res.js';
 import {NIVEAUX} from './contenu/musee.js';
-import {RAYONS} from './contenu/supermarche.js';
+import {NIVEAUX_SUPER} from './contenu/supermarche.js';
 import {produit} from './produits.js';
 
 const wood=c=>new THREE.MeshStandardMaterial({map:T.woodTexture(c||'#7a4a26')});
@@ -42,14 +42,14 @@ function etagere(g,boxes,x,z,w,h,cols){
 const NOMS_SAC={'Farine de maïs (5 kg)':['FARINE','#f5efe3'],'Riz (2 kg)':['RIZ','#fff8e0'],'Sucre (1 kg)':['SUCRE','#ffffff'],'Haricots (1 kg)':['HARICOTS','#e6d2b0']};
 function rayonGarni(g,B,x,z,w,r){
   const planche=wood('#7a4a26');
-  box(g,w,2.5,.12,planche,x,1.25,z-.3);                                   // fond
-  [-w/2,w/2].forEach(dx=>box(g,.1,2.4,.6,planche,x+dx,1.2,z));            // montants
+  box(g,w,2.5,.12,planche,x,1.25,z-.3);
+  [-w/2,w/2].forEach(dx=>box(g,.1,2.4,.6,planche,x+dx,1.2,z));
   [.08,.85,1.62].forEach((y,lv)=>{
     box(g,w,.06,.6,planche,x,y,z);
     const n=Math.floor((w-.4)/.52);
     for(let i=0;i<n;i++){
-      const idx=(i+lv*2)%r.produits.length,kind=r.modeles[idx],nom=r.produits[idx].n,sac=NOMS_SAC[nom];
-      const p=produit(kind,sac?{a:sac[0],b:sac[1]}:null);
+      const pr=r.produits[(i+lv*2)%r.produits.length],sac=NOMS_SAC[pr.n];
+      const p=produit(pr.m,sac?{a:sac[0],b:sac[1]}:null);
       p.position.set(x-w/2+.45+i*.52,y+.03,z+.04);p.rotation.y=((i*37+lv*11)%7-3)*.05;g.add(p);
     }
   });
@@ -74,7 +74,7 @@ function tableauPhoto(g,x,z,ry,e,couleur){
   const mat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7});
   const plan=new THREE.Mesh(new THREE.PlaneGeometry(W,H),mat);plan.position.set(0,1.95,.05);gr.add(plan);
   // illustration de secours (emoji) tant que la photo n'est pas disponible
-  const secours=()=>{const c=document.createElement('canvas');c.width=256;c.height=320;const k=c.getContext('2d');k.fillStyle=couleur;k.fillRect(0,0,256,320);k.fillStyle='rgba(255,255,255,.18)';k.fillRect(14,14,228,292);k.font='120px serif';k.textAlign='center';k.textBaseline='middle';k.fillStyle='#fff';k.fillText(e.ico||'🏛',128,150);k.font='bold 22px system-ui,sans-serif';k.fillText(String(e.titre).slice(0,20),128,270);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;mat.map=t;mat.needsUpdate=true};
+  const secours=()=>{if(e.pasdephoto){const c0=document.createElement('canvas');c0.width=256;c0.height=320;const k0=c0.getContext('2d');k0.fillStyle=couleur;k0.fillRect(0,0,256,320);k0.fillStyle='rgba(255,255,255,.18)';k0.fillRect(14,14,228,292);k0.font='120px serif';k0.textAlign='center';k0.textBaseline='middle';k0.fillStyle='#fff';k0.fillText(e.ico||'🏛',128,150);k0.font='bold 22px system-ui,sans-serif';k0.fillText(String(e.titre).slice(0,20),128,270);const t0=new THREE.CanvasTexture(c0);t0.colorSpace=THREE.SRGBColorSpace;mat.map=t0;mat.needsUpdate=true;return}const c=document.createElement('canvas');c.width=256;c.height=320;const k=c.getContext('2d');k.fillStyle='#d9d4c7';k.fillRect(0,0,256,320);k.strokeStyle='#9a9384';k.lineWidth=6;k.strokeRect(10,10,236,300);k.font='96px serif';k.textAlign='center';k.textBaseline='middle';k.fillStyle='#8a8374';k.fillText('📷',128,140);k.font='bold 21px system-ui,sans-serif';k.fillStyle='#5a5448';k.fillText('Photo à venir',128,240);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;mat.map=t;mat.needsUpdate=true};
   if(e.img){
     if(cacheTex[e.img]&&cacheTex[e.img].image){mat.map=cacheTex[e.img];mat.needsUpdate=true}
     else new THREE.TextureLoader().load(e.img,t=>{t.colorSpace=THREE.SRGBColorSpace;cacheTex[e.img]=t;mat.map=t;mat.needsUpdate=true;
@@ -118,16 +118,23 @@ const DECOR={
     banc(g,B,-3.2,1.6);banc(g,B,3.2,1.6);
   },
   supermarche(g,B,W,D,n){
-    // grand magasin : quatre rayons garnis le long du mur du fond, deux îlots au centre, deux caisses près de l'entrée
-    RAYONS.forEach((r,i)=>{const x=-7.5+i*5;
-      rayonGarni(g,B,x,-D/2+.8,4.4,r);
-      tableau(g,x,3.1,-D/2+.05,4.2,.8,[{t:r.ico+' '+r.nom.toUpperCase(),s:40,y:.5}],['#2e7d32','#8d5a3b','#1f5f9e','#6a3d9a'][i])});
-    // îlots centraux : fruits à gauche, boissons à droite
-    ilot(g,B,-4.5,-.6,['mangue','banane','ananas','tomate']);ilot(g,B,4.5,-.6,['bouteille','jus','brique','bouteille']);
-    // caisses
-    [[6.2,3.4],[2.6,3.4]].forEach(([x,z])=>{box(g,2.4,1.0,.9,wood('#3d4a5a'),x,.5,z);box(g,.5,.38,.04,std('#1b1b1b'),x-.5,1.2,z);B.push({x0:x-1.2,x1:x+1.2,z0:z-.5,z1:z+.5});
-      tableau(g,x,2.5,D/2-.05,2.2,.6,[{t:'CAISSE',s:56,y:.5}],'#1f7a4d')});
-    [[-8.6,3.4],[-7.9,3.4],[-7.2,3.4],[-6.5,3.4]].forEach(([x,z])=>{box(g,.6,.5,.9,std('#9aa3ad'),x,.55,z);box(g,.6,.04,.9,std('#c8ced4'),x,.9,z)});
+    // un niveau du grand magasin : trois rayons garnis contre le mur du fond, un escalator à droite, les caisses au rez-de-chaussée
+    const k=Math.max(1,Math.min(NIVEAUX_SUPER.length,n||1)),niv=NIVEAUX_SUPER[k-1];
+    niv.rayons.forEach((r,i)=>{const x=-6.8+i*6.8;
+      rayonGarni(g,B,x,-D/2+.8,5.6,r);
+      tableau(g,x,3.1,-D/2+.05,5.2,.8,[{t:r.ico+' '+r.nom.toUpperCase(),s:38,y:.5}],niv.couleur)});
+    tableau(g,0,3.7,-D/2+.05,8,.7,[{t:'NIVEAU '+k+' · '+niv.nom.toUpperCase(),s:34,y:.5}],'#222');
+    if(k===1){
+      ilot(g,B,-4.5,-.6,['mangue','banane','ananas','orange']);
+      [[-2.4,3.4],[1.2,3.4]].forEach(([x,z])=>{box(g,2.4,1.0,.9,wood('#3d4a5a'),x,.5,z);box(g,.5,.38,.04,std('#1b1b1b'),x-.5,1.2,z);B.push({x0:x-1.2,x1:x+1.2,z0:z-.5,z1:z+.5});
+        tableau(g,x,2.5,D/2-.05,2.2,.6,[{t:'CAISSE',s:56,y:.5}],'#1f7a4d')});
+    }else ilot(g,B,-4.5,-.6,k===2?['bouteille','jus','brique','boite']:['ballon','cartable','seau','casserole']);
+    // escalator
+    const ex=W/2-1.7;box(g,1.5,.1,6,std('#444',.6),ex,.05,D/2-3.6);
+    for(let i=0;i<10;i++)box(g,1.3,.12,.4,std(i%2?'#9aa3ad':'#c8ced4',.5),ex,.2+i*.1,D/2-1.0-i*.42);
+    [-.72,.72].forEach(dx=>box(g,.06,.9,5.2,std('#222',.5),ex+dx,.8,D/2-3.4));
+    B.push({x0:ex-.9,x1:ex+.9,z0:D/2-6.4,z1:D/2-.6});
+    [[-8.6,3.4],[-7.9,3.4],[-7.2,3.4]].forEach(([x,z])=>{box(g,.6,.5,.9,std('#9aa3ad'),x,.55,z);box(g,.6,.04,.9,std('#c8ced4'),x,.9,z)});
   },
   autoecole(g,B,W,D,n){
     // accueil : comptoir d'inscription à gauche, salle de cours à droite

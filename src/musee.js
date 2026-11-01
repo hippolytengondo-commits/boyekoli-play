@@ -37,7 +37,7 @@ export function creerMusee(D){
     const niv=NIVEAUX.find(n=>n.id===d.nid),e=niv.expos.find(x=>x.id===d.eid);
     let h=`<h3>${e.ico||'🏛'} ${esc(e.titre)}</h3><p style="font-size:12px;opacity:.7">${esc(niv.nom)}</p>`;
     if(e.img)h+=`<img src="${esc(e.img)}" alt="${esc(e.titre)}" style="max-width:100%;max-height:260px;border-radius:12px;display:block;margin:8px auto" onerror="this.style.display='none'">`;
-    else h+=`<div style="font-size:84px;text-align:center">${e.ico||'🏛'}</div>`;
+    else if(e.pasdephoto)h+=`<div style="font-size:84px;text-align:center">${e.ico||'🏛'}</div>`;else h+=`<div style="text-align:center;opacity:.6;padding:18px">📷 Photo à venir</div>`;
     h+=`<p>${esc(e.txt)}</p>`;
     if(e.credit)h+=`<p style="font-size:11px;opacity:.65">Photo : ${esc(e.credit.auteur)} · ${esc(e.credit.licence)}</p>`;
     return h+`<button onclick="museeLire()">🔊 Réécouter</button><button class="s" onclick="closeDialog()">Fermer</button>`;
