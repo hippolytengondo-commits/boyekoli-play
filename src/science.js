@@ -102,6 +102,7 @@ export function creerScience(D){
   function finExp(){
     const id=E.id,x=EXPS[id],s=SCI(),prem=!s.exp[id];
     if(prem){s.exp[id]={fait:true,err:E.err};s.pts+=10;A().pieces+=4;A().xp+=6;refreshHud()}else s.exp[id].err=Math.min(s.exp[id].err,E.err);
+    D.mis&&D.mis.evt('sci','exp',id);
     const g=grpDe(id);let bonus='';
     if(!s.grp[g.id]&&nbFaits(g)>=g.requis){const err=g.exps.filter(fait).reduce((t,k)=>t+(s.exp[k].err||0),0),stars=err<=1?3:err<=4?2:1;s.grp[g.id]={stars,date:new Date().toLocaleDateString('fr-FR')};A().done['met:'+g.d]=true;A().stars['met:'+g.d]=Math.max(A().stars['met:'+g.d]||0,stars);A().pieces+=10+3*stars;A().xp+=15;bonus=`<p style="font-size:14px">🏅 <b>Badge de jeune ${({chimie:'chimiste',biologie:'biologiste',physique:'physicien'})[g.id]} obtenu !</b> ${'⭐'.repeat(stars)} · +${10+3*stars} 🪙</p>`;refreshHud()}
     let cert='';if(!s.cert&&GROUPES.every(q=>s.grp[q.id])){s.cert={date:new Date().toLocaleDateString('fr-FR')};A().pieces+=15;cert=`<p>${btn('🎓 Recevoir mon certificat de jeune scientifique','sciCert()','#6a1b9a')}</p>`;refreshHud()}

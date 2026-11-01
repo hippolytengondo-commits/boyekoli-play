@@ -19,7 +19,8 @@ export function creerDesign(D){
     if(d.proj.length>=8){toast('8 projets maximum : supprime-en un.');return null}
     d.proj.push(p);d.cur=p.id;save();return p}
   const courant=()=>{const d=DS();return d.proj.find(p=>p.id===d.cur)||null};
-  function sauve(){if(P){P.maj=Date.now();clearTimeout(sautSave);sautSave=setTimeout(()=>save(),400)}}
+  function etatMis(){const m={};P.meubles.forEach(x=>{m[x.id]=(m[x.id]||0)+1});const n=k=>P.ops.filter(o=>o.k===k).length;return {surf:P.W*P.D,nb:P.nb,toit:P.toit,tm:P.tm,cm:P.cm,jardin:P.opt.jardin,terrasse:P.opt.terrasse,cloture:P.opt.cloture,garage:P.opt.garage,portes:n('porte'),fen:n('fen'),m}}
+  function sauve(){if(P){P.maj=Date.now();clearTimeout(sautSave);sautSave=setTimeout(()=>{save();D.mis&&D.mis.evt('ds','etat',etatMis())},400)}}
   // ---------- textures procédurales
   const TC={};
   function baseTex(kind,hex){

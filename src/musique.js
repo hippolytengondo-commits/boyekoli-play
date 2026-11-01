@@ -201,7 +201,7 @@ export function creerMusique(D){
     musPratPasser:()=>{const st=V.cst;if(!st.ok){toast('Termine d’abord l’exercice pratique.');return}hook=null;st.ph='quiz';st.qs=st.c.quiz.map((q,i)=>rot(q,i+st.c.id.length));st.qi=0;st.bon=0;st.rep=undefined;rendre()},
     musQuizRep:i=>{const st=V.cst;if(st.rep!==undefined)return;st.rep=i;if(i===st.qs[st.qi].a){st.bon++;SFX.ok&&SFX.ok()}else SFX.ko&&SFX.ko();rendre()},
     musQuizSuite:()=>{const st=V.cst;if(st.qi+1<st.qs.length){st.qi++;st.rep=undefined;rendre();return}
-      st.ph='res';const m=MUS();if(st.bon>=2){const stars=st.bon===3?3:2,prev=m.cours[st.c.id];if(!prev){A().pieces+=5;A().xp+=8;st.gain=5;refreshHud()}m.cours[st.c.id]={stars:Math.max(stars,prev?prev.stars:0)};save();SFX.win&&SFX.win();verifBadges()}rendre()},
+      st.ph='res';const m=MUS();if(st.bon>=2){const stars=st.bon===3?3:2,prev=m.cours[st.c.id];if(!prev){A().pieces+=5;A().xp+=8;st.gain=5;refreshHud()}m.cours[st.c.id]={stars:Math.max(stars,prev?prev.stars:0)};save();D.mis&&D.mis.evt('mus','cours',st.c.id);SFX.win&&SFX.win();verifBadges()}rendre()},
     musCerFin:go=>{const w=document.getElementById('cerem');if(w)w.remove();if(go){V={ong:'profil'};dessineOnglets();rendre()}if(cer.length)setTimeout(cerSuite,300);else cerOn=false},
     musQuitter:()=>quitter(),
     musRetourSalle:()=>{stopLecture();hook=null;V={ong:'instr'};dessineOnglets();rendre();if(studio)studio.zone('salle')},

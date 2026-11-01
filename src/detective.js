@@ -81,7 +81,7 @@ export function creerDetective(D){
   // ---------- interactions
   function collecter(ob){
     const d=casDef(),c=CAS_ST(cas),ind=ob.indice;if(!ind)return false;
-    if(!c.indices[ind]){c.indices[ind]={t:Date.now()};save();SFX.coin&&SFX.coin();msg('🔎 Indice trouvé : '+d.indices[ind].nom,3500);
+    if(!c.indices[ind]){D.mis&&D.mis.evt('det','indice',ind);c.indices[ind]={t:Date.now()};save();SFX.coin&&SFX.coin();msg('🔎 Indice trouvé : '+d.indices[ind].nom,3500);
       if(ob.id==='ticket')0}
     if(ramassable(ob)){mot.retirer(ob.id);msg('✋ Ramassé : '+d.indices[ind].nom+' (dans ton inventaire)',3500)}
     return true}
@@ -114,7 +114,7 @@ export function creerDetective(D){
     mot.parler(p.id,6);ouvrirNoeud(dial,'n0',p)}
   function ouvrirNoeud(dial,nid,p){
     const n=dial[nid];if(!n){fermerP();return}
-    if(n.temo&&cas){const c=CAS_ST(cas);if(!c.temos[n.temo.id]){c.temos[n.temo.id]={txt:n.temo.txt,qui:dial.nom};save();msg('📝 Témoignage noté dans ton carnet',2500)}}
+    if(n.temo&&cas){const c=CAS_ST(cas);if(!c.temos[n.temo.id]){D.mis&&D.mis.evt('det','temoin',n.temo.id);c.temos[n.temo.id]={txt:n.temo.txt,qui:dial.nom};save();msg('📝 Témoignage noté dans ton carnet',2500)}}
     dial.__p=p;dialG=dial;
     PAR.afficher(ov,{nom:dial.nom,texte:n.t,voice:PAR.voixDe(p),ancre:p&&mot.ecran(p.id),choix:n.c.map(([l,nx])=>[l,`detRep('${nid}','${nx||''}')`]),retour:'detRetour()'});panneau=true;mot&&mot.fige(true);const pp=$('detpan');if(pp){pp.style.display='none';pp.innerHTML=''}}
   let dialG=null;
@@ -201,7 +201,7 @@ export function creerDetective(D){
   function choixAnalyse(casId,ind,i){
     const d=CAS[casId],x=d.indices[ind],an=d.analyses[x.analyse],c=CAS_ST(casId);
     const ok=an.type==='empreinte'?i===an.bon:i===an.bonne;
-    if(ok){if(!c.analyses[ind]){c.analyses[ind]=true;A().xp+=4;save()}SFX.bravo&&SFX.bravo();analyse(casId,ind,{zoom:1,msg:'✅ <b>Analyse réussie !</b> '+esc(an.exp)})}
+    if(ok){D.mis&&D.mis.evt('det','analyse',ind);if(!c.analyses[ind]){c.analyses[ind]=true;A().xp+=4;save()}SFX.bravo&&SFX.bravo();analyse(casId,ind,{zoom:1,msg:'✅ <b>Analyse réussie !</b> '+esc(an.exp)})}
     else{SFX.ko&&SFX.ko();analyse(casId,ind,{zoom:an.type==='empreinte'?1.8:1,msg:'❌ Pas tout à fait. '+(an.type==='empreinte'?'Utilise la loupe : compare la forme du dessin et la position des points rouges.':'Relis la question et réfléchis : un scientifique teste avant de conclure.')})}}
   // ---------- solution
   let sol=null;
@@ -220,7 +220,7 @@ export function creerDetective(D){
   function finEnquete(){
     const d=casDef(),c=CAS_ST(cas),pho=c.photos.length,ind=nbIndices(cas)/Object.keys(d.indices).length;
     let stars=1+(sol.err<=1?1:0)+((pho>=3&&ind>=.75)?1:0);const prem=!c.fini;c.fini=true;c.stars=Math.max(c.stars||0,stars);c.essais=(c.essais||0)+1;
-    const idm={musee:'d1',ecole:'d2'}[cas],a=A();a.done['met:'+idm]=true;a.stars['met:'+idm]=Math.max(a.stars['met:'+idm]||0,stars);
+    const idm={musee:'d1',ecole:'d2'}[cas],a=A();D.mis&&D.mis.evt('det','fini',idm==='d1'?'d1':'d2');a.done['met:'+idm]=true;a.stars['met:'+idm]=Math.max(a.stars['met:'+idm]||0,stars);
     let gain=0;if(prem){gain=15+5*stars;a.pieces+=gain;a.xp+=20+5*stars;refreshHud()}
     const t=a.tal||(a.tal={});t.enquete=(t.enquete||0)+15;
     const nvCert=!DET().cert;if(nvCert)DET().cert={date:new Date().toLocaleDateString('fr-FR'),cas:cas};

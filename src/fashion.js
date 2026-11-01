@@ -177,7 +177,7 @@ export function creerMode(D){
   function finDefile(abandon){
     if(!DF)return;const d=DF;DF=null;decor();reconstruire();cs.auto=true;
     if(abandon){return}
-    const m=FS();m.defile.n++;m.defile.best=Math.max(m.defile.best,d.poses);save();rend();
+    const m=FS();m.defile.n++;m.defile.best=Math.max(m.defile.best,d.poses);save();D.mis&&D.mis.evt('fs','defile',d.poses);rend();
     over(`<div style="text-align:center"><div style="font-size:44px">👏✨</div><h3>Défilé terminé !</h3><p style="font-size:14px">${d.poses} pose(s) réussie(s) sur ${d.list.length} tenues.</p><p style="font-size:13px">${d.poses>=2?'Bravo ! Tu peux valider la mission « Le grand défilé ».':'Il faut 2 poses réussies pour valider la mission. Réessaie !'}</p></div>`+btn('↩ Continuer','fsFermerOver()')+btn('🎯 Missions','fsFermerOver();fsTab(\'miss\')','#2e7d32'));
     D.__lastDefile=d.poses}
   // ---------- missions
@@ -211,13 +211,13 @@ export function creerMode(D){
     fsRetour:()=>{const o=$('fsover');if(o&&o.style.display==='flex')fermerOver();else quitter()},fsOuvrir:()=>ouvrir(),fsQuitter:()=>quitter(),fsTab:t=>setTab(t),fsFermerOver:()=>fermerOver(),
     fsSet:(k,v)=>{FS().crea[k]=v;sauve();reconstruire();rend()},fsCoul:c=>{FS().crea.couleur=c;sauve();reconstruire();rend()},fsTog:k=>{const c=FS().crea;c[k]=!c[k];sauve();reconstruire();rend()},
     fsLook:(k,v)=>{FS().look[k]=v;sauve();reconstruire();rend()},fsChev:c=>actions.fsLook('ch',c),fsLev:c=>actions.fsLook('lev',c),fsYeux:c=>actions.fsLook('yeux',c),fsPeau:c=>actions.fsLook('skin',PEAUX.indexOf(c)),
-    fsCoiffOk:()=>{const m=FS();m.coiffOk=true;save();msg(m.look.coiff==='courtes'?'Coiffure validée (courte). La mission demande une coiffure africaine.':'✅ Coiffure validée dans le salon !',3500);SFX.ok&&SFX.ok()},
+    fsCoiffOk:()=>{const m=FS();m.coiffOk=true;save();D.mis&&D.mis.evt('fs','coiff',m.look);msg(m.look.coiff==='courtes'?'Coiffure validée (courte). La mission demande une coiffure africaine.':'✅ Coiffure validée dans le salon !',3500);SFX.ok&&SFX.ok()},
     fsBg:b=>{bg=b;decor();rend()},fsPose:p=>{pose=p;if(body)poser(body,p);cs.auto=false;rend()},
     fsPhoto:()=>{const m=FS();const img=snapshot();m.photos.unshift({img,date:new Date().toLocaleDateString('fr-FR')});m.photos=m.photos.slice(0,8);save();SFX.coin&&SFX.coin();msg('📸 Photo enregistrée !');rend()},
     fsSuppPh:i=>{FS().photos.splice(i,1);save();rend()},
     fsCoudre:()=>{couture={i:0,err:0,msg:''};etapeCouture();rend()},
     fsOutil:k=>{const e=ETAPES[couture.i];if(k===e.o){SFX.ok&&SFX.ok();couture.msg='';couture.i++;if(couture.i<ETAPES.length)etapeCouture();else SFX.win&&SFX.win()}else{couture.err++;SFX.ko&&SFX.ko();couture.msg='❌ Ce n’est pas le bon outil : '+esc(e.txt)}rend()},
-    fsEnreg:()=>{const m=FS();if(m.port.length>=8){msg('Portfolio plein (8 max).');return}const cr=m.crea,md=MODELES.find(x=>x.id===cr.modele);m.port.push(Object.assign({},cr,{nom:md.nom+' '+(m.port.length+1),img:snapshot()}));couture=null;save();SFX.coin&&SFX.coin();msg('✅ Création ajoutée au portfolio');setTab('port')},
+    fsEnreg:()=>{const m=FS();if(m.port.length>=8){msg('Portfolio plein (8 max).');return}const cr=m.crea,md=MODELES.find(x=>x.id===cr.modele);m.port.push(Object.assign({},cr,{nom:md.nom+' '+(m.port.length+1),img:snapshot()}));couture=null;save();D.mis&&D.mis.evt('fs','coudre',m.port[m.port.length-1]);SFX.coin&&SFX.coin();msg('✅ Création ajoutée au portfolio');setTab('port')},
     fsEssai:i=>{const m=FS();Object.assign(m.crea,m.port[i]);delete m.crea.nom;delete m.crea.img;sauve();reconstruire();msg('Tenue chargée sur le mannequin.')},
     fsSuppC:i=>{if(confirm!==i){confirm=i;rend();return}FS().port.splice(i,1);confirm=-1;save();rend()},
     fsDefile:()=>lancerDefile(),fsPose2:()=>pose2(),fsValider:id=>valider(id),fsCert:()=>cert(),

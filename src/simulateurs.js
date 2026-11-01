@@ -262,7 +262,7 @@ export function creerSimulateurs(D){
           if(!r.id)return;
           const mm=MISSIONS.find(x=>x.id===r.id),pp=pil();
           if(r.ok){
-            const prem=!pp.m[r.id];if(!pp.m[r.id])pp.m[r.id]={best:r.temps||0,fois:0};pp.m[r.id].fois++;if(r.temps)pp.m[r.id].best=pp.m[r.id].best?Math.min(pp.m[r.id].best,r.temps):r.temps;
+            const prem=!pp.m[r.id];if(!pp.m[r.id])pp.m[r.id]={best:r.temps||0,fois:0};pp.m[r.id].fois++;D.mis&&D.mis.evt('vol','mission',r.id);if(r.temps)pp.m[r.id].best=pp.m[r.id].best?Math.min(pp.m[r.id].best,r.temps):r.temps;
             const g=prem?mm.rec:(mm.type==='lecon'?0:Math.floor(mm.rec/4));A().pieces+=g;A().xp+=prem?15:3;pts('pilotage',prem?25:6);
             if(mm.brevet&&!pp.brevet){pp.brevet=true;toast('🪪 Brevet de pilote obtenu ! Les missions sont ouvertes.')}
             save();refreshHud();SFX.bravo&&SFX.bravo();toast((mm.type==='lecon'?'Leçon réussie : ':'Mission réussie : ')+'+'+g+' 🪙');parler(mm.type==='lecon'?'Leçon réussie, bravo !':'Mission accomplie, bravo !')}

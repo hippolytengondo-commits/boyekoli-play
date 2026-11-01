@@ -132,7 +132,7 @@ export function creerHopital(D){
     if(prem){m.pts+=10;A().pieces+=4;A().xp+=6;refreshHud()}
     let extra='';
     if(!m.badges.medecin&&nbCas()>=2){m.badges.medecin=true;const avg=Math.round(CAS.filter(x=>m.cas[x.id]).reduce((t,x)=>t+m.cas[x.id].stars,0)/nbCas());A().done['met:h1']=true;A().stars['met:h1']=Math.max(A().stars['met:h1']||0,avg);A().pieces+=12;A().xp+=15;refreshHud();extra=true}
-    const t=A().tal||(A().tal={});t.sante=(t.sante||0)+8;save();C.et='fin';casEtape();SFX.win&&SFX.win();
+    const t=A().tal||(A().tal={});t.sante=(t.sante||0)+8;save();D.mis&&D.mis.evt('med','cas',c.id);C.et='fin';casEtape();SFX.win&&SFX.win();
     if(extra)setTimeout(()=>{toast('🏅 Badge de jeune médecin ! Mission 1 réussie (+12 🪙)')},400)}
   // ---------- MISSION 2 : services
   function service(id){
@@ -152,7 +152,7 @@ export function creerHopital(D){
     const m=MED(),id=C.id,s=SERVICES[id],prem=!m.svc[id];m.svc[id]={fait:true,err:C.err};let extra='';
     if(prem){m.pts+=8;A().pieces+=3;A().xp+=5;refreshHud()}
     if(!m.badges.metiers&&nbSvc()>=4){m.badges.metiers=true;m.cert={date:new Date().toLocaleDateString('fr-FR')};A().done['met:h2']=true;A().stars['met:h2']=Math.max(A().stars['met:h2']||0,3);A().pieces+=15;A().xp+=15;refreshHud();extra='<p>🎓 <b>Mission 2 réussie !</b> Certificat de découverte des métiers médicaux obtenu (+15 🪙)</p>'+btn('🎓 Voir mon certificat','medCert()','#6a1b9a')}
-    const t=A().tal||(A().tal={});t.sante=(t.sante||0)+6;save();SFX.win&&SFX.win();
+    const t=A().tal||(A().tal={});t.sante=(t.sante||0)+6;save();D.mis&&D.mis.evt('med','svc',id);SFX.win&&SFX.win();
     panel(`<div style="text-align:center"><div style="font-size:40px">${s.ico}🎉</div><h3>Activité réussie !</h3><p style="font-size:13px">${prem?'+8 points · +3 🪙':'Déjà validée'}</p>${extra}</div>`+btn('↩ Retour','medFermerP()')+btn('📋 Dossiers','medDossiers()'),true)}
   // ---------- actions
   const actions={

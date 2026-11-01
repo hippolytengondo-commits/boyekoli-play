@@ -96,7 +96,7 @@ export function creerVille(D){
   function mois(){
     S=stats();V.mois++;V.budget+=S.rev-S.dep;if(V.budget<-500)V.budget=-500;
     V.pop+=(S.tgt-V.pop)*.18;if(Math.abs(S.tgt-V.pop)<.5)V.pop=S.tgt;if(V.pop<0)V.pop=0;
-    if(V.mois%4===0)ajusterTrafic();S=stats();sauve();majStats()}
+    if(V.mois%4===0)ajusterTrafic();S=stats();sauve();majStats();D.mis&&D.mis.evt('vil','etat',S)}
   function majStats(){const e=$('vstat');if(!e)return;e.innerHTML=`💰 <b>${S.budget}</b> (${S.rev-S.dep>=0?'+':''}${S.rev-S.dep}/mois) · 👥 <b>${Math.round(V.pop)}</b> · 😊 <b>${S.sat}%</b> · 📅 mois ${V.mois}`}
   // ---------- entrées
   const ray=new THREE.Raycaster(),mv=new THREE.Vector2();

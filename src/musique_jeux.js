@@ -64,6 +64,7 @@ export function creerJeux(C,D){
   const finVue=()=>`<div style="text-align:center;background:#2a1f45;border-radius:14px;padding:14px;margin-top:8px"><div style="font-size:34px">${ETO(G_.stars)}</div><b>${G_.titre}</b><p style="font-size:13px">${G_.detail}${G_.gain?' · +'+G_.gain+' 🪙':''}</p>${btn('🔁 Rejouer','musJeu(\''+C.V.jeu+'\')','p')}${btn('Autres jeux','musJeu(null)')}</div>`;
   function finJeu(id,stars,titre,detail){
     const m=M(),old=(m.jeux[id]||{}).stars||0;let gain=0;if(stars>old){gain=2*(stars-old);A().pieces+=gain;A().xp+=stars*2;m.jeux[id]={stars}}
+    D.mis&&D.mis.evt('mus','jeu',id);
     const t=A().tal||(A().tal={});t.musique=(t.musique||0)+stars*3;
     Object.assign(G_,{fini:true,stars,titre,detail,gain});save();refreshHud();SFX[stars?'win':'ko']&&SFX[stars?'win':'ko']();C.verifBadges();rr()}
   const feedback=(ok,exp)=>`<p style="font-size:13px;margin:6px 0">${ok?'✅ <b>Bravo !</b>':'❌ <b>Pas tout à fait.</b>'} ${esc(exp||'')}</p>`;

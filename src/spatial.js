@@ -146,7 +146,7 @@ export function creerEspace(D){
     const n=nbDone();let ex='';
     if(n>=6&&!a.done['met:s1']){a.done['met:s1']=true;a.stars['met:s1']=2;s.cert={date:new Date().toLocaleDateString('fr-FR')};a.pieces+=15;refreshHud();mis.badge=true}
     if(n>=12)a.stars['met:s1']=3;
-    save();SFX.win&&SFX.win();PAR.dire('Mission réussie ! Bravo, astronaute.','mavungu')}
+    save();D.mis&&D.mis.evt('sp','mission',mi.id);SFX.win&&SFX.win();PAR.dire('Mission réussie ! Bravo, astronaute.','mavungu')}
   // ---------- boucle
   function boucle(){
     raf=requestAnimationFrame(boucle);if(!R)return;const t=performance.now(),dt=Math.min(.05,(t-(boucle.t||t))/1000);boucle.t=t;
