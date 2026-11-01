@@ -1,0 +1,65 @@
+// Collections du jeu : objets à découvrir. Ajouter un objet = ajouter une ligne ici, sans toucher au programme.
+// La collection « provinces » est calculée à partir des provinces explorées (voir enrichissement.js).
+export const COLLECTIONS=[
+ {id:'animaux',nom:'Animaux de la RDC',ico:'🦓',objets:[
+  {id:'an_okapi',ico:'🦓',nom:'L’okapi',txt:'Cousin de la girafe, il vit dans la forêt de l’Ituri. Ses pattes rayées le cachent dans les feuillages.'},
+  {id:'an_gorille',ico:'🦍',nom:'Le gorille de montagne',txt:'Il vit sur les volcans des Virunga, en famille, guidé par un grand mâle au dos argenté.'},
+  {id:'an_bonobo',ico:'🐒',nom:'Le bonobo',txt:'On ne le trouve à l’état sauvage qu’en RDC, au sud du fleuve Congo. Il est très pacifique.'},
+  {id:'an_elephant',ico:'🐘',nom:'L’éléphant de forêt',txt:'Plus petit que l’éléphant de savane, il disperse les graines et ouvre des chemins dans la forêt.'},
+  {id:'an_leopard',ico:'🐆',nom:'Le léopard',txt:'Chasseur discret et agile, il grimpe aux arbres avec sa proie.'},
+  {id:'an_pangolin',ico:'🦔',nom:'Le pangolin géant',txt:'Couvert d’écailles, il mange des fourmis et des termites et se roule en boule en cas de danger.'},
+  {id:'an_hippo',ico:'🦛',nom:'L’hippopotame',txt:'Il passe le jour dans l’eau et sort la nuit pour brouter l’herbe.'},
+  {id:'an_chimpanze',ico:'🐵',nom:'Le chimpanzé',txt:'Il vit en groupe dans la forêt et utilise de petits outils pour attraper des insectes.'}]},
+ {id:'oiseaux',nom:'Oiseaux',ico:'🦜',objets:[
+  {id:'oi_paon',ico:'🦚',nom:'Le paon congolais',txt:'Un oiseau que l’on ne trouve qu’en RDC. Il a été décrit par les scientifiques en 1936.'},
+  {id:'oi_perroquet',ico:'🦜',nom:'Le perroquet gris',txt:'Il vit dans la forêt et sait imiter de nombreux sons.'},
+  {id:'oi_calao',ico:'🐦',nom:'Le calao',txt:'Son grand bec porte un casque. Il fait son nid dans un trou d’arbre.'},
+  {id:'oi_touraco',ico:'🐦',nom:'Le touraco',txt:'Oiseau coloré de la forêt, il crie fort pour avertir ses voisins.'},
+  {id:'oi_aigle',ico:'🦅',nom:'L’aigle couronné',txt:'L’un des plus puissants rapaces d’Afrique. Il chasse dans la forêt.'},
+  {id:'oi_martin',ico:'🐦',nom:'Le martin-pêcheur',txt:'Il plonge dans l’eau pour attraper de petits poissons.'},
+  {id:'oi_heron',ico:'🦩',nom:'Le héron goliath',txt:'C’est le plus grand héron du monde. Il pêche au bord des lacs et des rivières.'}]},
+ {id:'aquatiques',nom:'Espèces aquatiques',ico:'🐟',objets:[
+  {id:'aq_tigre',ico:'🐟',nom:'Le poisson-tigre goliath',txt:'Un grand poisson du fleuve Congo aux dents très pointues.'},
+  {id:'aq_tilapia',ico:'🐠',nom:'Le tilapia',txt:'Poisson des rivières et des lacs, très apprécié sur les marchés.'},
+  {id:'aq_silure',ico:'🐟',nom:'Le silure',txt:'Aussi appelé poisson-chat à cause de ses moustaches, il fouille la vase.'},
+  {id:'aq_croco',ico:'🐊',nom:'Le crocodile du Nil',txt:'Il vit dans les fleuves et les lacs et attend sa proie presque sans bouger.'},
+  {id:'aq_elephant',ico:'🐟',nom:'Le poisson-éléphant',txt:'Il envoie de petits signaux électriques pour se repérer dans l’eau trouble.'},
+  {id:'aq_ndagala',ico:'🐟',nom:'La ndagala du Tanganyika',txt:'Petite sardine du lac Tanganyika, pêchée de nuit à la lumière des lampes.'}]},
+ {id:'monuments',nom:'Monuments et sites',ico:'🏛',objets:[
+  {id:'mo_stade',ico:'🏟',nom:'Le Stade des Martyrs',txt:'Grand stade de Kinshasa, où se jouent les grands matchs et les concerts.'},
+  {id:'mo_cathedrale',ico:'⛪',nom:'La cathédrale Notre-Dame du Congo',txt:'Grande église de Kinshasa, dans la commune de Lingwala.'},
+  {id:'mo_palais',ico:'🏛',nom:'Le Palais de la Nation',txt:'Bâtiment de la présidence, dans la commune de la Gombe à Kinshasa.'},
+  {id:'mo_pont',ico:'🌉',nom:'Le pont Maréchal',txt:'Pont suspendu qui traverse le fleuve Congo à Matadi.'},
+  {id:'mo_mausolee',ico:'🏛',nom:'Le mausolée Laurent-Désiré Kabila',txt:'Monument de Kinshasa en hommage à l’ancien président.'},
+  {id:'mo_echangeur',ico:'🛣',nom:'L’échangeur de Limete',txt:'Grand échangeur routier de Kinshasa, qui relie plusieurs grandes routes.'},
+  {id:'mo_virunga',ico:'🌋',nom:'Le parc national des Virunga',txt:'Le plus ancien parc d’Afrique, créé en 1925. Il protège gorilles, volcans et lacs.'},
+  {id:'mo_zongo',ico:'💧',nom:'Les chutes de Zongo',txt:'Belles chutes d’eau de la province du Kongo-Central.'}]},
+ {id:'instruments',nom:'Instruments traditionnels',ico:'🥁',objets:[
+  {id:'in_likembe',ico:'🎹',nom:'La likembe',txt:'Petit instrument à lamelles de métal que l’on joue avec les pouces.'},
+  {id:'in_ngoma',ico:'🥁',nom:'Le ngoma',txt:'Tambour traditionnel que l’on joue avec les mains pour la danse et les fêtes.'},
+  {id:'in_lokole',ico:'🪘',nom:'Le lokole',txt:'Tambour à fente en bois. Il servait à envoyer des messages d’un village à l’autre.'},
+  {id:'in_xylophone',ico:'🎶',nom:'Le xylophone',txt:'Lames de bois de tailles différentes qui donnent des notes différentes.'},
+  {id:'in_guitare',ico:'🎸',nom:'La guitare de la rumba',txt:'La rumba congolaise est inscrite au patrimoine culturel immatériel de l’humanité (UNESCO) depuis 2021.'}]},
+ {id:'historiques',nom:'Objets historiques',ico:'🏺',objets:[
+  {id:'hi_masque',ico:'🎭',nom:'Le masque kuba',txt:'Les Kuba du Kasaï portent des masques lors des cérémonies importantes.'},
+  {id:'hi_nkisi',ico:'🗿',nom:'La statue nkisi',txt:'Statue du peuple kongo à laquelle on associait des pouvoirs de protection.'},
+  {id:'hi_lukasa',ico:'🧭',nom:'Le lukasa',txt:'Planchette ornée du peuple luba qui aidait à se rappeler l’histoire du royaume.'},
+  {id:'hi_croix',ico:'✝',nom:'La croix de cuivre du Katanga',txt:'Ces croix de cuivre ont longtemps servi de monnaie dans la région du Katanga.'},
+  {id:'hi_raphia',ico:'🧵',nom:'Le tissu de raphia kuba',txt:'Tissu tressé à la main en fibres de raphia, brodé de motifs géométriques.'}]},
+ {id:'decouvertes',nom:'Découvertes scientifiques',ico:'🔬',objets:[
+  {id:'de_okapi',ico:'🦓',nom:'L’okapi décrit en 1901',txt:'Les peuples de la forêt le connaissaient depuis toujours ; les scientifiques l’ont décrit en 1901.'},
+  {id:'de_ebola',ico:'🧪',nom:'Le virus Ebola',txt:'Identifié en 1976 en RDC, près de la rivière Ebola. Des chercheurs congolais, dont le docteur Muyembe, y ont participé.'},
+  {id:'de_gravite',ico:'🍎',nom:'La gravité',txt:'Isaac Newton a expliqué pourquoi les objets tombent : la Terre les attire.'},
+  {id:'de_vaccin',ico:'💉',nom:'Le vaccin',txt:'En 1796, Edward Jenner crée le premier vaccin, contre la variole.'},
+  {id:'de_penicilline',ico:'🧫',nom:'La pénicilline',txt:'Alexander Fleming la découvre en 1928 : c’est le premier antibiotique.'},
+  {id:'de_pile',ico:'🔋',nom:'La pile électrique',txt:'Alessandro Volta invente la pile en 1800.'},
+  {id:'de_bonobo',ico:'🐒',nom:'Le bonobo reconnu en 1929',txt:'En 1929, on reconnaît que le bonobo est une espèce différente du chimpanzé.'}]},
+ {id:'transports',nom:'Moyens de transport',ico:'🚆',objets:[
+  {id:'tr_pirogue',ico:'🛶',nom:'La pirogue',txt:'Creusée dans un tronc, elle permet de voyager sur les rivières et les lacs.'},
+  {id:'tr_bateau',ico:'🚢',nom:'Le bateau fluvial',txt:'Le fleuve Congo est une grande route d’eau pour les voyageurs et les marchandises.'},
+  {id:'tr_train',ico:'🚆',nom:'Le train',txt:'Il transporte des voyageurs et de lourdes marchandises sur de longues distances.'},
+  {id:'tr_moto',ico:'🏍',nom:'La moto-taxi',txt:'Rapide dans les embouteillages. Le casque est indispensable.'},
+  {id:'tr_tshukudu',ico:'🛴',nom:'Le tshukudu',txt:'Trottinette en bois de la région de Goma, qui transporte de lourdes charges.'},
+  {id:'tr_bus',ico:'🚌',nom:'Le bus',txt:'Il transporte beaucoup de personnes à la fois dans les grandes villes.'},
+  {id:'tr_avion',ico:'✈',nom:'L’avion',txt:'Il relie en quelques heures des villes très éloignées dans ce vaste pays.'}]}
+];

@@ -27,6 +27,7 @@ import {construireRes,posTerrain,prixTerrain,CATALOGUE,TYPES,batiment,nomBatimen
 import {coutRoute,COUT_ROND} from './routes.js';
 import {buildInterieur} from './interieurs.js';
 import {creerTrafic,voiture,moto,voitureJoueur,motoJoueur} from './trafic.js';
+import {creerEnrichissement} from './enrichissement.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
 import {construireReperes,construireStation} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
@@ -590,6 +591,7 @@ function renderDialog(){
   else if(d.kind==='rond')h=htmlRond(d);
   else if(d.kind==='menu')h=htmlMenu(d);
   else if(d.kind==='pompe')h=htmlPompe(d);
+  else if(d.kind==='coll'||d.kind==='surp'||d.kind==='evt')h=EN.html(d);
   else if(d.kind==='profile')h=htmlProfile(d);
   else if(d.kind==='map')h=htmlMap(d);
   else if(d.kind==='congo')h=htmlCongo(d);
@@ -1031,7 +1033,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1472,6 +1474,14 @@ function appliquerSave(s){
   if(G.mode!=='start'){buildScene();refreshHud()}
 }
 const Esp=makeEspace({G,esc,renderDialog,toast:t=>toast(t),lire:t=>{const w=G.voice;G.voice=true;speak(t,'ilunga');G.voice=w},PROGRAMME,CONTENU,missionCle,startMission:(a,b,c,o)=>startMission(a,b,c,o),getSave,applySave:appliquerSave,aProgression});
+// collections, surprise du jour et événement du jour
+const EN=creerEnrichissement({G,esc,toast:t=>toast(t),save,gain,SFX,renderDialog:()=>renderDialog(),openBox:d=>openBox(d),openMenu:()=>openMenu(),PROVS,slugTr});
+let surpriseProposee=false;
+setInterval(()=>{
+  if(surpriseProposee||G.mode!=='play'||G.dialog||G.monte||G.sc==='arene')return;
+  surpriseProposee=true;
+  if(EN.aOuvrir().surprise)openBox({kind:'surp'});
+},6000);
 function openEsp(vue){
   quitterArene();
   if(G.mode==='start'){G.depart=true;G.dialog={kind:'esp',vue:vue||'',msg:''};$('dlg').style.zIndex='9';renderDialog();return}
@@ -2441,7 +2451,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;
