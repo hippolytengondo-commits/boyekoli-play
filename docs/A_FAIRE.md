@@ -55,3 +55,7 @@ Méthode : Wikimedia limite les téléchargements groupés (erreur 429). Envoyer
 - fleuve : 5/54/Congo_River_from_Kinshasa_in_Democratic_Republic_of_the_Congo_%28DRC%29.jpg (CC BY-SA 4.0, EdwinAlden.1995)
 À rechercher : diamant, or, cuivre, cobalt, volcan des Virunga, Stade des Martyrs (une vraie vue du stade), masque kuba, statue nkisi, lukasa, likembe.
 Pour chaque photo ajoutée : renseigner `credit` (auteur, licence, source) dans `src/contenu/musee.js` (la salle « Crédits des photos » les affiche).
+
+Mise à jour (01/11/2026, soir) : les 13 photos ci-dessus sont maintenant référencées directement depuis Wikimedia Commons (vignettes de 500 px) dans `src/contenu/musee.js`, avec leurs crédits. Elles s'affichent dans le jeu si le téléphone peut joindre Wikimedia ; sinon un cadre « Photo à venir » apparaît. À vérifier sur un vrai téléphone. Pour une version autonome (sans dépendance), les copier dans `img/musee/` quand la limite de téléchargement (erreur 429) sera levée.
+Rappel : ne pas contourner les restrictions réseau de la session (un essai via un service tiers a été refusé et n'a pas été poursuivi).
+Reste à trouver : diamant, or, cuivre, cobalt, volcan des Virunga, Stade des Martyrs, masque kuba, statue nkisi, lukasa, likembe. L'utilisateur peut aussi envoyer lui-même des photos libres de droits.
