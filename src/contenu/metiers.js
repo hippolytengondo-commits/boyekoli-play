@@ -29,6 +29,8 @@ export const MODULES=[
   {id:'m1',titre:'Atelier mode et coiffure',fash:true,intro:'',qs:[]}]},
  {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'BOYEKOLI SMART CITY : sois le maire, gère le budget, l’énergie, l’eau et les services.',dossiers:[
   {id:'v1',titre:'Maire de la ville',vil:true,intro:'',qs:[]}]},
+ {id:'espace',ico:'🚀',nom:'Exploration spatiale',guide:'scientifique',txt:'BOYEKOLI SPACE EXPLORER : construis une fusée, pilote-la, explore la Lune, Mars et le système solaire.',dossiers:[
+  {id:'s1',titre:'Astronaute de la mission',esp:true,intro:'',qs:[]}]},
  {id:'musique',ico:'🎶',nom:'Studio de musique et danse',guide:'artiste',txt:'Rumba, soukous, instruments et rythmes congolais.',dossiers:[
   {id:'mu1',titre:'Rumba et rythmes',intro:'Au studio, la musique congolaise fait danser le monde.',qs:[
    Q('La rumba congolaise est inscrite au patrimoine de…',['l’UNESCO','la FIFA','l’ONU Sport','la NASA'],0,'Elle a été inscrite au patrimoine culturel immatériel de l’UNESCO en 2021.'),

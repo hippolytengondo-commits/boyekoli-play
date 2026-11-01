@@ -181,6 +181,15 @@ export const MODELES={
     box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
     enseigneToit(g,H,'HÔTEL DE VILLE','Smart City · Maire','#1b5e7a','🌆');
   },
+  espace(g){
+    const H=6;box(g,W,H,D,M('#e6e8f2'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#1a1f5e'),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3),verre());vi.position.set(0,2.3,D/2+.06);g.add(vi);porte(g,'#6a2fa0');
+    // fusée sur le toit, coupole de télescope
+    cyl(g,.5,.5,3,M('#ffffff'),-3,H+1.6,-1,14);const nz=new THREE.Mesh(new THREE.ConeGeometry(.5,1.2,14),M('#d6302b'));nz.position.set(-3,H+3.7,-1);g.add(nz);[-1,1].forEach(s=>box(g,.1,1.2,.7,M('#d6302b'),-3+s*.6,H+.9,-1));
+    const dm=new THREE.Mesh(new THREE.SphereGeometry(1.4,16,10,0,Math.PI*2,0,Math.PI/2),M('#cfd3e0'));dm.position.set(3,H,-1);g.add(dm);
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,'SPACE EXPLORER','Fusées · Planètes · Astronautes','#1a1f5e','🚀');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -195,6 +204,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'espace',x:-47,z:-48,ry:Math.PI/2,w:10,d:7,nom:'la Cité de l’espace',coul:'#1a1f5e',norot:true},
   {id:'mairie',x:-47,z:-36,ry:Math.PI/2,w:10,d:7,nom:'l’Hôtel de ville',coul:'#1b5e7a',norot:true},
   {id:'labo',x:-47,z:-12,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
   {id:'design',x:-47,z:12,ry:Math.PI/2,w:10,d:7,nom:'le Design Studio',coul:'#c9733d',norot:true},
