@@ -83,3 +83,10 @@ Reste de la feuille de route : agence de détectives, laboratoire scientifique, 
 - Animalerie : modèles 3D (chien, chat, lapin, perroquet) à la place des cubes ; ces modèles sont aussi ceux de l'animal qui suit le joueur.
 - Centre commercial décalé vers le nord et auvent réduit, pour dégager la route. À vérifier sur téléphone.
 - Pistes : davantage de pièces de mode, quiz de couture supplémentaires, relecture par un enseignant de coupe et couture.
+
+## Aéroport et pilotage réalistes (01/11/2026)
+- Aéroport déplacé à l'est du village (x≈130), relié par une route bitumée (à partir du bout de la rue), avec parking, panneaux, terminal, tour et deux avions garés. Les limites de la carte ont été étendues vers l'est (véhicules utilisables).
+- Licence de pilote comme à l'auto-école : inscription (20 pièces) → théorie (2 quiz) → vol d'examen chronométré → brevet. Puis missions chronométrées (courrier, ville, province) et vol libre.
+- Cockpit (`src/avion.js`) : procédure de départ (porte, ceinture, batterie, frein, démarreur maintenu), manche tactile, manette des gaz, palonniers, volets, freins, instruments (vitesse, altitude, cap, vario, horizon artificiel), vues cockpit/extérieure, son du moteur. Échec (temps écoulé, accident, sortie de piste) → retour à l'aéroport. On peut couper le moteur et quitter l'avion au parking.
+- À tester sur téléphone : prise en main du manche, difficulté de l'atterrissage, durée des chronos (à ajuster dans `MISSIONS`), vue cockpit.
+- Limites : le vol se joue dans une scène dédiée (piste et campagne) et non dans la grande carte de la ville ; modèle d'avion simple ; pas de météo.

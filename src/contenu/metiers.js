@@ -96,7 +96,15 @@ export const MODULES=[
    Q('Un avion vole à 600 km/h pendant 2 heures. Quelle distance ?',['300 km','600 km','1 200 km','1 800 km'],2,'600 × 2 = 1 200 km.'),
    Q('Quelle est la capitale de la RDC, destination de nombreux vols ?',['Kinshasa','Lubumbashi','Goma','Kisangani'],0,'Kinshasa est la capitale.'),
    Q('Avant le décollage, le pilote…',['fait la liste de contrôle','dort','ferme les yeux','mange'],0,'La check-list garantit la sécurité.'),
-   Q('Quelle couleur de feu signifie « arrêt » ?',['Rouge','Vert','Bleu','Blanc'],0,'Le rouge signifie arrêt.')]}]}
+   Q('Quelle couleur de feu signifie « arrêt » ?',['Rouge','Vert','Bleu','Blanc'],0,'Le rouge signifie arrêt.')]},
+  {id:'p2',titre:'Règles de l’air et instruments',intro:'Deuxième partie de la théorie : les instruments, la météo et les règles de l’air.',qs:[
+   Q('Que mesure l’altimètre ?',['L’altitude','La vitesse','Le cap','Le carburant'],0,'L’altimètre indique la hauteur de l’avion.'),
+   Q('Que fait-on si la vitesse devient trop faible en l’air ?',['On risque le décrochage : on baisse le nez et on donne des gaz','On monte encore plus','On coupe le moteur','On baisse les volets au maximum'],0,'Sous la vitesse de décrochage, l’aile ne porte plus.'),
+   Q('Pendant le décollage, quel instrument surveille-t-on en priorité ?',['L’anémomètre (vitesse)','La radio musicale','La montre','La boussole seulement'],0,'On atteint la vitesse de rotation avant de tirer sur le manche.'),
+   Q('Pour atterrir, on doit…',['réduire la vitesse et garder le nez presque à plat','foncer à pleine vitesse','couper les ailes','éteindre les feux'],0,'Un atterrissage doux demande une vitesse réduite et une bonne assiette.'),
+   Q('À quoi servent les volets ?',['Augmenter la portance à basse vitesse','Refroidir le moteur','Décorer l’aile','Faire du bruit'],0,'Les volets permettent de voler et d’atterrir plus lentement.'),
+   Q('Qui guide les avions au sol et dans le ciel depuis la tour ?',['Le contrôleur aérien','Le mécanicien','Le douanier','Le passager'],0,'Le contrôleur aérien organise la circulation des avions.'),
+   Q('Avant de démarrer, que fait-on avec la check-list ?',['On vérifie chaque point un par un','On l’ignore','On la range','On la déchire'],0,'La check-list évite les oublis dangereux.')]}]}
 ];
 export const CULTURES={
   mais:{ico:'🌽',nom:'Maïs',cout:4,min:3,rendement:3,prix:3,txt:'Le maïs sert à la bouillie et à la farine.'},

@@ -1,6 +1,6 @@
 // Simulateurs de métiers : studio de musique, salon de mode, atelier de décoration, aéroport (avion), profil de talents.
 // Chaque simulateur est un plein écran autonome ; le temps passé nourrit le profil de talents (aide à découvrir sa voie).
-import {lancerAvion} from './avion.js';
+import {lancerAvion,MISSIONS} from './avion.js';
 import {creerModeJeu} from './modejeu.js';
 
 export const TALENTS={
@@ -208,29 +208,57 @@ export function creerSimulateurs(D){
     h+=A().deco&&A().deco[S.id]?' ✅ projet réussi':'';
     c.innerHTML=h;
   }
-  // ---------- AÉROPORT
+  // ---------- AÉROPORT : licence de pilote (inscription, théorie, vol d'examen), puis missions chronométrées
+  const pil=()=>{const a=A();if(!a.pilote)a.pilote={inscrit:false,brevet:false,m:{}};return a.pilote};
+  const theorie=()=>!!(A().done['met:p1']&&A().done['met:p2']);
   function aeroport(){
-    openBox({kind:'metiers',vue:'aeroport'});
-    parler('Bienvenue à l’aéroport Boyekoli. Tu peux piloter un avion, ou passer au contrôle aérien.');
+    openBox({kind:'metiers',vue:'aeroport',msg:''});
+    parler('Bienvenue à l’aéroport Boyekoli. Pour piloter, il faut une licence : inscription, théorie, puis vol d’examen.');
   }
-  function vueAeroport(){
-    return `<h3>✈️ Aéroport Boyekoli</h3><p style="font-size:12px">✈️ <b>Commandant Ilunga</b> : « Un pilote vérifie, anticipe et garde son calme. Tu veux voler ? »</p>
-    <button class="p" onclick="simAvion()">🛫 Simulateur de vol</button><button onclick="metOuvrir('pilotage')">🗼 Cours de pilotage et quiz</button>
-    <button onclick="simInfoAero()">🌍 Les aéroports de la RDC</button><button class="s" onclick="closeDialog()">Fermer</button>`;
+  function vueAeroport(d){
+    const p=pil();
+    let h='<h3>✈️ Aéroport Boyekoli</h3><p style="font-size:12px">✈️ <b>Commandant Ilunga</b> : « Un pilote vérifie, anticipe et garde son calme. Sans licence, pas de vol. »</p>';
+    if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
+    h+=`<p class="row"><span>Mes pièces</span><b>${A().pieces} 🪙</b></p><h4>🪪 Licence de pilote ${p.brevet?'✅ obtenue':''}</h4>`;
+    if(!p.inscrit)h+=`<button class="p" onclick="simInscriptionPilote()">📝 S’inscrire à l’école de pilotage (20 🪙)</button>`;
+    else{
+      h+=`<p style="font-size:13px">${A().done['met:p1']?'✅':'⬜'} Théorie 1 : bases du pilotage<br>${A().done['met:p2']?'✅':'⬜'} Théorie 2 : règles de l’air et instruments<br>${p.brevet?'✅':'⬜'} Pratique : vol d’examen chronométré</p>`;
+      h+=`<button onclick="metOuvrir('pilotage')">📚 Cours et quiz de théorie</button>`;
+    }
+    if(p.inscrit&&theorie()&&!p.brevet)h+=`<p style="font-size:12px">Ta théorie est validée : va à l’avion garé devant le terminal pour passer le vol d’examen.</p>`;
+    if(p.brevet)h+=`<p style="font-size:12px">Tu es pilote ! Monte dans l’avion garé devant le terminal pour tes missions chronométrées.</p>`;
+    h+=`<button onclick="simInfoAero()">🌍 Les aéroports de la RDC</button><button class="s" onclick="closeDialog()">Fermer</button>`;
+    return h;
   }
-  function avion(){
-    cadre('🛫 Simulateur de vol','pilotage',c=>{
+  function vueMissions(d){
+    const p=pil();let h='<h3>🛩 L’avion</h3>';
+    if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
+    h+='<p style="font-size:12px">Choisis ton vol. Le chrono démarre quand tu commences à rouler. En cas d’échec (temps écoulé, accident), tu rentres à l’aéroport.</p>';
+    MISSIONS.forEach(m=>{const ok=m.brevet?(p.inscrit&&theorie()):p.brevet;const r=p.m[m.id];
+      h+=ok?`<button class="${r?'':'p'}" onclick="simAvionMission('${m.id}')">${r?'✅':'▶'} ${esc(m.nom)} <small>(${Math.floor(m.tmax/60)} min ${m.tmax%60} s${r?' · record '+r.best+' s':''})</small><br><small>${esc(m.txt)} · +${m.rec} 🪙</small></button>`:`<div style="padding:8px;margin:3px 0;background:#eee;border-radius:8px;font-size:12px;color:#888">🔒 ${esc(m.nom)} : ${m.brevet?'il faut l’inscription et la théorie validée':'il faut le brevet de pilote'}</div>`});
+    if(p.brevet)h+='<button onclick="simAvionMission(\'libre\')">🕊 Vol libre (sans chrono)</button>';
+    return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
+  }
+  function avion(missionId){
+    const p=pil();
+    const m=MISSIONS.find(x=>x.id===missionId)||null;
+    cadre('🛫 Cockpit','pilotage',c=>{
       c.style.padding='0';c.style.overflow='hidden';
-      c.innerHTML='<div id="av3" style="position:absolute;inset:0"></div>';
-      const sim=lancerAvion(c.querySelector('#av3'),(ok,n)=>{
-        const rec=A().vols||0;
-        if(ok){A().pieces+=12;A().xp+=15;A().vols=rec+1;pts('pilotage',25);save();refreshHud();SFX.win&&SFX.win();toast('Mission accomplie : +12 🪙');}
-        else{A().pieces+=3;save();refreshHud();toast('Atterrissage réussi : +3 🪙')}
-      });
-      stopFn=()=>sim.stop();
-      window.__AV=sim;
+      const sim=lancerAvion(c,{mission:m,toast:t=>toast(t),
+        onQuit:()=>{fermer();closeDialog()},
+        onFin:r=>{
+          if(!r.id)return;
+          const mm=MISSIONS.find(x=>x.id===r.id),pp=pil();
+          if(r.ok){
+            const prem=!pp.m[r.id];if(!pp.m[r.id])pp.m[r.id]={best:r.temps,fois:0};pp.m[r.id].fois++;pp.m[r.id].best=Math.min(pp.m[r.id].best,r.temps);
+            const g=prem?mm.rec:Math.floor(mm.rec/4);A().pieces+=g;A().xp+=prem?20:4;pts('pilotage',prem?30:8);
+            if(mm.brevet&&!pp.brevet){pp.brevet=true;toast('🪪 Brevet de pilote obtenu ! Les missions sont ouvertes.')}
+            save();refreshHud();SFX.bravo&&SFX.bravo();toast('Mission réussie : +'+g+' 🪙');parler('Mission accomplie, bravo !')}
+          else{pts('pilotage',2);save();SFX.ko&&SFX.ko();parler('Mission échouée. Retour à l’aéroport.')}
+        }});
+      stopFn=()=>sim.stop();window.__AV=sim;
     });
-    parler('Pousse la manette des gaz, prends de la vitesse, tire le nez vers le haut pour décoller, traverse les anneaux, puis reviens atterrir doucement sur la piste.');
+    parler('Procédure de départ : ouvre la porte, monte à bord, allume la batterie, vérifie le frein, puis démarre le moteur.');
   }
   const toast=t=>D.toast(t);
   // ---------- PROFIL DE TALENTS
@@ -253,7 +281,7 @@ export function creerSimulateurs(D){
   const tenir=f=>{if(!G.dialog)openBox({kind:'metiers',vue:'sim',msg:''});f()};
   const MJ=creerModeJeu({A,save,refreshHud,toast:t=>D.toast(t),parler,pts,SFX,esc,mannequin:L=>mannequin(L),PIECES,COUL,MOTIFS,libre:()=>ov&&ov.querySelector('#md')});
   const actions=Object.assign({},MJ.actions,{
-    simMusique:()=>tenir(musique),simMode:()=>tenir(mode),simDeco:()=>tenir(deco),simAeroport:aeroport,simAvion:()=>tenir(avion),simCours:id=>{fermer();openBox({kind:'metiers',vue:'module',m:id,msg:''})},simProfil:()=>openBox({kind:'metiers',vue:'profil'}),
+    simMusique:()=>tenir(musique),simMode:()=>tenir(mode),simDeco:()=>tenir(deco),simAeroport:aeroport,simAvion:()=>openBox({kind:'metiers',vue:'missions',msg:''}),simAvionMission:id=>tenir(()=>avion(id)),simInscriptionPilote:()=>{const d=G.dialog;if(A().pieces<20){d.msg='Il te manque '+(20-A().pieces)+' pièces.';SFX.ko&&SFX.ko();rr();return}A().pieces-=20;pil().inscrit=true;save();refreshHud();SFX.coin&&SFX.coin();d.msg='Inscription validée ! Prépare maintenant la théorie.';rr()},simCours:id=>{fermer();openBox({kind:'metiers',vue:'module',m:id,msg:''})},simProfil:()=>openBox({kind:'metiers',vue:'profil'}),
     simInfoAero:()=>{const d=G.dialog;d.vue='infoaero';require_render()},
     simMuInst:k=>{inst=k;dessineMu()},
     simNote:i=>{son(inst,NOTES[i][1]);pts('musique',0)},
@@ -292,7 +320,7 @@ export function creerSimulateurs(D){
   function require_render(){rr()}
   return {
     actions,
-    html:d=>d.vue==='aeroport'?vueAeroport():d.vue==='profil'?profil():d.vue==='infoaero'?`<h3>🌍 Aéroports de la RDC</h3><p style="font-size:13px">N’djili (Kinshasa), Luano (Lubumbashi), Goma, Kisangani Bangoboka, Mbuji-Mayi, Kananga, Bukavu Kavumu. Le pays est très vaste et les routes sont souvent difficiles : l’avion relie les provinces. Les pilotes, les contrôleurs et les mécaniciens y sont indispensables.</p><button onclick="simAeroport()">← Aéroport</button>`:null,
+    html:d=>d.vue==='aeroport'?vueAeroport(d):d.vue==='missions'?vueMissions(d):d.vue==='profil'?profil():d.vue==='infoaero'?`<h3>🌍 Aéroports de la RDC</h3><p style="font-size:13px">N’djili (Kinshasa), Luano (Lubumbashi), Goma, Kisangani Bangoboka, Mbuji-Mayi, Kananga, Bukavu Kavumu. Le pays est très vaste et les routes sont souvent difficiles : l’avion relie les provinces. Les pilotes, les contrôleurs et les mécaniciens y sont indispensables.</p><button onclick="simAeroport()">← Aéroport</button>`:null,
     bouton:()=>'<button onclick="simProfil()">🌟 Mon profil de talents</button>',
     spots(){return []},
     fermer
