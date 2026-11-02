@@ -26,7 +26,7 @@ export function creerMetiers(D){
   function vueHub(d){
     let h='<h3>🏙 Pôle des métiers</h3><p style="font-size:13px">Découvre les métiers, apprends en t’amusant et gagne des pièces. Chaque guide t’accompagne.</p>'+msg(d);
     MODULES.forEach(m=>{h+=`<button onclick="metOuvrir('${m.id}')">${m.ico} ${esc(m.nom)} <small>(${nbFaits(m)}/${m.dossiers.length})</small></button>`});
-    h+='<button class="p" onclick="simAeroport()">✈️ Aéroport et simulateur de vol</button><button class="p" onclick="simMusique()">🎵 MUSIQUE – Découvre, joue et compose !</button><button class="p" onclick="simMode()">👗 Salon de mode (créer des tenues)</button><button class="p" onclick="simDeco()">🏠 Atelier de décoration (plans de pièces)</button><button onclick="simProfil()">🌟 Mon profil de talents</button><button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="metBoutique()">🏪 Ma boutique</button>';
+    h+='<button class="p" onclick="simAeroport()">✈️ Aéroport et simulateur de vol</button><button class="p" onclick="simMusique()">🎵 MUSIQUE – Découvre, joue et compose !</button><button class="p" onclick="simMode()">👗 Salon de mode (créer des tenues)</button><button class="p" onclick="simDeco()">🏠 Atelier de décoration (plans de pièces)</button><button onclick="simProfil()">🌟 Mon profil de talents</button><button onclick="metFerme()">🌾 Agriculture et élevage</button><button onclick="entOuvrir()">🏪 Ma boutique</button>';
     return h+'<button class="s" onclick="closeDialog()">Fermer</button>';
   }
   function vueModule(d){
@@ -46,11 +46,11 @@ export function creerMetiers(D){
     });
     h+=`<div class="row"><b>Élevage</b><br>🐔 Poules : ${f.poule} <button style="padding:6px 8px" onclick="metAcheter('poule')">+ (10 🪙)</button> · 🐐 Chèvres : ${f.chevre} <button style="padding:6px 8px" onclick="metAcheter('chevre')">+ (30 🪙)</button><br><small>Elles produisent des œufs et du lait avec le temps. Plafond : ${CAP} par animal.</small></div>`;
     h+='<p class="row"><span>En réserve</span><b style="font-size:12px">'+(Object.keys(libStock).filter(k=>f.stock[k]>0).map(k=>f.stock[k]+' '+libStock[k]).join(' · ')||'rien')+'</b></p>';
-    return h+'<button onclick="metBoutique()">🏪 Vendre dans ma boutique</button><button onclick="metFerme()">🔄 Actualiser</button><button onclick="metHub()">← Pôle des métiers</button>';
+    return h+'<button onclick="metBoutique()">🧺 Vendre mes récoltes au marché</button><button onclick="entOuvrir()">💼 Business Simulator : mon entreprise</button><button onclick="metFerme()">🔄 Actualiser</button><button onclick="metHub()">← Pôle des métiers</button>';
   }
   function vueBoutique(d){
     majElevage();const f=ferme();
-    let h='<h3>🏪 Ma boutique</h3><p style="font-size:12px">💼 <b>Madame Béa</b> : « Un bon commerçant sait rendre la monnaie sans se tromper. »</p>'+pieces()+msg(d);
+    let h='<h3>🧺 Vendre mes récoltes</h3><p style="font-size:12px">💼 <b>Madame Béa</b> : « Un bon commerçant sait rendre la monnaie sans se tromper. »</p>'+pieces()+msg(d);
     if(d.vente){const v=d.vente;
       h+=`<p><b>Un client achète ${v.q} ${libStock[v.k]}</b> à ${v.u} 🪙 pièce : total ${v.total} 🪙. Il paie avec ${v.billet} 🪙. Combien rends-tu ?</p>`;
       v.opts.forEach(o=>{h+=`<button onclick="metRendre(${o})">${o} 🪙</button>`});
@@ -67,7 +67,7 @@ export function creerMetiers(D){
     metLancer:(mid,did)=>{const m=mod(mid),x=m.dossiers.find(z=>z.id===did),g=GUIDES[m.guide];
       if(x.jeu){if(window.detOuvrir)window.detOuvrir(x.jeu);return}
       if(x.sci){if(window.sciOuvrir)window.sciOuvrir();return}
-      if(x.biz){if(window.bizOuvrir)window.bizOuvrir();return}
+      if(x.biz){if(window.entOuvrir)window.entOuvrir();return}
       if(x.agr){if(window.agOuvrir)window.agOuvrir();return}
       if(x.esp){if(window.spOuvrir)window.spOuvrir();return}
       if(x.vil){if(window.citeOuvrir)window.citeOuvrir();return}

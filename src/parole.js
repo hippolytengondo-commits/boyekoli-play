@@ -22,7 +22,7 @@ export function creerParole(D){
   function repeter(){if(last)voix(last.texte,last.voice,true)}
   // bouton son dans la barre du haut, et bouton Retour accessible en bas (au pouce)
   function equiper(ov,o){
-    if(!document.getElementById('parCss')){const st=document.createElement('style');st.id='parCss';st.textContent='#detpan,#scipan,#medpan,#dsover,#fsover,#vover,#spover{padding-top:max(env(safe-area-inset-top),56px)!important}';document.head.appendChild(st)}
+    if(!document.getElementById('parCss')){const st=document.createElement('style');st.id='parCss';st.textContent='#detpan,#scipan,#medpan,#dsover,#fsover,#vover,#spover,#entpan{padding-top:max(env(safe-area-inset-top),56px)!important}';document.head.appendChild(st)}
     const top=ov.firstElementChild;if(top){top.style.paddingTop='max(env(safe-area-inset-top),22px)';
       const sn=document.createElement('button');sn.className='parVoixBtn';sn.style.cssText='padding:5px 9px;margin:0 2px;border-radius:10px;border:2px solid #fff3;background:#3a4a5e;color:#fff;font-size:14px;touch-action:manipulation';sn.onclick=()=>window.parVoix();sn.textContent=G.voice?'🔊':'🔇';top.insertBefore(sn,top.lastElementChild)}
     const b=document.createElement('button');b.id='sortieRapide';b.textContent='⬅ Retour';
