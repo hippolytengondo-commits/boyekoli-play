@@ -188,7 +188,7 @@ export function creerEspace(D){
   const kdn=e=>{if(!ov)return;const m={arrowup:'f',w:'f',z:'f',arrowdown:'b',s:'b',arrowleft:'l',q:'l',a:'l',arrowright:'r',d:'r',' ':'u'}[e.key.toLowerCase()];if(m)keys[m]=e.type==='keydown'};
   function kbs(){window.addEventListener('keydown',kdn);window.addEventListener('keyup',kdn)}
   function stopTout(){keys={};mis=null}
-  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);window.removeEventListener('keydown',kdn);window.removeEventListener('keyup',kdn);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=W=null;mis=null;ptr.clear();save()}
+  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);window.removeEventListener('keydown',kdn);window.removeEventListener('keyup',kdn);try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=sc=W=null;mis=null;ptr.clear();save()}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('spover');o.style.display='flex';o.innerHTML=h}
   function fermerOver(){const o=$('spover');if(o){o.style.display='none';o.innerHTML=''}}

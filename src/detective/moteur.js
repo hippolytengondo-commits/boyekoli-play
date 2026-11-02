@@ -118,5 +118,5 @@ export function creerMoteur(el,opt){
   const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?66:50;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
   return {ecran,setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
     objs:()=>objs,pnjs:()=>pnjs,def:()=>def,
-    stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.dispose()}catch(e){}el.innerHTML=''}};
+    stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.forceContextLoss();r.dispose()}catch(e){}el.innerHTML=''}};
 }

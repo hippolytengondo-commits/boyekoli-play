@@ -83,7 +83,7 @@ export function creerBusiness(D){
     const b=B();sel=id&&find(id)?id:(b.cs[0]&&b.cs[0].id)||null;tab=onglet||(b.cs.length?'com':'creer');aperçu(sel&&find(sel));maj();rendTabs();rend();
     try{history.pushState({biz:1},'')}catch(e){}pop=()=>{if(ov)quitter()};window.addEventListener('popstate',pop);raf=requestAnimationFrame(boucle);
     PAR.dire(b.cs.length?'Bienvenue dans ton bureau, chef d’entreprise !':'Bienvenue ! Je suis Maman Béa. Pour réussir en affaires, il faut un bon plan. Commence par ouvrir ton premier commerce.','bea')}
-  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=mod3=null;save()}
+  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=sc=mod3=null;save()}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('bizover');o.style.display='flex';o.innerHTML=h}
   function fermerOver(){const o=$('bizover');if(o){o.style.display='none';o.innerHTML=''}}

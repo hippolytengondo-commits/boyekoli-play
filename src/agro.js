@@ -145,7 +145,7 @@ export function creerAgro(D){
     entrees();tab='ferme';outil='arroser';cs={yaw:.5,pitch:.9,dist:30};pause=false;vit=1;monde();maj();rendTabs();rend();
     try{history.pushState({ag:1},'')}catch(e){}pop=()=>{if(ov)quitter()};window.addEventListener('popstate',pop);raf=requestAnimationFrame(boucle);
     PAR.dire('Bienvenue à la ferme Boyekoli. Choisis un outil, puis touche une parcelle !','bea')}
-  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=grp=null;ptr.clear();save()}
+  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=sc=grp=null;ptr.clear();save()}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('agover');o.style.display='flex';o.innerHTML=h}
   function fermerOver(){const o=$('agover');if(o){o.style.display='none';o.innerHTML=''}}

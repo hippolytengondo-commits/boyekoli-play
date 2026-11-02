@@ -15,7 +15,7 @@ export function creerViewer(cont,construire,onPick,distInit){
   cvs.addEventListener('pointerup',e=>{ptrs.delete(e.pointerId);if(!moved&&onPick){const b=cvs.getBoundingClientRect();mv.set(((e.clientX-b.left)/b.width)*2-1,-((e.clientY-b.top)/b.height)*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(grp.children,true);for(const x of h){let o=x.object;while(o&&!o.userData.part)o=o.parent;if(o){onPick(o.userData.part,o);return}}}});
   cvs.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(1.8,Math.min(9,dist+e.deltaY*.004))},{passive:false});
   const boucle=()=>{if(auto)yaw+=.006;grp.rotation.y=yaw;grp.rotation.x=pitch;cam.position.set(0,0,dist);cam.lookAt(0,0,0);r.render(sc,cam);raf=requestAnimationFrame(boucle)};raf=requestAnimationFrame(boucle);
-  return {zoom:d=>{dist=Math.max(1.8,Math.min(9,dist+d))},auto:v=>{auto=v},grp,dispose(){cancelAnimationFrame(raf);try{r.dispose()}catch(e){}cont.innerHTML=''}}}
+  return {zoom:d=>{dist=Math.max(1.8,Math.min(9,dist+d))},auto:v=>{auto=v},grp,dispose(){cancelAnimationFrame(raf);try{r.forceContextLoss();r.dispose()}catch(e){}cont.innerHTML=''}}}
 
 export const M3=(c,op,rough)=>new THREE.MeshStandardMaterial({color:c,transparent:op<1,opacity:op===undefined?1:op,roughness:rough===undefined?.5:rough});
 

@@ -1494,7 +1494,7 @@ function loop(now){
     $('alabel').textContent='Arrêter la cueillette';$('ba').disabled=false;
   }
   placeBubble();
-  rig.render();
+  if(!G.cache)rig.render();
 }
 
 // ---------- Cinématique d'introduction ----------
@@ -1613,7 +1613,7 @@ const AMEN=creerAmenager({G,esc,SFX,save,refreshHud,parler:parlerFr,toast:t=>toa
 const PAR=creerParole({G,esc,save,stop:()=>stopSpeech(),voix:(t,id,force,fin)=>{if(force){const w=G.voice;G.voice=true;speak(t,id||'ilunga',fin);G.voice=w}else speak(t,id||'ilunga',fin)}});
 const MIS=creerMissions50({PAR,G,esc,SFX,save,refreshHud,toast:t=>toast(t)});window.__MIS=MIS;
 // barres du haut des écrans plein format : on les descend sous la zone de l'heure et de la batterie des téléphones
-try{new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1&&n.style&&n.style.zIndex==='9000'&&n.firstElementChild&&!n.querySelector('#sortieRapide'))n.firstElementChild.style.paddingTop='max(env(safe-area-inset-top),22px)'}))).observe(document.body,{childList:true})}catch(e){}
+try{new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1&&n.style&&n.style.zIndex==='9000'&&n.firstElementChild&&!n.querySelector('#sortieRapide'))n.firstElementChild.style.paddingTop='max(env(safe-area-inset-top),22px)'}));G.cache=!![...document.body.children].some(e=>e.style&&e.style.zIndex==='9000')}).observe(document.body,{childList:true})}catch(e){}
 const DETEC=creerDetective({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});
 window.__DET=DETEC;
 const SCIE=creerScience({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__SCI=SCIE;

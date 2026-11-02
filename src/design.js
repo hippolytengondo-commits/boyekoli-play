@@ -245,7 +245,7 @@ export function creerDesign(D){
   function charge(id){const d=DS();d.cur=id;P=courant();sel=-1;cur=null;construire();rendTabs();setTab(tab||'maison');$('dstit').textContent='🏠 '+P.nom+(P.mission?' · mission':'');majPad();fermerOver();save()}
   function fermer(){
     if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',taillerCanvas);window.removeEventListener('keydown',kb);window.removeEventListener('keyup',kb);kb=null;
-    if(P)save();try{R.dispose()}catch(e){}ov.remove();ov=null;R=null;sc=null;P=null;gWorld=gMeu=gWalls=roof=null;ptrs.clear();keys={};drag=null}
+    if(P)save();try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=null;sc=null;P=null;gWorld=gMeu=gWalls=roof=null;ptrs.clear();keys={};drag=null}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('dsover');o.style.display='flex';o.style.paddingBottom='84px';o.innerHTML=h}
   function fermerOver(){const o=$('dsover');if(o){o.style.display='none';o.innerHTML=''}}

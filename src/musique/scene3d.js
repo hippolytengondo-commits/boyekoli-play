@@ -213,5 +213,5 @@ export function creerStudio3D(el,opt){
   const rs=()=>{const w=el.clientWidth||W0,h=Math.max(100,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=Math.max(50,Math.min(98,2*Math.atan(Math.tan(.73)/cam.aspect)*180/Math.PI));cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);rs();
   return {zone,pulse,pulseGlobal,concertInstaller,resize:rs,zoneCourante:()=>zoneId,
     setLow(v){r.setPixelRatio(v?1:Math.min(devicePixelRatio||1,1.5))},
-    stop(){cancelAnimationFrame(raf);removeEventListener('resize',rs);try{r.dispose()}catch(e){}el.innerHTML=''},scene:sc,objs,camera:cam};
+    stop(){cancelAnimationFrame(raf);removeEventListener('resize',rs);try{r.forceContextLoss();r.dispose()}catch(e){}el.innerHTML=''},scene:sc,objs,camera:cam};
 }

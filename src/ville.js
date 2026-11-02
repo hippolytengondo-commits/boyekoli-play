@@ -135,7 +135,7 @@ export function creerVille(D){
     entrees();tab='build';cur='maison';vue='aerien';cs={yaw:.7,pitch:.9,dist:52,tx:0,tz:0};pause=false;vit=1;monde();S=stats();majStats();rendTabs();rend();
     try{history.pushState({vil:1},'')}catch(e){}pop=()=>{if(ov)quitter()};window.addEventListener('popstate',pop);raf=requestAnimationFrame(boucle);
     parler('Bienvenue, maire ! Construis une ville où tout le monde vit bien.')}
-  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=grp=null;ptr.clear();if(V)save();V=null}
+  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',ov._rs);try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=sc=grp=null;ptr.clear();if(V)save();V=null}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('vover');o.style.display='flex';o.innerHTML=h}
   function fermerOver(){const o=$('vover');if(o){o.style.display='none';o.innerHTML=''}}

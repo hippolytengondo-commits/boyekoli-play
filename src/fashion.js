@@ -122,7 +122,7 @@ export function creerMode(D){
     setTimeout(taille,60);window.addEventListener('resize',taille);entrees();DF=null;tab='accueil';bg='blanc';pose='face';cs.auto=true;cs.dist=3.6;cs.y=.95;decor();reconstruire();rendTabs();rend();
     try{history.pushState({fs:1},'')}catch(e){}pop=()=>{if(ov)quitter()};window.addEventListener('popstate',pop);raf=requestAnimationFrame(boucle);
     parler('Bienvenue au Fashion Studio.')}
-  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',taille);try{R.dispose()}catch(e){}ov.remove();ov=null;R=sc=body=null;ptr.clear();DF=null;C=null;couture=null;save()}
+  function fermer(){if(!ov)return;cancelAnimationFrame(raf);window.removeEventListener('resize',taille);try{R.forceContextLoss();R.dispose()}catch(e){}ov.remove();ov=null;R=sc=body=null;ptr.clear();DF=null;C=null;couture=null;save()}
   function quitter(){if(pop){window.removeEventListener('popstate',pop);pop=null}const a=!!ov;fermer();if(a)closeDialog()}
   function over(h){const o=$('fsover');o.style.display='flex';o.style.paddingBottom='84px';o.innerHTML=h}
   function fermerOver(){const o=$('fsover');if(o){o.style.display='none';o.innerHTML=''}}
