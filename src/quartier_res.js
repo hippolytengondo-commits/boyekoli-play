@@ -292,7 +292,7 @@ export function construireRes(w,etat,cb){
     let l1,l2,bg;
     if(annexe){l1='ANNEXE';l2='du terrain n°'+(bat.annexe+1);bg='#1f7a4d'}
     else if(possede){l1='MON TERRAIN';l2=bat?nomBatiment(bat):'à construire';bg='#1f7a4d'}
-    else if(vente){l1='À VENDRE';l2=prixTerrain(k)+' points de savoir';bg='#b8860b'}
+    else if(vente){l1='À VENDRE';l2=prixTerrain(k)+' FC';bg='#b8860b'}
     else{l1='TERRAIN N°'+(k+1);l2='bientôt disponible';bg='#5a6275'}
     cyl(t,.06,.08,2.2,std('#5a3a22',.9),-3.4,1.1,DEMI-.3,6);
     const sg=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.2),new THREE.MeshStandardMaterial({map:T.textBoard([{t:l1,s:70,y:.35},{t:l2,s:l2.length>14?34:44,y:.72}],1024,512,bg,'#ffffff'),roughness:.6}));
@@ -318,7 +318,7 @@ export function construireRes(w,etat,cb){
     }
     // point d'action, au bord de la route
     const fx=p.x+(p.side?-DEMI-1.2:DEMI+1.2);
-    const lab=annexe?'Annexe du terrain n°'+(bat.annexe+1):possede?(bat?nomBatiment(bat)+' (terrain n°'+(k+1)+')':'Construire sur mon terrain n°'+(k+1)):vente?'Acheter le terrain n°'+(k+1)+' · '+prixTerrain(k)+' points de savoir':'Terrain n°'+(k+1)+' : achète d’abord le précédent';
+    const lab=annexe?'Annexe du terrain n°'+(bat.annexe+1):possede?(bat?nomBatiment(bat)+' (terrain n°'+(k+1)+')':'Construire sur mon terrain n°'+(k+1)):vente?'Acheter le terrain n°'+(k+1)+' · '+prixTerrain(k)+' FC':'Terrain n°'+(k+1)+' : achète d’abord le précédent';
     const sp={x:fx,z:p.z,r:3.6,label:lab,run:()=>possede?cb.ouvrir(k):vente?cb.acheter(k):cb.verrou(k)};
     if(bat&&!annexe&&cb.libelle)Object.defineProperty(sp,'label',{get:()=>cb.libelle(k,bat)});
     spots.push(sp);

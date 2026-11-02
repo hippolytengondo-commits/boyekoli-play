@@ -20,9 +20,9 @@ const MISSIONS=[
  {id:'g5',nom:'L’étang à poissons',txt:'Pêche 4 tilapias.',ok:s=>s.pech>=4,pieces:7},
  {id:'g6',nom:'Le compost',txt:'Utilise l’engrais naturel 3 fois.',ok:s=>s.eng>=3,pieces:6},
  {id:'g7',nom:'La rotation des cultures',txt:'Récolte 3 cultures différentes pour garder un sol fertile.',ok:s=>Object.keys(s.cul).length>=3,pieces:8},
- {id:'g8',nom:'Au marché',txt:'Vends 20 produits et gagne 300 FC au total.',ok:s=>s.vendu>=20&&s.gain>=300,pieces:8},
- {id:'g9',nom:'Une ferme prospère',txt:'Atteins 1 000 FC dans ta caisse.',ok:s=>s.fc>=1000,pieces:10},
- {id:'g10',nom:'La grande ferme',txt:'Aie 4 cultures récoltées, 3 sortes d’animaux et 500 FC.',ok:s=>Object.keys(s.cul).length>=4&&s.poule>=1&&s.chevre>=1&&s.poisson>=1&&s.fc>=500,pieces:15}];
+ {id:'g8',nom:'Au marché',txt:'Vends 20 produits et gagne 300 pf au total.',ok:s=>s.vendu>=20&&s.gain>=300,pieces:8},
+ {id:'g9',nom:'Une ferme prospère',txt:'Atteins 1 000 pf dans ta caisse.',ok:s=>s.fc>=1000,pieces:10},
+ {id:'g10',nom:'La grande ferme',txt:'Aie 4 cultures récoltées, 3 sortes d’animaux et 500 pf.',ok:s=>Object.keys(s.cul).length>=4&&s.poule>=1&&s.chevre>=1&&s.poisson>=1&&s.fc>=500,pieces:15}];
 const SAVOIRS=[
  ['💧 L’eau','Les plantes ont soif : arrose le matin ou le soir. La saison des pluies arrose gratuitement mais fait aussi pousser les mauvaises herbes.'],
  ['🌿 Les mauvaises herbes','Elles volent l’eau et la lumière des cultures. On les arrache à la main ou à la houe avant qu’elles ne grandissent.'],
@@ -36,8 +36,8 @@ const SAVOIRS=[
 export function creerAgro(D){
   const {PAR,G,esc,SFX,save,refreshHud,openBox,closeDialog,toast}=D;
   const A=()=>G.adv;
-  const AG=()=>{const a=A();if(!a.agro)a.agro=neuf();const g=a.agro;['stock','done','stars','badges'].forEach(k=>{if(!g[k])g[k]={}});if(!g.st)g.st={rec:0,perdu:0,cul:{},oeufs:0,pech:0,eng:0,vendu:0,gain:0};return g};
-  function neuf(){return {fc:250,jour:1,pluie:false,sais:'pluies',parc:Array(GR*GH).fill(null).map(()=>({c:null,p:0,eau:1,her:false,par:0,sol:2,prev:null})),stock:{},ani:{poule:0,chevre:0,poisson:0},nourri:false,pt:{},done:{},stars:{},badges:{},cert:null,st:{rec:0,perdu:0,cul:{},oeufs:0,pech:0,eng:0,vendu:0,gain:0}}}
+  const AG=()=>{const a=A();if(!a.agro)a.agro=neuf();const g=a.agro;['stock','done','stars','badges'].forEach(k=>{if(!g[k])g[k]={}});if(g.ration===undefined)g.ration=6;if(!g.st)g.st={rec:0,perdu:0,cul:{},oeufs:0,pech:0,eng:0,vendu:0,gain:0};return g};
+  function neuf(){return {fc:250,jour:1,pluie:false,sais:'pluies',parc:Array(GR*GH).fill(null).map(()=>({c:null,p:0,eau:1,her:false,par:0,sol:2,prev:null})),stock:{},ani:{poule:0,chevre:0,poisson:0},ration:6,alerteAli:false,pt:{},done:{},stars:{},badges:{},cert:null,st:{rec:0,perdu:0,cul:{},oeufs:0,pech:0,eng:0,vendu:0,gain:0}}}
   let ov=null,R=null,sc=null,cam=null,raf=0,pop=null,tab='ferme',outil='arroser',graine='mais',cs={yaw:.5,pitch:.9,dist:30},ptr=new Map(),cells=[],grp=null,anim=[],tm=0,vit=1,sautSave=0,rain=null,hemi=null,sun=null,pause=false;
   const $=id=>ov&&ov.querySelector('#'+id);
   const btn=(t,oc,bg,st)=>`<button onclick="${oc}" style="padding:7px 10px;margin:2px;border-radius:10px;border:2px solid #fff3;background:${bg||'#3b5a3a'};color:${bg==='#ffd54f'?'#222':'#fff'};font-size:13px;font-weight:600;touch-action:manipulation;${st||''}">${t}</button>`;
@@ -92,20 +92,20 @@ export function creerAgro(D){
         if((p.stress||0)>=3){g.st.perdu++;p.c=null;p.p=0;p.stress=0;alerte='🥀 Une culture a séché faute d’eau. Arrose chaque jour !'}}
       parcelle(i)});
     // animaux
-    const nu=g.nourri;g.nourri=false;
-    if(nu){g.stock.oeuf=(g.stock.oeuf||0)+g.ani.poule;g.st.oeufs+=g.ani.poule;if(g.jour%2===0)g.stock.lait=(g.stock.lait||0)+g.ani.chevre;g.pt.poisson=(g.pt.poisson||0)+g.ani.poisson*0}
+    const nbAni=g.ani.poule+g.ani.chevre+g.ani.poisson,besoin=Math.ceil(nbAni/3),nu=nbAni>0&&(g.ration||0)>=besoin;
+    if(nbAni>0&&nu){g.ration-=besoin;g.alerteAli=false;g.stock.oeuf=(g.stock.oeuf||0)+g.ani.poule;g.st.oeufs+=g.ani.poule;if(g.jour%2===0)g.stock.lait=(g.stock.lait||0)+g.ani.chevre}
     if(g.ani.poisson&&g.jour%7===0){g.stock.poisson=(g.stock.poisson||0)+g.ani.poisson;toast('🐟 Les tilapias ont grandi : à pêcher !')}
-    if((g.ani.poule+g.ani.chevre+g.ani.poisson>0)&&!nu&&g.jour>1)alerte=alerte||'🐔 Les animaux n’ont pas été nourris : pas de production aujourd’hui.';
+    if(nbAni>0&&!nu&&!g.alerteAli){g.alerteAli=true;alerte=alerte||'🌾 Plus d’aliments pour les animaux : achète des rations dans l’onglet Élevage. Ils ne produisent plus tant qu’ils ne sont pas nourris.'}
     meteo();if(alerte){msg(alerte,4000);PAR.dire(alerte,'bea')}
     maj();verifMissions();sauve()}
   // ---------- actions sur parcelle
   function agir(i){
     const g=AG(),p=g.parc[i];if(!p)return;
-    if(outil==='semer'){const C=CULT[graine];if(p.c){msg('Cette parcelle est déjà cultivée.');return}if(g.fc<C.sem){msg('💰 Pas assez de FC pour les semences ('+C.sem+').');SFX.ko&&SFX.ko();return}g.fc-=C.sem;const rot=p.prev&&p.prev!==graine;p.c=graine;p.p=0;p.eau=Math.max(p.eau,1);p.stress=0;p.rot=!!rot;SFX.coin&&SFX.coin()}
+    if(outil==='semer'){const C=CULT[graine];if(p.c){msg('Cette parcelle est déjà cultivée.');return}if(g.fc<C.sem){msg('💰 Pas assez de pf pour les semences ('+C.sem+').');SFX.ko&&SFX.ko();return}g.fc-=C.sem;const rot=p.prev&&p.prev!==graine;p.c=graine;p.p=0;p.eau=Math.max(p.eau,1);p.stress=0;p.rot=!!rot;SFX.coin&&SFX.coin()}
     else if(outil==='arroser'){if(!p.c){msg('Rien à arroser ici.');return}p.eau=3;SFX.coin&&SFX.coin()}
     else if(outil==='desherber'){if(!p.her){msg('Pas de mauvaises herbes ici.');return}p.her=false;SFX.coin&&SFX.coin()}
-    else if(outil==='soigner'){if(!p.par){msg('Aucun parasite ici.');return}if(g.fc<5){msg('💰 Il faut 5 FC de neem.');return}g.fc-=5;p.par=0;SFX.coin&&SFX.coin()}
-    else if(outil==='engrais'){if(g.fc<4){msg('💰 Il faut 4 FC de compost.');return}if(p.sol>=3){msg('Ce sol est déjà très fertile.');return}g.fc-=4;p.sol=Math.min(3,p.sol+1);g.st.eng++;SFX.coin&&SFX.coin()}
+    else if(outil==='soigner'){if(!p.par){msg('Aucun parasite ici.');return}if(g.fc<5){msg('💰 Il faut 5 pf de neem.');return}g.fc-=5;p.par=0;SFX.coin&&SFX.coin()}
+    else if(outil==='engrais'){if(g.fc<4){msg('💰 Il faut 4 pf de compost.');return}if(p.sol>=3){msg('Ce sol est déjà très fertile.');return}g.fc-=4;p.sol=Math.min(3,p.sol+1);g.st.eng++;SFX.coin&&SFX.coin()}
     else if(outil==='recolter'){const C=p.c&&CULT[p.c];if(!C){msg('Rien à récolter.');return}if(p.p<C.jours){msg('Pas encore mûr : encore '+(C.jours-p.p)+' jour(s).');return}
       let q=4+(p.sol>=3?2:p.sol>=2?1:0)+(p.rot?1:0)-(p.her?1:0)-((p.stress||0)>0?1:0);q=Math.max(1,q);
       g.stock[p.c]=(g.stock[p.c]||0)+q;g.st.rec++;g.st.cul[p.c]=(g.st.cul[p.c]||0)+q;p.prev=p.c;p.c=null;p.p=0;p.sol=Math.max(0,p.sol-1);p.her=false;p.par=0;SFX.win&&SFX.win();msg('✅ Récolte : +'+q+' '+C.nom);D.mis&&D.mis.evt('agr','recolte',p.prev)}
@@ -125,7 +125,7 @@ export function creerAgro(D){
   // ---------- boucle
   function boucle(){
     raf=requestAnimationFrame(boucle);if(!R)return;const t=performance.now(),dt=Math.min(.05,(t-(boucle.t||t))/1000);boucle.t=t;
-    if(!pause){tm+=dt*vit;if(tm>=5){tm=0;jour()}}
+    if(!pause){tm+=dt*vit;if(tm>=20){tm=0;jour()}}
     const now=t/1000;anim.forEach(a=>{const x=a.cx+Math.cos(now*.4+a.a)*a.r*(a.t==='f'?1:.7+.3*Math.sin(now+a.a)),z=a.cz+Math.sin(now*.4+a.a)*a.r*(a.t==='f'?1:.7+.3*Math.cos(now+a.a));a.o.position.x=x;a.o.position.z=z;if(a.t!=='f')a.o.rotation.y=-now*.4-a.a;a.o.position.y=a.t==='f'?.2:0});
     if(rain&&rain.visible){const a=rain.geometry.attributes.position;for(let i=0;i<a.count;i+=2){let y=a.getY(i)-dt*24;if(y<0)y+=25;a.setY(i,y);a.setY(i+1,y-.8)}a.needsUpdate=true}
     const d=cs.dist,cp=Math.cos(cs.pitch);cam.position.set(Math.sin(cs.yaw)*cp*d,Math.sin(cs.pitch)*d,Math.cos(cs.yaw)*cp*d);cam.lookAt(0,0,0);R.render(sc,cam)}
@@ -151,22 +151,22 @@ export function creerAgro(D){
   function fermerOver(){const o=$('agover');if(o){o.style.display='none';o.innerHTML=''}}
   function msg(t,ms){const m=$('agmsg');if(!m)return;m.textContent=t;m.style.display='block';clearTimeout(msg.t);msg.t=setTimeout(()=>{if(m)m.style.display='none'},ms||2500)}
   function maj(){const e=$('agstat');if(!e)return;const g=AG(),st=Object.keys(g.stock).filter(k=>g.stock[k]>0).map(k=>(CULT[k]?CULT[k].ico:k==='oeuf'?'🥚':k==='lait'?'🥛':'🐟')+g.stock[k]).join(' ');
-    e.innerHTML=`💰 <b>${Math.round(g.fc)}</b> FC · 📅 jour <b>${g.jour}</b> (${g.sais==='pluies'?'🌧 pluies':'☀️ sèche'}) ${g.pluie?'· ☔ il pleut':''}<br>📦 ${st||'stock vide'}`}
+    e.innerHTML=`💰 <b>${Math.round(g.fc)}</b> pf · 📅 jour <b>${g.jour}</b> (${g.sais==='pluies'?'🌧 pluies':'☀️ sèche'}) ${g.pluie?'· ☔ il pleut':''}<br>📦 ${st||'stock vide'}`}
   const TABS=[['ferme','🌾 Ferme'],['elev','🐔 Élevage'],['marche','🛒 Marché'],['miss','🎯 Missions'],['savoir','📖 Savoirs']];
   function rendTabs(){$('agtabs').innerHTML=TABS.map(t=>`<button onclick="agTab('${t[0]}')" style="flex:0 0 auto;padding:9px 11px;border:0;border-bottom:3px solid ${tab===t[0]?'#ffd54f':'transparent'};background:none;color:${tab===t[0]?'#ffd54f':'#cfe3cf'};font-size:13px;font-weight:600">${t[1]}</button>`).join('')}
   function rend(){
     const sh=$('agsheet');if(!sh)return;const g=AG();let h='';
     if(tab==='ferme'){
-      h='<div style="font-size:12px;opacity:.75">Outil (puis touche une parcelle)</div>'+[['semer','🌱 Semer'],['arroser','💧 Arroser'],['desherber','🌿 Désherber'],['soigner','🐛 Soigner (5 FC)'],['engrais','♻️ Compost (4 FC)'],['recolter','🧺 Récolter']].map(o=>btn(o[1],`agOutil('${o[0]}')`,outil===o[0]?'#ffd54f':'')).join('');
-      if(outil==='semer')h+='<div style="font-size:12px;opacity:.75;margin-top:4px">Graines (coût)</div>'+Object.keys(CULT).map(k=>btn(CULT[k].ico+' '+CULT[k].nom+' · '+CULT[k].sem+' FC · '+CULT[k].jours+' j',`agGraine('${k}')`,graine===k?'#ffd54f':'')).join('')+`<p style="font-size:12px;opacity:.85">${esc(CULT[graine].txt)}</p>`;
-      h+='<div>'+btn('💧 Arroser toute la ferme (½ FC par parcelle)','agToutArroser()','#2c7fb8')+'</div><p style="font-size:11px;opacity:.8">Parcelle sombre = humide. Herbes vertes = désherber. Points rouges = parasites. Une bulle dorée = prêt à récolter.</p>'}
+      h='<div style="font-size:12px;opacity:.75">Outil (puis touche une parcelle)</div>'+[['semer','🌱 Semer'],['arroser','💧 Arroser'],['desherber','🌿 Désherber'],['soigner','🐛 Soigner (5 pf)'],['engrais','♻️ Compost (4 pf)'],['recolter','🧺 Récolter']].map(o=>btn(o[1],`agOutil('${o[0]}')`,outil===o[0]?'#ffd54f':'')).join('');
+      if(outil==='semer')h+='<div style="font-size:12px;opacity:.75;margin-top:4px">Graines (coût)</div>'+Object.keys(CULT).map(k=>btn(CULT[k].ico+' '+CULT[k].nom+' · '+CULT[k].sem+' pf · '+CULT[k].jours+' j',`agGraine('${k}')`,graine===k?'#ffd54f':'')).join('')+`<p style="font-size:12px;opacity:.85">${esc(CULT[graine].txt)}</p>`;
+      h+='<div>'+btn('💧 Arroser toute la ferme (½ pf par parcelle)','agToutArroser()','#2c7fb8')+'</div><p style="font-size:11px;opacity:.8">Parcelle sombre = humide. Herbes vertes = désherber. Points rouges = parasites. Une bulle dorée = prêt à récolter.</p>'}
     else if(tab==='elev'){
-      const a=g.ani,c=(k,p,max)=>`${btn('Acheter · '+p+' FC',`agAcheter('${k}',${p},${max})`)}`;
-      h=`<b>🐔 Élevage</b><p style="font-size:12px;margin:2px 0">Nourris tes animaux chaque jour (2 FC) pour qu’ils produisent.</p>`+btn(g.nourri?'✅ Animaux nourris aujourd’hui':'🌾 Nourrir les animaux (2 FC)','agNourrir()',g.nourri?'#555':'#2e7d32')+
+      const a=g.ani,c=(k,p,max)=>`${btn('Acheter · '+p+' pf',`agAcheter('${k}',${p},${max})`)}`;
+      h=`<b>🐔 Élevage</b><p style="font-size:12px;margin:2px 0">Les animaux sont nourris <b>automatiquement une fois par jour</b> avec ta réserve d’aliments. Il faut 1 ration pour 3 animaux par jour.</p><div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">🌾 Réserve : <b>${g.ration||0}</b> ration(s) · besoin par jour : <b>${Math.ceil((a.poule+a.chevre+a.poisson)/3)}</b> · ${btn('Acheter 10 rations · 15 pf','agAliments()','#2e7d32','padding:5px 9px')}</div>`+
         `<div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">🐔 Poules : <b>${a.poule}</b>/8 · 1 œuf par jour chacune ${c('poule',30,8)}</div><div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">🐐 Chèvres : <b>${a.chevre}</b>/4 · du lait tous les 2 jours ${c('chevre',80,4)}</div><div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">🐟 Tilapias : <b>${a.poisson}</b>/10 · pêche chaque semaine ${c('poisson',15,10)}</div>`+(g.stock.poisson?btn('🎣 Pêcher ('+g.stock.poisson+' poissons prêts)','agPecher()','#2c7fb8'):'')}
     else if(tab==='marche'){
       const ks=Object.keys(g.stock).filter(k=>g.stock[k]>0);
-      h='<b>🛒 Marché du jour</b><p style="font-size:12px;margin:2px 0">Les prix changent chaque jour : vends quand c’est cher !</p>'+(ks.length?ks.map(k=>`<div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">${CULT[k]?CULT[k].ico+' '+CULT[k].nom:k==='oeuf'?'🥚 Œufs':k==='lait'?'🥛 Lait':'🐟 Poisson'} × ${g.stock[k]} · prix <b>${prixJour(k)} FC</b> ${btn('Vendre tout','agVendre(\''+k+'\')','#2e7d32')}</div>`).join(''):'<p style="font-size:13px">Ton stock est vide. Récolte d’abord !</p>')}
+      h='<b>🛒 Marché du jour</b><p style="font-size:12px;margin:2px 0">Les prix changent chaque jour : vends quand c’est cher !</p>'+(ks.length?ks.map(k=>`<div style="background:#0e200f;border-radius:10px;padding:6px;margin:4px 0;font-size:13px">${CULT[k]?CULT[k].ico+' '+CULT[k].nom:k==='oeuf'?'🥚 Œufs':k==='lait'?'🥛 Lait':'🐟 Poisson'} × ${g.stock[k]} · prix <b>${prixJour(k)} pf</b> ${btn('Vendre tout','agVendre(\''+k+'\')','#2e7d32')}</div>`).join(''):'<p style="font-size:13px">Ton stock est vide. Récolte d’abord !</p>')}
     else if(tab==='miss'){
       const s=statsM();h='<b>🎯 Missions de la ferme</b>'+MISSIONS.map(m=>{const ok=g.done[m.id],pret=m.ok(s);return `<div style="background:#0e200f;border-radius:10px;padding:6px 8px;margin:4px 0;font-size:13px"><b>${ok?'✅':pret?'🟢':'▫️'} ${esc(m.nom)}</b> ${ok?'⭐'.repeat(g.stars[m.id]||1):''}<br><span style="opacity:.85">${esc(m.txt)}</span>${ok?'':'<br>'+btn('✅ Valider','agValider(\''+m.id+'\')',pret?'#2e7d32':'#555')}</div>`}).join('')+`<p style="font-size:12px">${Object.keys(g.done).length}/10 (5 suffisent pour valider l’atelier agricole).</p>`+(g.cert?btn('🎓 Mon certificat','agCert()','#6a1b9a'):'')}
     else h=SAVOIRS.map(n=>`<div style="background:#0e200f;border-radius:10px;padding:7px;margin:4px 0;font-size:13px"><b>${esc(n[0])}</b><br>${esc(n[1])}</div>`).join('');
@@ -180,18 +180,18 @@ export function creerAgro(D){
     if(n>=5&&!a.done['met:g1']){a.done['met:g1']=true;a.stars['met:g1']=2;g.cert={date:new Date().toLocaleDateString('fr-FR')};a.pieces+=15;refreshHud();ex='<p>🏅 <b>Jeune agriculteur !</b> Atelier validé (+15 🪙)</p><button onclick="agCert()" style="padding:9px 12px;border-radius:10px;background:#6a1b9a;color:#fff;border:0">🎓 Mon certificat</button>'}
     if(n>=10)a.stars['met:g1']=3;
     save();SFX.win&&SFX.win();D.mis&&D.mis.evt('agr','mission',id);PAR.dire('Mission réussie ! Bravo, jeune agriculteur.','bea');maj();rend();
-    over(`<div style="text-align:center"><div style="font-size:44px">🌾🎉</div><h3>Mission réussie !</h3><p>${esc(m.nom)}${prem?' · +'+m.pieces+' 🪙 · +100 FC pour la ferme':''}</p>${ex}</div>`)}
+    over(`<div style="text-align:center"><div style="font-size:44px">🌾🎉</div><h3>Mission réussie !</h3><p>${esc(m.nom)}${prem?' · +'+m.pieces+' 🪙 · +100 pf pour la ferme':''}</p>${ex}</div>`)}
   function cert(){const g=AG();if(!g.cert){over('<h3>🎓 Certificat</h3><p>Réussis 5 missions de la ferme.</p>');return}
     over(`<div style="background:linear-gradient(#f4fbe8,#d6eab8);color:#2a4a12;border:6px double #6a9a2a;border-radius:14px;padding:16px;text-align:center"><div style="font-size:12px;letter-spacing:3px">BOYEKOLI FARM</div><div style="font-size:44px">🌾</div><h2 style="margin:4px 0;font-family:serif">CERTIFICAT DE JEUNE AGRICULTEUR</h2><p style="font-size:14px">décerné à</p><div style="font-size:24px;font-weight:800;font-family:serif;color:#7a1f1f">${esc(G.nom||'Jeune agriculteur')}</div><p style="font-size:13px">pour avoir cultivé, élevé et vendu dans une ferme éducative.</p><p style="font-size:12px">Fait le ${esc(g.cert.date)}</p></div>`)}
   const actions={
     agOuvrir:()=>ouvrir(),agQuitter:()=>quitter(),agTab:t=>{tab=t;rendTabs();rend()},agOutil:o=>{outil=o;rend()},agGraine:k=>{graine=k;rend()},
     agRetour:()=>{const o=$('agover');if(o&&o.style.display==='flex')fermerOver();else quitter()},
     agPause:()=>{pause=!pause;msg(pause?'⏸ Temps arrêté':'▶ Le temps passe',1200)},agVit:()=>{vit=vit===1?3:1;msg('⏩ Vitesse ×'+vit,1200)},
-    agToutArroser:()=>{const g=AG();let n=0;g.parc.forEach((p,i)=>{if(p.c&&p.eau<3){p.eau=3;n++;parcelle(i)}});const c=Math.ceil(n/2);if(!n){msg('Tout est déjà arrosé.');return}if(g.fc<c){msg('💰 Il faut '+c+' FC.');SFX.ko&&SFX.ko();return}g.fc-=c;maj();sauve();msg('💧 '+n+' parcelles arrosées ('+c+' FC)')},
-    agAcheter:(k,p,max)=>{const g=AG();if(g.ani[k]>=max){msg('Maximum atteint.');return}if(g.fc<p){msg('💰 Pas assez de FC.');SFX.ko&&SFX.ko();return}g.fc-=p;g.ani[k]++;animaux();maj();rend();sauve();SFX.coin&&SFX.coin()},
-    agNourrir:()=>{const g=AG();if(g.nourri)return;const n=g.ani.poule+g.ani.chevre+g.ani.poisson;if(!n){msg('Achète d’abord des animaux.');return}if(g.fc<2){msg('💰 Il faut 2 FC.');return}g.fc-=2;g.nourri=true;maj();rend();sauve();SFX.coin&&SFX.coin()},
+    agToutArroser:()=>{const g=AG();let n=0;g.parc.forEach((p,i)=>{if(p.c&&p.eau<3){p.eau=3;n++;parcelle(i)}});const c=Math.ceil(n/2);if(!n){msg('Tout est déjà arrosé.');return}if(g.fc<c){msg('💰 Il faut '+c+' pf.');SFX.ko&&SFX.ko();return}g.fc-=c;maj();sauve();msg('💧 '+n+' parcelles arrosées ('+c+' pf)')},
+    agAcheter:(k,p,max)=>{const g=AG();if(g.ani[k]>=max){msg('Maximum atteint.');return}if(g.fc<p){msg('💰 Pas assez de pf.');SFX.ko&&SFX.ko();return}g.fc-=p;g.ani[k]++;animaux();maj();rend();sauve();SFX.coin&&SFX.coin()},
+    agAliments:()=>{const g=AG();if(g.fc<15){msg('💰 Il faut 15 pf.');SFX.ko&&SFX.ko();return}g.fc-=15;g.ration=(g.ration||0)+10;g.alerteAli=false;maj();rend();sauve();SFX.coin&&SFX.coin()},agNourrirOld:()=>{const g=AG();if(g.nourri)return;const n=g.ani.poule+g.ani.chevre+g.ani.poisson;if(!n){msg('Achète d’abord des animaux.');return}if(g.fc<2){msg('💰 Il faut 2 pf.');return}g.fc-=2;g.nourri=true;maj();rend();sauve();SFX.coin&&SFX.coin()},
     agPecher:()=>{const g=AG(),n=g.stock.poisson||0;if(!n)return;g.st.pech+=n;msg('🎣 '+n+' tilapias pêchés ! Va les vendre.');rend();sauve();maj();SFX.win&&SFX.win()},
-    agVendre:k=>{const g=AG(),n=g.stock[k]||0;if(!n)return;const v=n*prixJour(k);g.fc+=v;g.st.vendu+=n;g.st.gain+=v;g.stock[k]=0;maj();rend();sauve();SFX.coin&&SFX.coin();msg('💰 Vendu pour '+v+' FC')},
+    agVendre:k=>{const g=AG(),n=g.stock[k]||0;if(!n)return;const v=n*prixJour(k);g.fc+=v;g.st.vendu+=n;g.st.gain+=v;g.stock[k]=0;maj();rend();sauve();SFX.coin&&SFX.coin();msg('💰 Vendu pour '+v+' pf')},
     agValider:id=>valider(id),agCert:()=>cert(),agFermerOver:()=>fermerOver(),
     agTest:{jours:n=>{for(let i=0;i<n;i++)jour()},agir:(i,o,gr)=>{outil=o;if(gr)graine=gr;agir(i)},g:AG}};
   return {actions,ouvrir,fermer,AG,estOuvert:()=>!!ov};

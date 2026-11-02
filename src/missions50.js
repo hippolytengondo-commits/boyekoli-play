@@ -3,9 +3,11 @@
 // scolaire (question de cours) et un objectif de jeu détecté par événements envoyés par les jeux (D.mis.evt).
 import {MISSIONS50,JEUX,CHAPITRES} from './missions50/data.js';
 import {PROGRAMME} from './programme.js';
+const GATE={sci:'sci',med:'med',det:'det',ds:'ds',fs:'fs',sp:'sp',mus:'mus',vol:'vol'};
 
 export function creerMissions50(D){
   const {PAR,G,esc,SFX,save,refreshHud,toast}=D;
+  const bloque=m=>GATE[m.jeu]&&window.__ACC&&!window.__ACC.ouvert(GATE[m.jeu]);
   const A=()=>G.adv;
   const S=()=>{const a=A();if(!a.m50)a.m50={actif:null,prog:0,done:{},stars:{}};const s=a.m50;if(!s.done)s.done={};if(!s.stars)s.stars={};return s};
   const find=id=>MISSIONS50.find(m=>m.id===id);
@@ -44,7 +46,7 @@ export function creerMissions50(D){
     CHAPITRES.forEach((c,ci)=>{
       const ok=ouvert(ci);h+=`<h3 style="margin:14px 0 2px;font-size:15px">${esc(c.nom)} ${ok?'':'🔒'}</h3><p style="font-size:12px;opacity:.8;margin:0 0 4px">${ok?esc(c.intro):'Réussis 5 missions du chapitre précédent pour débloquer ce chapitre.'}</p>`;
       if(ok)MISSIONS50.filter(m=>m.chap===ci).forEach(m=>{const d=s.done[m.id],J=JEUX[m.jeu],act=s.actif===m.id;
-        h+=btn(`${d?'✅':act?'🎯':'▫️'} ${J.ico} <b>${esc(m.titre)}</b><br><span style="font-size:12px;opacity:.85;font-weight:400">${esc(m.t)} (${esc(m.prov)}) · ${esc(J.nom)} ${d?'· '+'⭐'.repeat(s.stars[m.id]||1):''}</span>`,`m50Brief('${m.id}')`,act?'#7a5a10':d?'#1f5a3a':'')})});
+        h+=btn(`${d?'✅':bloque(m)?'🔒':act?'🎯':'▫️'} ${J.ico} <b>${esc(m.titre)}</b><br><span style="font-size:12px;opacity:.85;font-weight:400">${esc(m.t)} (${esc(m.prov)}) · ${esc(J.nom)}${bloque(m)?' · jeu bloqué':''} ${d?'· '+'⭐'.repeat(s.stars[m.id]||1):''}</span>`,`m50Brief('${m.id}')`,act?'#7a5a10':d?'#1f5a3a':'')})});
     fenetre(h)}
   function briefing(id){
     const m=find(id),J=JEUX[m.jeu],s=S(),act=s.actif===id;

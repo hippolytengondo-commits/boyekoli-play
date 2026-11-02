@@ -50,6 +50,7 @@ import {creerEspace} from './spatial.js';
 import {creerMissions50} from './missions50.js';
 import {creerAgro} from './agro.js';
 import {creerEntreprise} from './entreprise.js';
+import {creerAcces} from './acces.js';
 import {creerJeux as creerJeuxMusique} from './musique_jeux.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
@@ -362,17 +363,17 @@ function construireVille(){
   {
     const rp=construireReperes(w,AMEN.AM().rep,ENT.reperes());
     rp.portes.forEach(r=>{
-      if(r.biz){spotsExtra.push({x:r.px,z:r.pz,r:4.4,label:r.ico+' '+r.nom+' : entrer dans mon commerce',run:()=>ENT.actions.entOuvrir()});return}
+      if(r.biz){spotsExtra.push({x:r.px,z:r.pz,r:4.4,get label(){return ACC.lbl('ent',r.ico+' '+r.nom+' : entrer dans mon commerce')},run:()=>ENT.actions.entOuvrir()});return}
       {const ACCES={hopital:['🏥 BOYEKOLI MEDICAL CENTER : entrer',()=>HOPI.actions.medOuvrir()],agence:['🕵️ Agence de détectives : entrer',()=>DETEC.actions.detOuvrir()],labo:['🔬 BOYEKOLI SCIENCE LAB : entrer',()=>SCIE.actions.sciOuvrir()],design:['🏠 BOYEKOLI DESIGN STUDIO : entrer',()=>DESI.actions.dsOuvrir()],modestudio:['👗 BOYEKOLI FASHION STUDIO : entrer',()=>FASH.actions.fsOuvrir()],espace:['🚀 BOYEKOLI SPACE EXPLORER : entrer',()=>ESPA.actions.spOuvrir()],ferme:['🌾 BOYEKOLI FARM : entrer',()=>AGRO.actions.agOuvrir()]};
-       if(ACCES[r.id]){spotsExtra.push({x:r.px,z:r.pz,r:4.4,label:ACCES[r.id][0],run:ACCES[r.id][1]});return}}
+       if(ACCES[r.id]){const GA={hopital:'med',labo:'sci',design:'ds',modestudio:'fs',espace:'sp',ferme:'ferme',agence:'det'}[r.id],tx=ACCES[r.id][0];spotsExtra.push({x:r.px,z:r.pz,r:4.4,get label(){return GA?ACC.lbl(GA,tx):tx},run:ACCES[r.id][1]});return}}
       const retour={x:r.px+(r.ry?0:0),z:r.pz+(r.ry?-1.6:1.6),phi:r.ry?-Math.PI/2:Math.PI/2};
       if(r.stage){
         const i=STAGES.findIndex(s=>s.id===r.stage),st=STAGES[i];
         SCENES.ville.doors.push({x:r.px,z:r.pz,r:2.3,to:st.scene,label:'Entrer : '+st.name,ok:()=>stageUnlocked(i),closed:'Porte fermée : termine d’abord « '+(STAGES[i-1]?STAGES[i-1].name:'la mission précédente')+' »',
           tx:SCENES[st.scene].spawn?SCENES[st.scene].spawn.x:-12,tz:SCENES[st.scene].spawn?SCENES[st.scene].spawn.z:0,phi:SCENES[st.scene].spawn?SCENES[st.scene].spawn.phi:0,retour:retour});
       }else{
-        SCENES.ville.doors.push({x:r.px,z:r.pz,r:2.3,to:'interieur',label:'Entrer : '+r.nom.replace(/^l’|^la |^le /,'').replace(/^./,c=>c.toUpperCase()),tx:0,tz:0,phi:-Math.PI/2,
-          pre:()=>{G.int={t:r.interieur,n:1,k:-1,ret:retour}}});
+        {const dd={x:r.px,z:r.pz,r:2.3,to:'interieur',tx:0,tz:0,phi:-Math.PI/2,pre:()=>{G.int={t:r.interieur,n:1,k:-1,ret:retour}}},tl='Entrer : '+r.nom.replace(/^l’|^la |^le /,'').replace(/^./,c=>c.toUpperCase());
+         if(r.id==='concession'){dd.gate='concession';Object.defineProperty(dd,'label',{get:()=>ACC.lbl('concession',tl),enumerable:true})}else dd.label=tl;SCENES.ville.doors.push(dd)}
       }
     });
   }
@@ -384,13 +385,13 @@ function construireVille(){
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
   {const ap=construireAeroport(w.group,w.colliders,w.boxes,130,0);
    w.bounds.x1=Math.max(w.bounds.x1,150);
-   SCENES.ville.spots.push({x:ap.hall.x,z:ap.hall.z,r:4,label:'✈️ Aéroport : inscription, licence de pilote',run:()=>SIM.actions.simAeroport()});
-   SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,label:'🛩 Avion : monter à bord (licence requise)',run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}SIM.actions.simAvion()}})}
+   SCENES.ville.spots.push({x:ap.hall.x,z:ap.hall.z,r:4,get label(){return ACC.lbl('vol','✈️ Aéroport : inscription, licence de pilote')},run:()=>SIM.actions.simAeroport()});
+   SCENES.ville.spots.push({x:ap.avion.x,z:ap.avion.z,r:5.5,get label(){return ACC.lbl('vol','🛩 Avion : monter à bord (licence requise)')},run:()=>{const p=G.adv.pilote||{};if(!p.inscrit){toast('Il faut d’abord t’inscrire à l’école de pilotage, au terminal.');SFX.ko();return}SIM.actions.simAvion()}})}
   // (le studio de musique est construit par RES.construire : il peut être déplacé)
   w.bounds.x0=Math.min(w.bounds.x0,-52);
   AMEN.construireExtras(w.group,w.colliders,w.boxes);
   {const br=RES.construire(w.group,w.colliders,w.boxes,construireStudioMusique);
-   br.spots.forEach(sp=>SCENES.ville.spots.push({x:sp.x,z:sp.z,r:sp.r,label:sp.label,run:sp.kind==='studio'?()=>MUSIC.actions.musOuvrir():()=>RES.actions.resOuvrir()}))}
+   br.spots.forEach(sp=>SCENES.ville.spots.push({x:sp.x,z:sp.z,r:sp.r,get label(){return sp.kind==='studio'?ACC.lbl('mus',sp.label):sp.label},run:sp.kind==='studio'?()=>MUSIC.actions.musOuvrir():()=>RES.actions.resOuvrir()}))}
   // stations-service : une au village, une à l'entrée de la cité
   STATIONS.map(s0=>Object.assign({},s0,AMEN.AM().st['st_'+s0.nom]||{})).forEach(st=>{
     const r=construireStation(w.group,w.colliders,w.boxes,st.x,st.z,st.nom);
@@ -578,12 +579,12 @@ $('info').addEventListener('click',()=>{
 });
 function refreshHud(){
   const pu=photoUrl();
-  $('stats').innerHTML=(pu?`<img class="av" src="${pu}" alt="">`:'')+'🪙 '+G.adv.pieces+' · 🎓 '+(G.adv.savoir||0)+' · ⭐ '+starsTotal()+' · Niv '+lvl();
+  $('stats').innerHTML=(pu?`<img class="av" src="${pu}" alt="">`:'')+'🪙 '+G.adv.pieces+' · 💵 '+(G.adv.savoir||0)+' FC · ⭐ '+starsTotal()+' · Niv '+lvl();
   if(G.mode!=='mini')majObjectif(objective());
 }
 function gain(p,xp,sv){
   const l0=lvl();
-  G.adv.pieces+=p;G.adv.xp+=xp;if(sv)G.adv.savoir=(G.adv.savoir||0)+sv;
+  G.adv.pieces+=p;G.adv.xp+=xp;if(sv){G.adv.savoir=(G.adv.savoir||0)+sv;setTimeout(()=>{if(!G.dialog||true)toast('💵 +'+sv+' FC gagnés')},50)}
   if(lvl()>l0){toast('Niveau '+lvl()+' atteint !'+(LEVEL_UNLOCKS[lvl()]?' Nouvelle tenue débloquée !':''));SFX.win()}
   refreshHud();save();
 }
@@ -636,6 +637,7 @@ function actionFor(t){
   return {label:d.label,enabled:true,run:()=>goTo(d)};
 }
 function goTo(d){
+  if(d.gate&&!ACC.ouvert(d.gate)){ACC.bloquer(d.gate,()=>goTo(d));return}
   if(d.pre)d.pre();
   // retour d'un repère du village : on ressort devant son bâtiment, pas au quartier d'origine
   if(d.to==='ville'&&G.retourRepere){const r=G.retourRepere;G.retourRepere=null;d=Object.assign({},d,{tx:r.x,tz:r.z,phi:r.phi})}
@@ -923,7 +925,7 @@ function buyRes(k){
 }
 // ---------- Chantiers de la maison ----------
 function openMaison(){openBox({kind:'maison',msg:''})}
-const icoCout=k=>k==='pieces'?'🪙':k==='savoir'?'🎓':RESS[k].e;
+const icoCout=k=>k==='pieces'?'🪙':k==='savoir'?'FC':RESS[k].e;
 const manque=(c)=>{const a=G.adv,m=[];Object.keys(c.cout).forEach(k=>{const n=c.cout[k],h=k==='pieces'?a.pieces:k==='savoir'?(a.savoir||0):(stock()[k]||0);if(h<n)m.push((n-h)+' '+icoCout(k))});return m};
 const payer=c=>Object.keys(c).forEach(x=>{const a=G.adv;if(x==='pieces')a.pieces-=c[x];else if(x==='savoir')a.savoir=(a.savoir||0)-c[x];else stock()[x]-=c[x]});
 function htmlMaison(d){
@@ -966,13 +968,13 @@ function boutonConstruction(k,t,niv){
 }
 function htmlTerrain(d){
   const a=G.adv,k=d.k,n=a.terrains||0,b=batsRes()[k]||null;
-  let h=`<h3>🏘 Terrain n°${k+1}</h3><p class="row"><span>Mes points de savoir</span><b>${a.savoir||0} 🎓</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
+  let h=`<h3>🏘 Terrain n°${k+1}</h3><p class="row"><span>Mes francs congolais</span><b>${a.savoir||0} FC</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
   if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
   h+='<button onclick="citeOuvrir()" style="background:#1b5e7a;color:#fff">🌆 Tableau de bord de ma cité (Smart City)</button>';
   if(k===n){
     const prix=prixTerrain(k),ok=(a.savoir||0)>=prix;
-    h+=`<p style="font-size:13px">Un terrain dans ton quartier résidentiel. Les points de savoir se gagnent en réussissant des missions : plus tu apprends, plus ta ville grandit. Chaque terrain coûte plus cher que le précédent.</p>`
-      +`<button class="${ok?'p':''}" onclick="acheterTerrain(${k})">Acheter ce terrain : ${prix} 🎓${ok?'':' — il te manque '+(prix-(a.savoir||0))+' 🎓'}</button>`;
+    h+=`<p style="font-size:13px">Un terrain dans ton quartier résidentiel. Les francs congolais (FC) se gagnent en répondant juste aux questions des missions : plus tu apprends, plus ta ville grandit. Chaque terrain coûte plus cher que le précédent.</p>`
+      +`<button class="${ok?'p':''}" onclick="acheterTerrain(${k})">Acheter ce terrain : ${prix} FC${ok?'':' — il te manque '+(prix-(a.savoir||0))+' FC'}</button>`;
   }else if(k<n){
     if(b&&b.annexe!==undefined){
       h+=`<p>Ce terrain sert d’annexe au terrain n°${b.annexe+1} : ${esc(nomBatiment(batsRes()[b.annexe]))}.</p>`;
@@ -986,9 +988,9 @@ function htmlTerrain(d){
         if(b.loc){const du=loyerDu(b);h+=`<p>🏘 <b>Des locataires occupent ce logement</b> (${lo} 🪙 par heure). Loyers à encaisser : <b>${du} 🪙</b></p><button class="${du?'p':''}" onclick="encaisserLoyer(${k})">💰 Encaisser les loyers</button><button class="s" onclick="louerTerrain(${k},false)">Reprendre le logement (fin de la location)</button>`}
         else h+=`<button onclick="louerTerrain(${k},true)">🏘 Mettre en location<br><small>Des familles s’installent et paient ${lo} 🪙 par heure (jusqu’à ${LOYER_MAX_H} h cumulées).</small></button>`;
       }else h+=`<p style="font-size:13px">🏥 Ce service accueille du personnel et des visiteurs : entre pour voir l’activité.</p>`;
-      h+=d.conf?`<p style="font-size:13px">Démolir « ${esc(nomBatiment(b))} » ? Tu récupères la moitié des pièces et des points de savoir investis, pas les matériaux.</p><button onclick="demolirTerrain(${k})">Oui, démolir</button><button class="s" onclick="demolirAnnuler()">Non, garder</button>`:`<button class="s" onclick="demolirAnnuler(true)">🔨 Démolir ou changer de construction</button>`;
+      h+=d.conf?`<p style="font-size:13px">Démolir « ${esc(nomBatiment(b))} » ? Tu récupères la moitié des pièces et des FC investis, pas les matériaux.</p><button onclick="demolirTerrain(${k})">Oui, démolir</button><button class="s" onclick="demolirAnnuler()">Non, garder</button>`:`<button class="s" onclick="demolirAnnuler(true)">🔨 Démolir ou changer de construction</button>`;
     }else{
-      h+=`<p style="font-size:13px">Choisis ce que tu construis sur ce terrain. Chaque construction coûte des pièces, des matériaux et des points de savoir, et peut être améliorée ensuite.</p>`;
+      h+=`<p style="font-size:13px">Choisis ce que tu construis sur ce terrain. Chaque construction coûte des pièces, des matériaux et des FC, et peut être améliorée ensuite.</p>`;
       ['Résidences','Services publics','Énergie et eau','Économie et transport','Environnement'].forEach(cat=>{
         h+=`<h4>${cat}</h4>`+TYPES.filter(t=>CATALOGUE[t].cat===cat).map(t=>boutonConstruction(k,t,0)).join('');
       });
@@ -1000,7 +1002,7 @@ function htmlTerrain(d){
 function acheterTerrain(k){
   const a=G.adv,d=G.dialog,prix=prixTerrain(k);
   if(k!==(a.terrains||0))return;
-  if((a.savoir||0)<prix){d.msg='Il te manque '+(prix-(a.savoir||0))+' points de savoir : réussis encore des missions !';SFX.ko();renderDialog();return}
+  if((a.savoir||0)<prix){d.msg='Il te manque '+(prix-(a.savoir||0))+' FC : réussis encore des questions !';SFX.ko();renderDialog();return}
   a.savoir-=prix;a.terrains=k+1;if(!a.maisRes)a.maisRes=[];
   G.refaireVille=true;save();refreshHud();SFX.win();
   d.msg='Félicitations ! Le terrain n°'+(k+1)+' est à toi. Ferme ce menu pour le voir, puis choisis ce que tu y construis.';renderDialog();
@@ -1044,7 +1046,7 @@ function demolirTerrain(k){
   B[k]=null;if((a.maisRes||[])[k])a.maisRes[k]=0;
   a.pieces+=p;a.savoir=(a.savoir||0)+sv;d.conf=false;
   G.refaireVille=true;save();refreshHud();SFX.coin();
-  d.msg='Construction démolie : +'+p+' 🪙 et +'+sv+' 🎓 récupérés. Le terrain est libre.';renderDialog();
+  d.msg='Construction démolie : +'+p+' 🪙 et +'+sv+' FC récupérés. Le terrain est libre.';renderDialog();
 }
 function bitumerRoute(id,type,i){
   const c=coutRoute(type,i);
@@ -1052,7 +1054,7 @@ function bitumerRoute(id,type,i){
 }
 function htmlRoute(d){
   const a=G.adv,c={cout:coutRoute(d.type,d.i)},m=manque(c);
-  let h=`<h3>🛣 Route à bitumer</h3><p class="row"><span>Mes points de savoir</span><b>${a.savoir||0} 🎓</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
+  let h=`<h3>🛣 Route à bitumer</h3><p class="row"><span>Mes francs congolais</span><b>${a.savoir||0} FC</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
   if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
   h+=`<p style="font-size:13px">Cette piste en terre devient une route goudronnée, plus belle et plus sûre pour toute la ville.</p>`
     +`<button class="${m.length?'':'p'}" onclick="payerRoute()">🛣 Bitumer ce tronçon<br><small>Coût : ${coutTexte(c.cout)}${m.length?' — il te manque : '+m.join(' · '):''}</small></button>`
@@ -1061,7 +1063,7 @@ function htmlRoute(d){
 }
 function htmlRond(d){
   const a=G.adv,m=manque({cout:COUT_ROND});
-  let h=`<h3>⛲ Rond-point du village</h3><p class="row"><span>Mes points de savoir</span><b>${a.savoir||0} 🎓</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
+  let h=`<h3>⛲ Rond-point du village</h3><p class="row"><span>Mes francs congolais</span><b>${a.savoir||0} FC</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
   if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
   h+=`<p style="font-size:13px">Un rond-point avec fontaine au carrefour central relie le quartier résidentiel et les quartiers de missions.</p>`
     +`<button class="${m.length?'':'p'}" onclick="payerRond()">⛲ Construire le rond-point<br><small>Coût : ${coutTexte(COUT_ROND)}${m.length?' — il te manque : '+m.join(' · '):''}</small></button>`;
@@ -1624,6 +1626,7 @@ const FASH=creerMode({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,open
 const CITE=creerCite({PAR,G,esc,SFX,save,refreshHud,mis:MIS,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t),bats:()=>batsRes()});window.__CITE=CITE;
 const ESPA=creerEspace({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__ESPA=ESPA;
 const AGRO=creerAgro({mis:MIS,PAR,G,esc,SFX,save,refreshHud,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__AGRO=AGRO;
+const ACC=creerAcces({PAR,G,esc,SFX,save,refreshHud,toast:t=>toast(t)});window.__ACC=ACC;
 const ENT=creerEntreprise({mis:MIS,PAR,G,esc,SFX,save,refreshHud,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t),rebuild:()=>{G.refaireVille=true}});window.__ENT=ENT;
 const SUP=creerSupermarche({G,esc,openBox:d=>openBox(d),parler:parlerFr,quiz3D:lancerQuiz3D,depenser:n=>{G.adv.pieces-=n;save();refreshHud()},toast:t=>toast(t),SFX,renderDialog:()=>renderDialog(),changerEtage:changerEtageMusee});
 let surpriseProposee=false;
@@ -2611,7 +2614,8 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,MIS.actions,SCIE.actions,HOPI.actions,DESI.actions,FASH.actions,CITE.actions,ESPA.actions,AGRO.actions,ENT.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+ACC.garder(SCIE.actions,{sciOuvrir:'sci'});ACC.garder(HOPI.actions,{medOuvrir:'med'});ACC.garder(DETEC.actions,{detOuvrir:'det'});ACC.garder(DESI.actions,{dsOuvrir:'ds'});ACC.garder(FASH.actions,{fsOuvrir:'fs'});ACC.garder(ESPA.actions,{spOuvrir:'sp'});ACC.garder(AGRO.actions,{agOuvrir:'ferme'});ACC.garder(ENT.actions,{entOuvrir:'ent'});ACC.garder(MUSIC.actions,{musOuvrir:'mus'});ACC.garder(SIM.actions,{simAeroport:'vol',simAvion:'vol'});
+Object.assign(window,ACC.actions,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,MIS.actions,SCIE.actions,HOPI.actions,DESI.actions,FASH.actions,CITE.actions,ESPA.actions,AGRO.actions,ENT.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;
