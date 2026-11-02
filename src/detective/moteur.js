@@ -66,10 +66,12 @@ export function creerMoteur(el,opt){
     // joueur
     if(joueur.obj)sc.remove(joueur.obj);
     joueur.obj=makeHuman(Object.assign({h:1},o.look||{s:'f',skin:3,hair:'courtes',outfit:'polo',c:'#7a5a3a'}));joueur.obj.scale.multiplyScalar(.95);sc.add(joueur.obj);
-    joueur.x=d.start.x;joueur.z=d.start.z;joueur.ry=0;snap=true;
+    {const [fx,fz]=libre(d.start.x,d.start.z);joueur.x=fx;joueur.z=fz}joueur.ry=0;snap=true;
     // chapeau et loupe du détective
     const chap=box(.46,.05,.46,'#3a2a1a',0,1.78,0,joueur.obj);box(.28,.14,.28,'#3a2a1a',0,1.86,0,joueur.obj);
   }
+  // si un point (départ, téléportation) tombe dans un obstacle, on le déplace vers l'endroit libre le plus proche
+  function libre(x,z){if(!collision(x,z))return [x,z];for(let r=.25;r<=5;r+=.25){for(let k=0;k<16;k++){const a=k/16*Math.PI*2,X=x+Math.cos(a)*r,Z=z+Math.sin(a)*r;if(!collision(X,Z))return [X,Z]}}return [x,z]}
   function collision(x,z){const R=.33;for(const b of bloc){if(x>b.x0-R&&x<b.x1+R&&z>b.z0-R&&z<b.z1+R)return true}return false}
   function majPnj(dt){Object.values(pnjs).forEach(p=>{p.g.userData.update(dt,{speed:0,talk:p.talk>0,cam:cam.position});if(p.talk>0)p.talk-=dt;else p.g.rotation.y+=((p.base)-p.g.rotation.y)*Math.min(1,dt*2)})}
   // plus proche élément interactif
@@ -89,7 +91,7 @@ export function creerMoteur(el,opt){
   function setLook(l){o.look=l;if(!joueur.obj)return;sc.remove(joueur.obj);joueur.obj=makeHuman(Object.assign({h:1},l));joueur.obj.scale.multiplyScalar(.95);sc.add(joueur.obj);box(.46,.05,.46,'#3a2a1a',0,1.78,0,joueur.obj);box(.28,.14,.28,'#3a2a1a',0,1.86,0,joueur.obj)}
   function ecran(id){const p=pnjs[id];if(!p)return null;const v=new THREE.Vector3(p.def.x,2.35,p.def.z).project(cam),b=r.domElement.getBoundingClientRect();return {x:b.left+(v.x+1)/2*b.width,y:b.top+(1-v.y)/2*b.height}}
   function etat(){return {x:joueur.x,z:joueur.z,ry:joueur.ry}}
-  function placer(x,z){joueur.x=x;joueur.z=z}
+  function placer(x,z){const [fx,fz]=libre(x,z);joueur.x=fx;joueur.z=fz}
   function photo(){
     const c=document.createElement('canvas');c.width=192;c.height=108;const g=c.getContext('2d');r.render(sc,cam);
     const src=r.domElement,sw=src.width,sh=src.height,rw=sh*16/9;g.drawImage(src,(sw-Math.min(sw,rw))/2,0,Math.min(sw,rw),sh,0,0,192,108);
