@@ -198,6 +198,13 @@ export const MODELES={
     box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
     enseigneToit(g,H,'BOYEKOLI FARM','Agriculture · Élevage','#2e6a2a','🌾');
   },
+  magasin(g,r){
+    const H=5,col=(r&&r.coul)||'#1f7a4d';box(g,W,H,D,M('#f0ead8'),0,H/2,0);box(g,W+.6,.5,D+.6,M(col),0,H+.25,0);
+    const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,2.6),verre());vi.position.set(0,2.1,D/2+.06);g.add(vi);porte(g,col);
+    [-3.4,3.4].forEach(x=>{box(g,.9,1.1,.9,M('#e8c04a'),x,.55,D/2+2.2)});
+    box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
+    enseigneToit(g,H,((r&&r.nom)||'COMMERCE').toUpperCase().slice(0,22),'Propriété du joueur',col,(r&&r.ico)||'🏪');
+  },
   concession(g){
     const H=6;box(g,W,H,D,M('#2b2b2b'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#b8860b'),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,3.6),verre());vi.position.set(0,2.2,D/2+.06);g.add(vi);
@@ -226,12 +233,12 @@ export const REPERES=[
   {id:'autoecole',x:8.2,z:9.6,ry:Math.PI,interieur:'autoecole',nom:'l’Auto-école',coul:'#1f5f9e'}
 ];
 
-export function construireReperes(w,ov){
+export function construireReperes(w,ov,extra){
   const g=new THREE.Group();w.group.add(g);
   const portes=[];
-  REPERES.map(r0=>Object.assign({},r0,(ov&&ov[r0.id])||{})).forEach(r=>{
+  REPERES.concat(extra||[]).map(r0=>Object.assign({},r0,(ov&&ov[r0.id])||{})).forEach(r=>{
     const b=new THREE.Group();b.position.set(r.x,0,r.z);b.rotation.y=r.ry;g.add(b);const rot90=Math.abs(Math.sin(r.ry))>.5;b.userData.edit={type:'rep',id:r.id,nom:r.nom,w:rot90?(r.d||D):(r.w||W),d:rot90?(r.w||W):(r.d||D),norot:!!r.norot};
-    MODELES[r.id==='police'?'police':r.id==='univ'?'univ':r.id==='sante'?'sante':r.id==='biblio'?'biblio':r.id](b);
+    MODELES[r.modele||(r.id==='police'?'police':r.id==='univ'?'univ':r.id==='sante'?'sante':r.id==='biblio'?'biblio':r.id)](b,r);
     const cs=Math.cos(r.ry),sn=Math.sin(r.ry);
     // emprise (le véhicule garé devant reste traversable)
     const bw=r.w||W,bd=r.d||D,ex=rot90?bd:bw,ez=rot90?bw:bd;w.boxes.push({x0:r.x-ex/2,x1:r.x+ex/2,z0:r.z-ez/2,z1:r.z+ez/2});

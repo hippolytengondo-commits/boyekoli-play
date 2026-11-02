@@ -67,6 +67,7 @@ export function creerMetiers(D){
     metLancer:(mid,did)=>{const m=mod(mid),x=m.dossiers.find(z=>z.id===did),g=GUIDES[m.guide];
       if(x.jeu){if(window.detOuvrir)window.detOuvrir(x.jeu);return}
       if(x.sci){if(window.sciOuvrir)window.sciOuvrir();return}
+      if(x.biz){if(window.bizOuvrir)window.bizOuvrir();return}
       if(x.agr){if(window.agOuvrir)window.agOuvrir();return}
       if(x.esp){if(window.spOuvrir)window.spOuvrir();return}
       if(x.vil){if(window.vilOuvrir)window.vilOuvrir();return}

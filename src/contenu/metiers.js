@@ -33,6 +33,8 @@ export const MODULES=[
   {id:'s1',titre:'Astronaute de la mission',esp:true,intro:'',qs:[]}]},
  {id:'agri',ico:'🌾',nom:'Agriculture et élevage',guide:'nature',txt:'BOYEKOLI FARM : cultive, élève et vends tes produits au marché.',dossiers:[
   {id:'g1',titre:'Jeune agriculteur',agr:true,intro:'',qs:[]}]},
+ {id:'business',ico:'💼',nom:'Entrepreneuriat et commerce',guide:'entrepreneure',txt:'BOYEKOLI BUSINESS : rachète le supermarché, ouvre des commerces et gère-les.',dossiers:[
+  {id:'e1',titre:'Jeune entrepreneur',biz:true,intro:'',qs:[]}]},
  {id:'musique',ico:'🎶',nom:'Studio de musique et danse',guide:'artiste',txt:'Rumba, soukous, instruments et rythmes congolais.',dossiers:[
   {id:'mu1',titre:'Rumba et rythmes',intro:'Au studio, la musique congolaise fait danser le monde.',qs:[
    Q('La rumba congolaise est inscrite au patrimoine de…',['l’UNESCO','la FIFA','l’ONU Sport','la NASA'],0,'Elle a été inscrite au patrimoine culturel immatériel de l’UNESCO en 2021.'),
