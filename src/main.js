@@ -2639,6 +2639,7 @@ function openBoxInstall(l){
 $('inst').onclick=installer;
 majInstall();
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+  try{navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='hors-ligne-pret'&&!localStorage.getItem('kelas_hl')){try{localStorage.setItem('kelas_hl','1')}catch(x){}toast('✅ Le jeu est prêt : il fonctionne maintenant sans Internet !')}})}catch(e){}
   window.addEventListener('load',()=>{try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}});
 }
 
@@ -2677,3 +2678,7 @@ fetch('img/manifest.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(async 
   init();
 });
 
+
+// indicateur de connexion : le jeu continue à fonctionner hors ligne, la sauvegarde reste sur l'appareil
+window.addEventListener('offline',()=>toast('📴 Mode hors connexion : tout fonctionne, ta progression est sauvegardée sur ton appareil.'));
+window.addEventListener('online',()=>toast('🌐 Connexion rétablie.'));

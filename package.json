@@ -3,7 +3,7 @@
   "private": true,
   "version": "12.0.0",
   "scripts": {
-    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=dist/game.js",
+    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=dist/game.js && node scripts/gen-sw.mjs",
     "site": "npm run build && rm -rf site && mkdir site && cp -r index.html style.css manifest.webmanifest sw.js _headers dist img icons site/ && find site -name '*.md' -delete"
   },
   "devDependencies": {
