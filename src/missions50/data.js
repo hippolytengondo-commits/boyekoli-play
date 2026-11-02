@@ -4,7 +4,7 @@ import {TERRITOIRES_LISTE as TERR} from '../territoires_gen.js';
 import {CONTENU} from '../programme.js';
 
 export const JEUX={sci:{nom:'Science Lab',ico:'🔬',open:'sciOuvrir',ov:'sciov',lieu:'le Science Lab'},med:{nom:'Medical Center',ico:'🏥',open:'medOuvrir',ov:'medov',lieu:'l’hôpital'},det:{nom:'Agence de détectives',ico:'🕵️',open:'detOuvrir',ov:'detov',lieu:'l’agence de détectives'},
- ds:{nom:'Design Studio',ico:'🏠',open:'dsOuvrir',ov:'dsov',lieu:'le Design Studio'},fs:{nom:'Fashion Studio',ico:'👗',open:'fsOuvrir',ov:'fsov',lieu:'le Fashion Studio'},vil:{nom:'Smart City',ico:'🌆',open:'vilOuvrir',ov:'vilov',lieu:'l’hôtel de ville'},
+ ds:{nom:'Design Studio',ico:'🏠',open:'dsOuvrir',ov:'dsov',lieu:'le Design Studio'},fs:{nom:'Fashion Studio',ico:'👗',open:'fsOuvrir',ov:'fsov',lieu:'le Fashion Studio'},vil:{nom:'Ma cité (Smart City)',ico:'🌆',open:'citeOuvrir',ov:'citeov',lieu:'le quartier résidentiel'},
  sp:{nom:'Space Explorer',ico:'🚀',open:'spOuvrir',ov:'spov',lieu:'la Cité de l’espace'},mus:{nom:'Music Studio',ico:'🎶',open:'musOuvrir',ov:'musov',lieu:'le studio de musique'},vol:{nom:'Simulateur de vol',ico:'✈️',open:'simAeroport',ov:'',lieu:'l’aéroport'}};
 export const CHAPITRES=[
  {nom:'Chapitre 1 · Du fleuve à la forêt',provs:['Kongo-Central','Kwango','Kwilu','Mai-Ndombe'],intro:'Mama Lola t’envoie vers l’Ouest : le Kongo-Central, le Kwango, le Kwilu et le Mai-Ndombe. Dans chaque territoire, un problème attend un jeune talent comme toi.'},

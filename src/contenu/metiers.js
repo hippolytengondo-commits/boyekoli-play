@@ -27,7 +27,7 @@ export const MODULES=[
   {id:'a2',titre:'La villa familiale',deco:true,intro:'',qs:[]}]},
  {id:'mode',ico:'👗',nom:'Atelier mode et coiffure',guide:'artiste',txt:'BOYEKOLI FASHION STUDIO : crée, couds et présente des tenues, coiffe ton mannequin.',dossiers:[
   {id:'m1',titre:'Atelier mode et coiffure',fash:true,intro:'',qs:[]}]},
- {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'BOYEKOLI SMART CITY : sois le maire, gère le budget, l’énergie, l’eau et les services.',dossiers:[
+ {id:'ville',ico:'🌆',nom:'Ville intelligente',guide:'architecte',txt:'SMART CITY : dans ton quartier résidentiel, achète des terrains, construis et gère ta cité (énergie, eau, services). Le tableau de bord du maire t’aide.',dossiers:[
   {id:'v1',titre:'Maire de la ville',vil:true,intro:'',qs:[]}]},
  {id:'espace',ico:'🚀',nom:'Exploration spatiale',guide:'scientifique',txt:'BOYEKOLI SPACE EXPLORER : construis une fusée, pilote-la, explore la Lune, Mars et le système solaire.',dossiers:[
   {id:'s1',titre:'Astronaute de la mission',esp:true,intro:'',qs:[]}]},

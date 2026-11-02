@@ -73,7 +73,16 @@ export function creerMoteur(el,opt){
   // si un point (départ, téléportation) tombe dans un obstacle, on le déplace vers l'endroit libre le plus proche
   function libre(x,z){if(!collision(x,z))return [x,z];for(let r=.25;r<=5;r+=.25){for(let k=0;k<16;k++){const a=k/16*Math.PI*2,X=x+Math.cos(a)*r,Z=z+Math.sin(a)*r;if(!collision(X,Z))return [X,Z]}}return [x,z]}
   function collision(x,z){const R=.33;for(const b of bloc){if(x>b.x0-R&&x<b.x1+R&&z>b.z0-R&&z<b.z1+R)return true}return false}
-  function majPnj(dt){Object.values(pnjs).forEach(p=>{p.g.userData.update(dt,{speed:0,talk:p.talk>0,cam:cam.position});if(p.talk>0)p.talk-=dt;else p.g.rotation.y+=((p.base)-p.g.rotation.y)*Math.min(1,dt*2)})}
+  function majPnj(dt){Object.values(pnjs).forEach(p=>{
+    let sp=0;
+    if(p.cible){const dx=p.cible.x-p.def.x,dz=p.cible.z-p.def.z,d=Math.hypot(dx,dz),st=Math.min(d,(p.vit||1.6)*dt);if(d>.08){p.def.x+=dx/d*st;p.def.z+=dz/d*st;p.g.position.set(p.def.x,0,p.def.z);p.g.rotation.y=Math.atan2(dx,dz);sp=p.vit||1.6;p.lab.position.set(p.def.x,2.5,p.def.z)}else{const f=p.cible.fin;p.cible=null;p.base=p.g.rotation.y;if(f)f(p.def.id)}}
+    p.g.userData.update(dt,{speed:sp,talk:p.talk>0,cam:cam.position});if(p.talk>0)p.talk-=dt;else if(!sp&&!p.cible)p.g.rotation.y+=((p.base)-p.g.rotation.y)*Math.min(1,dt*2)})}
+  // personnages dynamiques (clients, employés qui se déplacent)
+  function ajouterPnj(p){const h=makeHuman(Object.assign({h:1},p.look));h.position.set(p.x,0,p.z);h.rotation.y=p.ry||0;h.scale.multiplyScalar(p.echelle||.95);monde.add(h);const lab=etiquette(p.nom||'','#ffe082');lab.position.set(p.x,2.5,p.z);lab.visible=!!p.nom;monde.add(lab);pnjs[p.id]={def:p,g:h,lab,talk:0,base:p.ry||0,dyn:true}}
+  function allerA(id,x,z,vit,fin){const q=pnjs[id];if(!q)return;q.cible={x,z,fin};q.vit=vit||1.6}
+  function retirerPnj(id){const q=pnjs[id];if(!q)return;monde.remove(q.g);monde.remove(q.lab);delete pnjs[id]}
+  function pnjPos(id){const q=pnjs[id];return q?{x:q.def.x,z:q.def.z,marche:!!q.cible}:null}
+  function ecranObj(x,z,h){const v=new THREE.Vector3(x,h||2.2,z).project(cam),b=r.domElement.getBoundingClientRect();return {x:b.left+(v.x+1)/2*b.width,y:b.top+(1-v.y)/2*b.height}}
   // plus proche élément interactif
   const dist=(x,z,a,b)=>Math.hypot(x-a,z-b);
   function calcProche(){
@@ -111,14 +120,14 @@ export function creerMoteur(el,opt){
       joueur.obj.userData.update(dt,{speed:joueur.v,cam:cam.position});
       majPnj(dt);
       const p=calcProche();const k=p?p.kind+p.id:'';if(k!==derniere){derniere=k;pr=p;o.onProche(p)}else pr=p;
-      Object.values(pnjs).forEach(q=>{q.lab.visible=dist(joueur.x,joueur.z,q.def.x,q.def.z)<6.5});
+      Object.values(pnjs).forEach(q=>{q.lab.visible=!q.dyn&&dist(joueur.x,joueur.z,q.def.x,q.def.z)<6.5});
     }
     // caméra : vue 3/4 en hauteur
     const tx=joueur.x,tz=joueur.z;if(snap){cam.position.set(tx,8.6,tz+6.6);snap=false}else cam.position.lerp(new THREE.Vector3(tx,8.6,tz+6.6),Math.min(1,dt*5));cam.lookAt(tx,.9,tz-.5);
     r.render(sc,cam);raf=requestAnimationFrame(boucle)}
   raf=requestAnimationFrame(boucle);
   const rs=()=>{const w=el.clientWidth||W0,h=Math.max(200,el.clientHeight||H0);r.setSize(w,h,false);cam.aspect=w/h;cam.fov=w/h<.8?66:50;cam.updateProjectionMatrix()};addEventListener('resize',rs);setTimeout(rs,60);
-  return {ecran,setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
+  return {ajouterPnj,allerA,retirerPnj,pnjPos,ecranObj,ecran,setLook,charger,joy,proche:()=>{pr=calcProche();return pr},scanner,retirer,deverrouiller,parler,revelerTout,etat,placer,photo,fige:v=>{fige=v},cam,
     objs:()=>objs,pnjs:()=>pnjs,def:()=>def,
     stop(){cancelAnimationFrame(raf);removeEventListener('keydown',kd);removeEventListener('keyup',kd);removeEventListener('resize',rs);try{r.forceContextLoss();r.dispose()}catch(e){}el.innerHTML=''}};
 }

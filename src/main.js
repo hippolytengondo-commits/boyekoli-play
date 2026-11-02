@@ -45,7 +45,7 @@ import {creerScience} from './science.js';
 import {creerHopital} from './hopital.js';
 import {creerDesign} from './design.js';
 import {creerMode} from './fashion.js';
-import {creerVille} from './ville.js';
+import {creerCite} from './cite.js';
 import {creerEspace} from './spatial.js';
 import {creerMissions50} from './missions50.js';
 import {creerAgro} from './agro.js';
@@ -363,7 +363,7 @@ function construireVille(){
     const rp=construireReperes(w,AMEN.AM().rep,BIZ.reperes());
     rp.portes.forEach(r=>{
       if(r.biz){spotsExtra.push({x:r.px,z:r.pz,r:4.4,label:r.ico+' '+r.nom+' : entrer dans mon commerce',run:()=>BIZ.actions.bizOuvrir(r.bizId)});return}
-      {const ACCES={hopital:['🏥 BOYEKOLI MEDICAL CENTER : entrer',()=>HOPI.actions.medOuvrir()],agence:['🕵️ Agence de détectives : entrer',()=>DETEC.actions.detOuvrir()],labo:['🔬 BOYEKOLI SCIENCE LAB : entrer',()=>SCIE.actions.sciOuvrir()],design:['🏠 BOYEKOLI DESIGN STUDIO : entrer',()=>DESI.actions.dsOuvrir()],modestudio:['👗 BOYEKOLI FASHION STUDIO : entrer',()=>FASH.actions.fsOuvrir()],mairie:['🌆 BOYEKOLI SMART CITY : entrer',()=>VILL.actions.vilOuvrir()],espace:['🚀 BOYEKOLI SPACE EXPLORER : entrer',()=>ESPA.actions.spOuvrir()],ferme:['🌾 BOYEKOLI FARM : entrer',()=>AGRO.actions.agOuvrir()]};
+      {const ACCES={hopital:['🏥 BOYEKOLI MEDICAL CENTER : entrer',()=>HOPI.actions.medOuvrir()],agence:['🕵️ Agence de détectives : entrer',()=>DETEC.actions.detOuvrir()],labo:['🔬 BOYEKOLI SCIENCE LAB : entrer',()=>SCIE.actions.sciOuvrir()],design:['🏠 BOYEKOLI DESIGN STUDIO : entrer',()=>DESI.actions.dsOuvrir()],modestudio:['👗 BOYEKOLI FASHION STUDIO : entrer',()=>FASH.actions.fsOuvrir()],espace:['🚀 BOYEKOLI SPACE EXPLORER : entrer',()=>ESPA.actions.spOuvrir()],ferme:['🌾 BOYEKOLI FARM : entrer',()=>AGRO.actions.agOuvrir()]};
        if(ACCES[r.id]){spotsExtra.push({x:r.px,z:r.pz,r:4.4,label:ACCES[r.id][0],run:ACCES[r.id][1]});return}}
       const retour={x:r.px+(r.ry?0:0),z:r.pz+(r.ry?-1.6:1.6),phi:r.ry?-Math.PI/2:Math.PI/2};
       if(r.stage){
@@ -659,7 +659,7 @@ function closeDialog(){
   $('actwrap').classList.remove('hide');
   if(G.sc==='maison')buildScene();
   if(G.sc==='interieur'&&G.int.k>=0){const b=batsRes()[G.int.k];if(!b||b.annexe!==undefined){const r=G.int.ret;goTo({to:'ville',tx:r.x,tz:r.z,phi:r.phi})}else{G.int.n=b.n;buildScene()}}
-  if(G.refaireVille){G.refaireVille=false;if(G.sc==='ville')buildScene()}
+  if(G.refaireVille){G.refaireVille=false;if(G.sc==='ville')buildScene();CITE.signal()}
   refreshHud();
 }
 const MAT_FR=new Set(['francais','lecture','contes']);
@@ -968,6 +968,7 @@ function htmlTerrain(d){
   const a=G.adv,k=d.k,n=a.terrains||0,b=batsRes()[k]||null;
   let h=`<h3>🏘 Terrain n°${k+1}</h3><p class="row"><span>Mes points de savoir</span><b>${a.savoir||0} 🎓</b></p><p class="row"><span>Mes pièces</span><b>${a.pieces} 🪙</b></p><p class="row"><span>Mon sac</span><b>${esc(texteSac())}</b></p>`;
   if(d.msg)h+=`<p class="ok">${esc(d.msg)}</p>`;
+  h+='<button onclick="citeOuvrir()" style="background:#1b5e7a;color:#fff">🌆 Tableau de bord de ma cité (Smart City)</button>';
   if(k===n){
     const prix=prixTerrain(k),ok=(a.savoir||0)>=prix;
     h+=`<p style="font-size:13px">Un terrain dans ton quartier résidentiel. Les points de savoir se gagnent en réussissant des missions : plus tu apprends, plus ta ville grandit. Chaque terrain coûte plus cher que le précédent.</p>`
@@ -988,7 +989,7 @@ function htmlTerrain(d){
       h+=d.conf?`<p style="font-size:13px">Démolir « ${esc(nomBatiment(b))} » ? Tu récupères la moitié des pièces et des points de savoir investis, pas les matériaux.</p><button onclick="demolirTerrain(${k})">Oui, démolir</button><button class="s" onclick="demolirAnnuler()">Non, garder</button>`:`<button class="s" onclick="demolirAnnuler(true)">🔨 Démolir ou changer de construction</button>`;
     }else{
       h+=`<p style="font-size:13px">Choisis ce que tu construis sur ce terrain. Chaque construction coûte des pièces, des matériaux et des points de savoir, et peut être améliorée ensuite.</p>`;
-      ['Résidences','Services publics'].forEach(cat=>{
+      ['Résidences','Services publics','Énergie et eau','Économie et transport','Environnement'].forEach(cat=>{
         h+=`<h4>${cat}</h4>`+TYPES.filter(t=>CATALOGUE[t].cat===cat).map(t=>boutonConstruction(k,t,0)).join('');
       });
     }
@@ -1019,7 +1020,7 @@ function construireTerrain(k,t){
   G.refaireVille=true;save();refreshHud();SFX.win();
   d.msg='Chantier terminé : '+lv.n+' ! Ferme ce menu pour voir le résultat.';renderDialog();
 }
-const loyerDu=b=>Math.floor(LOYER(b.t,b.n)*Math.min(LOYER_MAX_H,Math.max(0,(Date.now()-(b.t0||Date.now()))/3.6e6)));
+const loyerDu=b=>Math.floor(LOYER(b.t,b.n)*Math.min(LOYER_MAX_H,Math.max(0,(Date.now()-(b.t0||Date.now()))/3.6e6))*CITE.facteur());
 function louerTerrain(k,oui){
   const b=batsRes()[k],d=G.dialog;if(!b||!LOYER(b.t,b.n))return;
   if(oui){b.loc=true;b.t0=Date.now();d.msg='Des familles s’installent. Reviens encaisser les loyers.'}
@@ -1140,7 +1141,7 @@ function htmlMenu(){
    +`<button onclick="openCongo()">🇨🇩 Explorer le Congo : provinces et territoires</button>`
    +`<button onclick="openProg()">🎓 Missions scolaires</button>`
    +`<button onclick="openComp()">🗺 Carte des compétences${aReviser().length?' · 🔁 '+aReviser().length+' à réviser':''}</button>`
-   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+'<button onclick="musOuvrir()" style="background:linear-gradient(90deg,#7d3fd1,#e8a23a);color:#fff">🎵 MUSIQUE – Découvre, joue et compose !</button>'+'<button onclick="amDebut()" style="background:#d35400;color:#fff">🏗 Mode aménagement : tout déplacer</button>'+'<button onclick="bizOuvrir()" style="background:#9a6a10;color:#fff">💼 Boyekoli Business (entrepreneur)</button>'+'<button onclick="agOuvrir()" style="background:#2e6a2a;color:#fff">🌾 Boyekoli Farm (agriculture et élevage)</button>'+'<button onclick="m50Tableau()" style="background:#b8860b;color:#fff">📜 Missions Boyekoli (50 missions dans les jeux)</button>'+'<button onclick="spOuvrir()" style="background:#6a2fa0;color:#fff">🚀 Space Explorer (exploration spatiale)</button>'+'<button onclick="vilOuvrir()" style="background:#1b5e7a;color:#fff">🌆 Smart City (ville intelligente)</button>'+'<button onclick="fsOuvrir()" style="background:#e84393;color:#fff">👗 Fashion Studio (mode et coiffure)</button>'+'<button onclick="dsOuvrir()" style="background:#c9733d;color:#fff">🏠 Design Studio (maisons 3D)</button>'+'<button onclick="medOuvrir()" style="background:#0b6e6e;color:#fff">🏥 Medical Center (hôpital 3D)</button>'+'<button onclick="sciOuvrir()" style="background:#0f4c75;color:#fff">🔬 Science Lab (laboratoire 3D)</button>'+'<button onclick="detOuvrir()" style="background:#2b3f6b;color:#fff">🕵️ Agence de détectives (enquêtes en 3D)</button>'+MET.bouton()+SIM.bouton()+EN.boutons()
+   +`<button onclick="openCarnet()">📒 Mon carnet de progression</button>`+AV.bouton()+ANI.bouton()+'<button onclick="musOuvrir()" style="background:linear-gradient(90deg,#7d3fd1,#e8a23a);color:#fff">🎵 MUSIQUE – Découvre, joue et compose !</button>'+'<button onclick="amDebut()" style="background:#d35400;color:#fff">🏗 Mode aménagement : tout déplacer</button>'+'<button onclick="bizOuvrir()" style="background:#9a6a10;color:#fff">💼 Boyekoli Business (entrepreneur)</button>'+'<button onclick="agOuvrir()" style="background:#2e6a2a;color:#fff">🌾 Boyekoli Farm (agriculture et élevage)</button>'+'<button onclick="m50Tableau()" style="background:#b8860b;color:#fff">📜 Missions Boyekoli (50 missions dans les jeux)</button>'+'<button onclick="spOuvrir()" style="background:#6a2fa0;color:#fff">🚀 Space Explorer (exploration spatiale)</button>'+'<button onclick="fsOuvrir()" style="background:#e84393;color:#fff">👗 Fashion Studio (mode et coiffure)</button>'+'<button onclick="dsOuvrir()" style="background:#c9733d;color:#fff">🏠 Design Studio (maisons 3D)</button>'+'<button onclick="medOuvrir()" style="background:#0b6e6e;color:#fff">🏥 Medical Center (hôpital 3D)</button>'+'<button onclick="sciOuvrir()" style="background:#0f4c75;color:#fff">🔬 Science Lab (laboratoire 3D)</button>'+'<button onclick="detOuvrir()" style="background:#2b3f6b;color:#fff">🕵️ Agence de détectives (enquêtes en 3D)</button>'+MET.bouton()+SIM.bouton()+EN.boutons()
    +`<button onclick="openEsp()">👤 Mon compte : classe et sauvegarde</button>`
    +(autonome()?'':`<button onclick="installer()">📲 Installer l’application</button>`)
    +(G.ui==='photo'?'':`<button onclick="closeDialog();openMap()">🗺 Carte des lieux</button>`)
@@ -1620,7 +1621,7 @@ const SCIE=creerScience({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,o
 const HOPI=creerHopital({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__HOPI=HOPI;
 const DESI=creerDesign({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__DESI=DESI;
 const FASH=creerMode({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__FASH=FASH;
-const VILL=creerVille({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__VILL=VILL;
+const CITE=creerCite({PAR,G,esc,SFX,save,refreshHud,mis:MIS,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t),bats:()=>batsRes()});window.__CITE=CITE;
 const ESPA=creerEspace({mis:MIS,PAR,G,esc,SFX,save,refreshHud,parler:parlerFr,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__ESPA=ESPA;
 const AGRO=creerAgro({mis:MIS,PAR,G,esc,SFX,save,refreshHud,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t)});window.__AGRO=AGRO;
 const BIZ=creerBusiness({mis:MIS,PAR,G,esc,SFX,save,refreshHud,openBox:d=>openBox(d),closeDialog:()=>closeDialog(),toast:t=>toast(t),rebuild:()=>{G.refaireVille=true}});window.__BIZ=BIZ;
@@ -2610,7 +2611,7 @@ $('hcom').onclick=()=>entrerPuis(openComp);
 $('hcla').onclick=()=>{const s=CLOUD.session();openEsp(s&&s.role==='enseignant'?'classes':'mm')};
 $('cont').onclick=()=>{if(G.ui==='photo')enterPhoto(false);else{$('cv').style.display='block';enterGame(false)}};
 
-Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,MIS.actions,SCIE.actions,HOPI.actions,DESI.actions,FASH.actions,VILL.actions,ESPA.actions,AGRO.actions,BIZ.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
+Object.assign(window,Esp.actions,EN.actions,SUP.actions,MUSEE.actions,AV.actions,CC.actions,ANI.actions,MET.actions,SIM.actions,MUSIC.actions,MUSACT,RES.actions,AMEN.actions,DETEC.actions,MIS.actions,SCIE.actions,HOPI.actions,DESI.actions,FASH.actions,CITE.actions,ESPA.actions,AGRO.actions,BIZ.actions,{acheterCarb,monter,descendre,klaxonner,ouvrirPompe,basculerCommande,__CARB:niveauCarb,bonusMJ,condDemarrer,condSuite,condEcouter,speak,inscNegocier,inscReponse,inscPayer,__condTick:condTick,acheterVeh,startConduite,answerCond,condSortir,__ae:()=>AE,visiterMission,libreSerie,louerTerrain,encaisserLoyer,demolirTerrain,demolirAnnuler,payerRond,openCongo,congoProv,acheterTerrain,construireTerrain,payerRoute,__ROUTE:bitumerRoute,mapProv,toggleMusic,startMini,openComp,compNiv,reviserCle,__REV:aReviser,construire,buyRes,openMaison,startMJ,sellSac,openShop,__CZ:()=>CZ_Q,__AUD:AUD,__MUS:MUS,__GO:(sc,x,z,phi)=>goTo({to:sc,tx:x,tz:z,phi}),__SC:()=>SCENES,__STG:()=>STAGES,__MJ_IDS:()=>MJ,__MJPOS:mjPos,suivantAventure,openCarnet,carnetBasc,installer,openSuite,__M3:M3,__CAM:camera,__CLES:()=>Object.keys(CONTENU),nextLine,jeuOrdre,jeuOrdreRaz,jeuOrdreOk,jeuPan,jeuPanOk,jeuPanTotal,jeuTriPick,jeuTriPose,openEsp,openProg,progGo,progBack,startMission,__NPCDATA:NPC,travel,openMap,cycleQuality,openCreatorFromPhoto,setChar,openProfile,setGenre,replay,toggleVoice,crStyle,crChar,crPhoto,crUpload,crTab,crSlide,crSet,crHair,crOutfit,crAcc,crBuy,creatorDone,shopMode,nextLine,answerQ,nextQ,closeDialog,infoNext,sellMangoes,buy,toggleSound,resetGame,__G:G,__W:()=>W,__snap:()=>snapCamera(),__dbg:()=>({cam:camera.position.toArray().map(v=>+v.toFixed(1)),bea:npcObjs.bea&&npcObjs.bea.obj.position.toArray(),beaVis:npcObjs.bea&&npcObjs.bea.obj.visible,n:Object.keys(npcObjs)})});
 
 // ---------- Installation comme application (Android, iPhone, ordinateur) ----------
 let invite=null;

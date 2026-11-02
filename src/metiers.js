@@ -70,7 +70,7 @@ export function creerMetiers(D){
       if(x.biz){if(window.bizOuvrir)window.bizOuvrir();return}
       if(x.agr){if(window.agOuvrir)window.agOuvrir();return}
       if(x.esp){if(window.spOuvrir)window.spOuvrir();return}
-      if(x.vil){if(window.vilOuvrir)window.vilOuvrir();return}
+      if(x.vil){if(window.citeOuvrir)window.citeOuvrir();return}
       if(x.fash){if(window.fsOuvrir)window.fsOuvrir();return}
       if(x.deco){if(window.dsOuvrir)window.dsOuvrir();return}
       if(x.med){if(window.medOuvrir)window.medOuvrir();return}

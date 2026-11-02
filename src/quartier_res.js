@@ -42,6 +42,21 @@ export const CATALOGUE={
   autoecole:{n:'Auto-école',ico:'🚦',cat:'Services publics',cache:true,niv:[
     {n:'Auto-école',cout:{pieces:120,savoir:350,brique:22,ciment:6,bois:6},d:'Forme les conducteurs : inscription, cours et leçons de conduite.'},
     {n:'Grande auto-école',cout:{pieces:260,savoir:700,brique:36,ciment:12,fer:6},double:true,d:'Plus de salles et de moniteurs : demande un second terrain.'}]},
+  energie:{n:'Énergie',ico:'⚡',cat:'Énergie et eau',niv:[
+    {n:'Panneaux solaires',cout:{pieces:70,savoir:300,fer:6,sable:2},d:'Des panneaux solaires : électricité propre et gratuite pour le quartier.'},
+    {n:'Centrale électrique',cout:{pieces:150,savoir:600,brique:24,ciment:12,fer:10},d:'Beaucoup d’électricité, mais elle pollue un peu.'}]},
+  eau:{n:'Eau potable',ico:'💧',cat:'Énergie et eau',niv:[
+    {n:'Puits et pompe',cout:{pieces:40,savoir:200,brique:10,ciment:3,fer:2},d:'Un puits avec pompe manuelle : de l’eau propre pour les voisins.'},
+    {n:'Château d’eau',cout:{pieces:110,savoir:500,brique:24,ciment:12,fer:10},d:'Un grand réservoir qui distribue l’eau à tout le quartier.'}]},
+  commerce:{n:'Commerce',ico:'🛒',cat:'Économie et transport',niv:[
+    {n:'Marché de quartier',cout:{pieces:50,savoir:250,bois:10,tissu:4},d:'Des étals : emplois et produits frais près des habitations.'},
+    {n:'Centre commercial',cout:{pieces:150,savoir:600,brique:30,ciment:12,fer:8},d:'Boutiques et supermarché : beaucoup d’emplois.'}]},
+  transport:{n:'Transport',ico:'🚌',cat:'Économie et transport',niv:[
+    {n:'Arrêt de bus',cout:{pieces:40,savoir:200,bois:6,fer:2},d:'Un arrêt de bus : moins d’embouteillages dans le quartier.'},
+    {n:'Gare routière',cout:{pieces:130,savoir:500,brique:24,ciment:10,fer:8},d:'Plusieurs lignes de bus : la circulation devient fluide.'}]},
+  parc:{n:'Parc',ico:'🌳',cat:'Environnement',niv:[
+    {n:'Jardin public',cout:{pieces:30,savoir:150,bois:4,sable:4},d:'Arbres, bancs et fleurs : l’air est plus pur et les habitants plus heureux.'},
+    {n:'Grand parc',cout:{pieces:90,savoir:350,bois:10,sable:10,fer:2},d:'Un grand parc avec étang et aire de jeux.'}]},
   pompiers:{n:'Pompiers',ico:'🚒',cat:'Services publics',niv:[
     {n:'Poste de pompiers',cout:{pieces:60,savoir:300,brique:20,ciment:6,fer:4},d:'Un camion et une équipe prêts à intervenir.'},
     {n:'Caserne',cout:{pieces:150,savoir:600,brique:34,ciment:12,fer:10},double:true,d:'Une caserne avec tour d’entraînement : demande un second terrain.'}]}
@@ -169,6 +184,41 @@ const DESSIN={
     box(g,.5,.25,.2,M('#e0a526'),-2.6,1.75,4.2);
     [[1.8,4.8],[2.6,4.8],[3.4,4.8]].forEach(([x,z])=>cyl(g,.18,.28,.5,M('#e67e22'),x,.25,z,10));
     return {w:W+.4,d:5.4};
+  },
+  energie(g,niv,k){
+    box(g,8,.12,5.4,M('#9aa0a6'),0,.06,-.5);
+    if(niv<2){for(let r=0;r<2;r++)for(let c=-1;c<=1;c++){const p=box(g,2.2,.1,1.5,M('#1b3a6b',.25),c*2.5,.9+r*.0,-1.7+r*2.2);p.rotation.x=-.5;box(g,.1,.9,.1,M('#777'),c*2.5,.45,-1.7+r*2.2)}
+      box(g,1.4,1.6,1.1,M('#e8e8e8'),3.1,.8,2.2);enseigne(g,'SOLAIRE','#1b3a6b',2.6,2.05,3);}
+    else{box(g,5,3.4,3.6,M('#7a7a80'),-1,1.7,-1);box(g,5.4,.3,4,M('#444'),-1,3.55,-1);cyl(g,.5,.8,6,M('#aaa'),2.6,3,-1.6,12);cyl(g,.45,.7,5,M('#aaa'),3.9,2.5,-.4,12);box(g,1.4,2,.12,M('#2b2b2b'),-1,1,.86);enseigne(g,'CENTRALE','#7a5a3a',4.1,.9,4);}
+    return {w:8.4,d:5.6};
+  },
+  eau(g,niv,k){
+    box(g,7,.12,5.4,M('#9aa0a6'),0,.06,-.5);
+    if(niv<2){box(g,2.2,.8,2.2,M('#8a8d91'),0,.4,-.5);cyl(g,.9,.9,.5,M('#3fa9d9'),0,.9,-.5,16);box(g,.1,2.4,.1,M('#555'),-1.4,1.2,-.5);box(g,1.6,.1,.1,M('#555'),-.7,2.4,-.5);box(g,.3,.3,.3,M('#2c7fb8'),-.1,2.2,-.5);enseigne(g,'EAU POTABLE','#2c7fb8',2.8,2.05,3)}
+    else{[[-1.4,-1.4],[1.4,-1.4],[-1.4,.4],[1.4,.4]].forEach(([a,b])=>box(g,.35,6,.35,M('#8a8d91'),a,3,b));cyl(g,2.2,2.2,2.4,M('#3fa9d9',.3),0,7,-.5,20);cyl(g,2.3,1.9,.6,M('#2c7fb8'),0,5.6,-.5,20);enseigne(g,'CHÂTEAU D’EAU','#1f5f9e',9,2.2,4.5)}
+    return {w:7.4,d:5.6};
+  },
+  commerce(g,niv,k){
+    const H=niv>=2?4.2:2.4;
+    if(niv<2){for(let i=-2;i<=2;i++){box(g,1.4,.9,1,M(['#c0392b','#e0a526','#2e7d4a','#e67e22','#7b3fa0'][i+2]),i*1.5,.45,1.2);box(g,1.5,.12,1.3,M(['#e74c3c','#f1c40f','#27ae60','#e67e22','#9b59b6'][i+2]),i*1.5,1.9,1.2);[-.65,.65].forEach(a=>box(g,.08,1.9,.08,M('#6b4423'),i*1.5+a,.95,1.7))}
+      box(g,8,2.2,.2,M('#d9c27a'),0,1.1,-2.6);enseigne(g,'MARCHÉ','#c0392b',2.5,-2.45,3);return {w:8.2,d:6}}
+    box(g,9.4,H,5,M('#f0ead8'),0,H/2,-.5);box(g,9.8,.4,5.4,M('#1f7a4d'),0,H+.2,-.5);box(g,6,2.4,.1,M('#9fd3f5',.2),0,1.4,2.02);box(g,1.6,2.2,.12,M('#4a2f1b'),0,1.1,2.06);enseigne(g,'CENTRE COMMERCIAL','#1f7a4d',H+.9,2.12,5);
+    [-3.4,3.4].forEach(x=>box(g,.9,1,.9,M('#e8c04a'),x,.5,3.6));return {w:9.8,d:5.6};
+  },
+  transport(g,niv,k){
+    if(niv<2){box(g,5,.12,3,M('#9aa0a6'),0,.06,2.6);box(g,3.4,.15,1.4,M('#2c7fb8'),0,2.2,2.6);[-1.5,1.5].forEach(a=>box(g,.1,2.2,.1,M('#555'),a,1.1,2.6));box(g,2.6,.4,.7,M('#e8e8e8'),0,.5,2.8);enseigne(g,'ARRÊT DE BUS','#2c7fb8',2.9,2.6,3);
+      const b=box(g,4,1.4,1.7,M('#f4c20d'),-.5,.9,5.2);box(g,3.6,.5,1.75,M('#9fd3f5',.2),-.5,1.2,5.2);[-1.6,.6].forEach(x=>[-.9,.9].forEach(z=>cyl(g,.35,.3,.3,M('#222'),x,.35,5.2+z,10)));return {w:5.4,d:8}}
+    box(g,9,3.6,4.6,M('#dfe3e8'),0,1.8,-.5);box(g,9.4,.35,5,M('#1f5f9e'),0,3.8,-.5);for(let i=0;i<3;i++){box(g,3,1.4,1.7,M(['#f4c20d','#2c7fb8','#d6302b'][i]),-3+i*3,.9,3.4);box(g,2.8,.5,1.75,M('#9fd3f5',.2),-3+i*3,1.2,3.4)}box(g,1.5,2.2,.12,M('#4a2f1b'),0,1.1,1.84);enseigne(g,'GARE ROUTIÈRE','#1f5f9e',4.6,1.85,4.5);return {w:9.4,d:6.4};
+  },
+  parc(g,niv,k){
+    box(g,9,.1,6.4,M('#4f9c3c'),0,.05,-.2);
+    const arbre=(x,z,s)=>{box(g,.25,1.6*s,.25,M('#6b4423'),x,.8*s,z);const c=new THREE.Mesh(new THREE.SphereGeometry(1.1*s,10,8),M('#2f7a36'));c.position.set(x,2.2*s,z);g.add(c)};
+    [[-3.2,-2],[3.2,-2],[-3.2,1.6],[3.2,1.6]].forEach(([x,z])=>arbre(x,z,1));
+    for(let i=-1;i<=1;i++){box(g,1.4,.1,.5,M('#d8c9a3'),i*2.4,.12,2.6);box(g,1.3,.5,.4,M('#8a5a2b'),i*2.4,.4,3)}
+    box(g,1.3,.1,5.4,M('#d8c9a3'),0,.12,-.2);
+    if(niv>=2){const et=new THREE.Mesh(new THREE.CylinderGeometry(2,2,.1,22),new THREE.MeshStandardMaterial({color:0x3fa9d9,roughness:.2}));et.position.set(0,.14,-1.2);g.add(et);box(g,.9,1.2,.9,M('#e0a526'),3.6,.6,-.6);box(g,.7,.08,1.8,M('#e74c3c'),3.6,.6,.5).rotation.x=.55;arbre(0,-3,1.3)}
+    enseigne(g,niv>=2?'GRAND PARC':'JARDIN PUBLIC','#2e7d4a',2.9,3.1,3.6);
+    return {w:9.4,d:6.6};
   },
   pompiers(g,niv,k){
     const H=niv>=2?4.6:3.6,W=niv>=2?9.4:8.4;
