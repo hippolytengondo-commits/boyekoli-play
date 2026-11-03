@@ -4,13 +4,16 @@ export const REGLES={
  ferme:{nom:'Boyekoli Farm',ico:'🌾',m:5,fc:50},sci:{nom:'Science Lab',ico:'🔬',m:8,fc:80},med:{nom:'Medical Center',ico:'🏥',m:12,fc:120},concession:{nom:'la Concession (motos et voitures)',ico:'🏍',m:12,fc:120},
  ds:{nom:'Design Studio',ico:'🏠',m:15,fc:150},vol:{nom:'l’Aéroport et le simulateur de vol',ico:'✈️',m:20,fc:200},det:{nom:'l’Agence de détectives',ico:'🕵️',m:22,fc:220},
  mus:{nom:'le Studio de musique',ico:'🎶',m:25,fc:250},fs:{nom:'Fashion Studio',ico:'👗',m:28,fc:280},sp:{nom:'Space Explorer',ico:'🚀',m:30,fc:300},ent:{nom:'Business Simulator',ico:'💼',m:35,fc:350}};
+import {session} from './cloud.js';
 export function creerAcces(D){
   const {PAR,G,esc,SFX,save,refreshHud,toast}=D;
   const A=()=>G.adv;
   const nbMissions=()=>Object.keys(A().done||{}).filter(k=>!/^(met|sup|jeu|bonus|stage):/.test(k)).length;
   // les joueurs qui ont déjà vraiment joué à un jeu gardent son accès
   const GP={sci:a=>a.sci&&Object.keys(a.sci.exp||{}).length,med:a=>a.med&&(Object.keys(a.med.cas||{}).length+Object.keys(a.med.svc||{}).length),det:a=>a.det&&Object.keys(a.det.cas||{}).length,ds:a=>a.deco2&&(a.deco2.proj||[]).length,fs:a=>a.mode2&&(a.mode2.port||[]).length,sp:a=>a.spat&&Object.keys(a.spat.done||{}).length,ferme:a=>a.agro&&a.agro.st&&a.agro.st.rec>0,ent:a=>a.ent,mus:a=>a.mus&&Object.keys(a.mus.cours||{}).length,vol:a=>a.pilote&&a.pilote.inscrit};
-  const ouvert=id=>{if(!REGLES[id])return true;const a=A();if(a.acces&&a.acces[id])return true;if(GP[id]&&GP[id](a)){if(!a.acces)a.acces={};a.acces[id]=true;return true}return false};
+  // l'administrateur (compte connecté de rôle « admin », conservé sur l'appareil) accède à tout, sans missions ni FC
+  const admin=()=>{try{const s=session();return !!s&&s.role==='admin'}catch(e){return false}};
+  const ouvert=id=>{if(!REGLES[id]||admin())return true;const a=A();if(a.acces&&a.acces[id])return true;if(GP[id]&&GP[id](a)){if(!a.acces)a.acces={};a.acces[id]=true;return true}return false};
   const ico=id=>REGLES[id]?REGLES[id].ico:'';
   const msgBloque=id=>{const r=REGLES[id];return '🔒 '+r.nom+' : réussis '+r.m+' missions ('+Math.min(nbMissions(),r.m)+'/'+r.m+') et achète l’accès ('+r.fc+' FC)'};
   const lbl=(id,txt)=>ouvert(id)?txt:'🔒 '+txt+' (bloqué)';
@@ -32,5 +35,5 @@ export function creerAcces(D){
   // enveloppe les fonctions d'ouverture : bloqué tant que l'accès n'est pas acheté
   function garder(actions,map){Object.keys(map).forEach(nom=>{const id=map[nom],f=actions[nom];if(typeof f!=='function')return;actions[nom]=(...a)=>{if(ouvert(id)){return f(...a)}bloquer(id,()=>f(...a))}})}
   const actions={accesAcheter:id=>acheter(id),accesFermer:()=>fermer(),accesVoirMissions:()=>{fermer();if(window.openProg){try{window.closeDialog&&window.closeDialog()}catch(e){}setTimeout(()=>window.openProg(),100)}}};
-  return {actions,ouvert,bloquer,garder,nbMissions,lbl,msgBloque,REGLES};
+  return {actions,ouvert,admin,bloquer,garder,nbMissions,lbl,msgBloque,REGLES};
 }

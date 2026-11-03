@@ -209,3 +209,8 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - Messages à l'écran : « Le jeu est prêt, il fonctionne sans Internet » (une fois) et « Mode hors connexion » / « Connexion rétablie ». Sauvegarde toujours locale (localStorage).
 - Testé : première visite → 78 fichiers en mémoire → coupure d'Internet → rechargement, création du joueur, village, Science Lab : tout fonctionne sans erreur.
 - À savoir : le jeu doit avoir été ouvert une fois avec Internet (et la page rechargée une fois pour que le service worker contrôle la page) ; sur iPhone, ajouter à l'écran d'accueil pour une mémoire plus durable ; les fonctions de comptes/classes en ligne nécessitent Internet.
+
+## Retours du 03/11 : administrateur, hôpital, volant
+- Administrateur : un compte connecté de rôle « admin » (conservé sur l'appareil, donc valable hors connexion) ouvre tous les jeux et lieux sans missions ni FC, et tous les chapitres des Missions Boyekoli (`ACC.admin()`).
+- Hôpital, mission 1 : après le bon examen (prise de sang, radio, échographie), il faut maintenant CONDUIRE LE PATIENT jusqu'au service : le patient apparaît, te suit, une consigne affiche la distance, le compte rendu s'ouvre à l'arrivée (bouton Annuler). Mission 2, urgences : après le tri des blessés, jeu de conduite de l'ambulance sur 3 voies (obstacles, confort du patient) ; l'onglet Ambulance propose aussi la conduite libre.
+- Conduite des véhicules : le volant occupe la place du joystick (en bas à gauche), les pédales restent à droite.

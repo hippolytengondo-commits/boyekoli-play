@@ -13,7 +13,7 @@ export function creerMissions50(D){
   const find=id=>MISSIONS50.find(m=>m.id===id);
   const actif=()=>{const s=S();return s.actif?find(s.actif):null};
   const nbChap=c=>MISSIONS50.filter(m=>m.chap===c&&S().done[m.id]).length;
-  const ouvert=c=>c===0||nbChap(c-1)>=5;
+  const ouvert=c=>c===0||nbChap(c-1)>=5||!!(window.__ACC&&window.__ACC.admin&&window.__ACC.admin());
   let modal=null,Q=null;
   const btn=(t,oc,bg)=>`<button onclick="${oc}" style="display:block;width:100%;text-align:left;padding:11px 12px;margin:5px 0;border-radius:12px;border:2px solid #fff4;background:${bg||'#2f4a63'};color:#fff;font:600 15px system-ui;touch-action:manipulation">${t}</button>`;
   // ---------- événements envoyés par les jeux

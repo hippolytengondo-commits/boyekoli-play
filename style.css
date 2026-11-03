@@ -330,9 +330,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-
 #carb i{display:block;height:7px;border-radius:4px;background:#ddd;margin-top:4px;overflow:hidden}
 #carb i b{display:block;height:100%;background:#2a9d5c;width:100%}
 #carb.bas i b{background:#d9822b}#carb.vide i b{background:#c0392b}
-#volant{position:absolute;z-index:3;right:max(12px,env(safe-area-inset-right,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));display:flex;align-items:flex-end;gap:12px}
+#volant{position:absolute;z-index:3;left:max(18px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:max(22px,env(safe-area-inset-bottom,0px));display:flex;align-items:flex-end;justify-content:space-between;gap:12px;pointer-events:none}
+#volant>*{pointer-events:auto}
 #volant.hide{display:none}
-#vol{width:140px;height:140px;border-radius:50%;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));background:rgba(255,255,255,.12)}
+#vol{width:132px;height:132px;border-radius:50%;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));background:rgba(255,255,255,.12)}
 #vol svg{width:100%;height:100%;display:block;pointer-events:none}
 #pedales{display:flex;flex-direction:column;gap:10px}
 #pedales button{width:84px;height:66px;border:0;border-radius:14px;font-size:24px;font-weight:800;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.4);touch-action:none;user-select:none;-webkit-user-select:none;line-height:1}
