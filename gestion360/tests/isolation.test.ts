@@ -97,4 +97,9 @@ describe("Isolation entre entreprises (scénario 20, articles 34 et 39)", () => 
     const seen = await withContext({ organizationId: B.organizationId, userId: B.userId }, (tx) => tx.user.findMany({ select: { id: true } }));
     expect(seen.map((u) => u.id)).toEqual([B.userId]);
   });
+
+  it("le rôle applicatif ne peut jamais s'octroyer le statut d'administrateur de plateforme", async () => {
+    await expect(withContext({ userId: B.userId }, (tx) => tx.$executeRaw`UPDATE users SET "isPlatformAdmin" = true WHERE id = ${B.userId}`)).rejects.toThrow();
+    await expect(withContext({ userId: B.userId }, (tx) => tx.$executeRaw`INSERT INTO users (id, email, name, "passwordHash", "isPlatformAdmin", "updatedAt") VALUES ('zz9', 'z@z.cd', 'z', 'x', true, now())`)).rejects.toThrow();
+  });
 });
