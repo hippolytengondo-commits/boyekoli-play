@@ -258,14 +258,14 @@ Publication actuelle : **Cloudflare Pages**, dépôt GitHub **privé** `boyekoli
 - Chaque jeu a été testé automatiquement dans un navigateur simulant un téléphone : parcours complets (laboratoire : 11 expériences, hôpital : cas et services, Business Simulator : création et journées, Design Studio, Fashion Studio, Space Explorer, ferme, cité, missions croisées).
 - Test de fumée : 25 clics aléatoires par jeu sans erreur.
 - Moteurs économiques réglés par simulation (entreprise, vol spatial).
-- **Limites reconnues** : pas encore de test sur de vrais téléphones ; les textes pédagogiques (médecine, sciences, droit, agriculture) doivent être relus par des enseignants et des professionnels ; les modèles 3D sont volontairement simples (performance) ; l'équilibrage (seuils de déblocage, prix, gains) est à affiner avec de vrais joueurs ; une seule entreprise est sauvegardée dans le Business Simulator ; la maison familiale n'est pas encore déplaçable.
+- **Limites reconnues** : l’application a été testée sur de vrais téléphones et sur ordinateur (à poursuivre sur un plus grand nombre d’appareils) ; les textes pédagogiques (médecine, sciences, droit, agriculture) doivent être relus par des enseignants et des professionnels ; les modèles 3D sont volontairement simples (performance) ; l'équilibrage (seuils de déblocage, prix, gains) est à affiner avec de vrais joueurs ; une seule entreprise est sauvegardée dans le Business Simulator ; la maison familiale n'est pas encore déplaçable.
 
 # 10. Documents du projet (dossier `docs/`)
 `A_FAIRE.md` (liste de reprise et notes de chaque étape), `DEPLOIEMENT.md` (dépôt privé et Cloudflare), `SERVEUR.md`, `DONNEES_TERRITOIRES.md`, `FEUILLE_DE_ROUTE_ENRICHISSEMENT.md`, `AUDIT-CAHIER-DES-CHARGES.md`, `EXTENSION_VILLE.md`, `SPONSORS.md`. Les documents Word confidentiels (budget et lettre UNICEF, évaluation de l'apport en nature, présentation investisseurs) ne sont **pas** dans Git.
 
 # 11. Prochaines étapes recommandées
 
-1. Tester le jeu sur plusieurs téléphones Android et corriger ce qui bloque.
+1. Poursuivre les tests sur un plus grand nombre de téléphones Android et corriger ce qui bloque.
 2. Faire relire les textes par des enseignants et des professionnels de santé.
 3. Régler l'équilibrage (seuils, prix, gains) après les premiers essais d'enfants.
 4. Avant le lancement public : sécurité de la base, e-mails de confirmation, captcha, sauvegardes.
