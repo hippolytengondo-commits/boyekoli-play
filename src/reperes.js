@@ -216,11 +216,17 @@ export const MODELES={
 // BOULEVARD DES MÉTIERS : une vraie route bitumée (2 voies, trottoirs, lampadaires) qui longe tous les bâtiments de missions
 // (hôpital, agence, ferme, laboratoire, design, mode, espace…) et rejoint la route du village. La station de taxis est
 // de l'autre côté, avec son parking : on y entre en véhicule par le boulevard.
+// Les barrières invisibles du « couloir d'entrée » coupaient le boulevard : on y ouvre un passage large de 9 m le long du boulevard.
+function ouvrirCouloir(bxs){
+  const A=-42.5,B=-33.5,sortie=[];
+  bxs.forEach(b=>{if(b.x1<=A||b.x0>=B||b.x1-b.x0<20){sortie.push(b);return}
+    if(b.x0<A)sortie.push({x0:b.x0,x1:A,z0:b.z0,z1:b.z1});if(b.x1>B)sortie.push({x0:B,x1:b.x1,z0:b.z0,z1:b.z1})});
+  bxs.length=0;sortie.forEach(b=>bxs.push(b))}
 function boulevardMetiers(g){
   const asph=asphalte(),trot=new THREE.MeshStandardMaterial({color:0xb9b4a6,roughness:.95,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
   const blanc=new THREE.MeshBasicMaterial({color:0xf2f2f2,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5}),jaune=new THREE.MeshBasicMaterial({color:0xe8c547,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5});
   const flat=(w,d,x,z,m,y,ry)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);p.rotation.x=-Math.PI/2;if(ry)p.rotation.z=ry;p.position.set(x,y||.034,z);p.receiveShadow=true;g.add(p);return p};
-  const X=-37,Z0=-92,Z1=84,L=Z1-Z0,ZC=(Z0+Z1)/2;
+  const X=-38,Z0=-92,Z1=62,L=Z1-Z0,ZC=(Z0+Z1)/2;
   flat(8,L,X,ZC,asph);flat(1.8,L,X-4.9,ZC,trot,.04);flat(1.8,L,X+4.9,ZC,trot,.04);
   for(let z=Z0+2;z<Z1-1;z+=4.2)flat(.18,1.9,X,z+.9,blanc,.04);
   flat(.12,L,X-3.7,ZC,blanc,.04);flat(.12,L,X+3.7,ZC,blanc,.04);
@@ -266,7 +272,7 @@ export function construireReperes(w,ov,extra){
     const dz=bd/2+1.4;
     portes.push(Object.assign({},r,{px:r.x+dz*sn,pz:r.z+dz*cs}));
   });
-  boulevardMetiers(g);
+  boulevardMetiers(g);ouvrirCouloir(w.boxes);
   return {portes};
 }
 
