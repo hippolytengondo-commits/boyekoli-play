@@ -44,6 +44,7 @@ const bat={
     add(g,bx(40,10,20),M(0xcf7a3b),0,5,0);add(g,bx(42,1.2,22),M(0x6a2a1a),0,10.6,0);add(g,bx(14,14,6),M(0xe8c040),0,7,11)},
   institut(g){ add(g,bx(34,13,16),M(0xf0efe9),0,6.5,0);add(g,bx(35,1,17),M(0x2c7fb8),0,13.4,0);for(let i=0;i<7;i++)add(g,bx(2.2,2,.2),M(0x1d2a36),-12+i*4,8,8.1)},
   immeuble(g){ add(g,bx(22,28,16),M(0xcfd3d6),0,14,0);for(let i=0;i<7;i++)add(g,bx(18,.5,.1),M(0x3a4a5c),0,3+i*3.6,8.1)}};
+export const BAT=bat;
 const PLAN=[ // t le long du boulevard, cote : +1 droite (nord), -1 gauche (sud), off : distance à l'axe
   ['palais',.34,1,78,'Palais du Peuple',0],['gouvernement',.55,1,60,'Hôtel du Gouvernement',0],['musee',.72,1,56,'Musée National',0],['cathedrale',.88,1,54,'Cathédrale du Centenaire',0],
   ['stade',.12,-1,86,'Stade des Martyrs',0],['arena',.34,-1,64,'Kinshasa Arena',0],['institut',.55,-1,44,'BNMRS',0],['institut',.64,-1,44,'Inst. sup. des sciences infirmières',0],

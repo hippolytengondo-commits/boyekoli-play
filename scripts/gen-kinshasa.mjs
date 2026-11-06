@@ -36,5 +36,29 @@ for(const[n,a]of reg){const xs=a.filter((_,i)=>i%2===0),zs=a.filter((_,i)=>i%2==
 // les sauts-de-mouton portent le même nom à plusieurs endroits : on les sépare par groupes de proximité
 const sauts=[];for(const r of roads.filter(r=>r.n==='Saut-de-Mouton')){const x=r.p[0],z=r.p[1];let g=sauts.find(s=>Math.hypot(s.x-x,s.z-z)<30);if(!g){g={n:'Saut-de-mouton',t:'saut',x,z};sauts.push(g)}}
 const out={o:[LON0,LAT0],s:S,roads,pass,lieux:[...lieux.filter(l=>l.t!=='saut'),...sauts]};
+
+// ---- POINTS D'INTÉRÊT (export Overpass « lieux nommés » : arrêts, marchés, feux, stades, édifices, camps, gares…)
+const poi=[],arrets=[],feux=[],vu=new Set();
+const clean=n=>n.replace(/^arr[êe]t\s+(de\s+bus\s+)?/i,'').replace(/\s+/g,' ').trim();
+for(const ft of feats.values()){if(ft.geometry.type!=='Point')continue;const p=ft.properties,n=(p.name||'').trim(),[lo,la]=ft.geometry.coordinates,x=+X(lo).toFixed(1),z=+Z(la).toFixed(1);
+  if(p.highway==='traffic_signals'){feux.push([x,z]);continue}
+  if(!n)continue;
+  if(p.highway==='bus_stop'||p.public_transport==='stop_position'||p.public_transport==='platform'||p.amenity==='bus_station'||p.amenity==='taxi'){const k=p.amenity==='bus_station'?'g':p.amenity==='taxi'?'t':'b';if(!arrets.some(a=>a[0]===clean(n)&&Math.hypot(a[1]-x,a[2]-z)<6))arrets.push([clean(n),x,z,k]);continue}
+  let t=null;
+  if(p.leisure==='stadium'||/^stade /i.test(n)&&!/ossen|Marchand/i.test(n))t='stade';
+  else if(p.amenity==='marketplace'||/^march[ée] |grand march/i.test(n))t='marche';
+  else if(/RTNC|Palais d|Palais du|Mus[ée]e national|Cath[ée]drale du Centenaire|Banque Centrale|Fonction Publique|Banque mondiale|Maison communale|Palais de Justice/i.test(n))t='edifice';
+  else if(/^Camps? (Kabila|Pinzi|Militaire|Loano|Colonel|Tshatshi|Bumba|Luka|matete)/i.test(n)||/Camps? Militaire/i.test(n))t='camp';
+  else if(/A[ée]roport de Ndolo|^Gare (de|Centrale|Routi)|Gare de Matete|Kisenso.?Gare/i.test(n)||p.railway==='station')t='gare';
+  else if(/^Place (de l')?[ÉE]changeur$|^[ÉE]changeur de Limete|^Echangeur$|^[ÉE]changeur$/i.test(n)){t='echangeur'}
+  if(!t)continue;const nom=t==='echangeur'?'Échangeur de Limete':n.replace(/Stade de marthyrs/i,'Stade des Martyrs');
+  const k=nom.toLowerCase();if(vu.has(k)&&t!=='marche')continue;vu.add(k);poi.push({n:nom,t,x,z})}
+// carrefours : nœuds où se croisent au moins deux grandes routes de noms différents
+{const noeud=new Map(),kk=(x,z)=>Math.round(x*5)+','+Math.round(z*5);
+ roads.forEach(r=>{if(r.c==='d'||r.n==='Contre-allée Lumumba')return;for(let i=0;i<r.p.length;i+=2){const k=kk(r.p[i],r.p[i+1]);let o=noeud.get(k);if(!o){o={x:r.p[i],z:r.p[i+1],n:new Set(),s:0,c:0};noeud.set(k,o)}if(r.n)o.n.add(r.n);o.s+=r.c==='a'?3:r.c==='b'?2:1;o.c++}});
+ const C=[...noeud.values()].filter(o=>o.n.size>=2&&o.c>=3&&o.s>=5).sort((a,b)=>b.s-a.s);const car=[];
+ for(const o of C){if(car.some(q=>Math.hypot(q.x-o.x,q.z-o.z)<14))continue;car.push({x:+o.x.toFixed(1),z:+o.z.toFixed(1),n:[...o.n].slice(0,2).join(' × '),s:o.s});if(car.length>=60)break}
+ out.carrefours=car}
+out.poi=poi;out.arrets=arrets;out.feux=feux;
 fs.writeFileSync('src/taxi/kinshasa.json',JSON.stringify(out));
-console.log('routes',roads.length,'points',roads.reduce((s,r)=>s+r.p.length/2,0),'passerelles',pass.length,'repères',out.lieux.length,'taille',(fs.statSync('src/taxi/kinshasa.json').size/1024).toFixed(0)+' Ko');
+console.log('POI',poi.length,'arrêts',arrets.length,'feux',feux.length,'carrefours',out.carrefours.length,'taille',(fs.statSync('src/taxi/kinshasa.json').size/1024).toFixed(0)+' Ko');
