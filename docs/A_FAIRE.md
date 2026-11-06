@@ -214,3 +214,11 @@ Contraintes communes : Three.js (pas de React), sans API payante, sauvegarde `ad
 - Administrateur : un compte connecté de rôle « admin » (conservé sur l'appareil, donc valable hors connexion) ouvre tous les jeux et lieux sans missions ni FC, et tous les chapitres des Missions Boyekoli (`ACC.admin()`).
 - Hôpital, mission 1 : après le bon examen (prise de sang, radio, échographie), il faut maintenant CONDUIRE LE PATIENT jusqu'au service : le patient apparaît, te suit, une consigne affiche la distance, le compte rendu s'ouvre à l'arrivée (bouton Annuler). Mission 2, urgences : après le tri des blessés, jeu de conduite de l'ambulance sur 3 voies (obstacles, confort du patient) ; l'onglet Ambulance propose aussi la conduite libre.
 - Conduite des véhicules : le volant occupe la place du joystick (en bas à gauche), les pédales restent à droite.
+
+## BOYEKOLI TAXI (Kinshasa) — ajouté
+- Jeu : `src/taxi.js` + `src/taxi/data.js` (missions, événements d'éthique) + `src/taxi/kinshasa.json` (carte). Bâtiment « Station de taxis » (quartier des métiers), accès bloqué : 16 missions + 160 FC (`src/acces.js`).
+- **Carte réelle** : exports OpenStreetMap (Overpass Turbo) convertis par `node scripts/gen-kinshasa.mjs <dossier des .geojson>` (1 unité = 10 m). Source © contributeurs OpenStreetMap, licence ODbL (à citer dans le jeu : fait dans le menu).
+  - Boulevard Lumumba redessiné : 2 chaussées de 4 voies, terre-plein, bordures rouge et blanc, contre-allées à Limete.
+  - 32 passerelles à arche (toit en toile blanche), sauts-de-mouton (routes surélevées), ponts (N'djili, Matete, Kinkole…), ronds-points nommés.
+- 6 missions (moto, taxi-voiture, minibus « esprit de mort ») : prix convenu, tentation (double prix), supplément, contrôle routier (civisme), surcharge, monnaie à rendre. Réputation de chauffeur ; certificat « Chauffeur exemplaire ».
+- **À faire / vérifier avec des Kinois** : noms des passerelles (1re, 7e, 13e rues…, marchés de la Liberté et de Pascal : elles sont numérotées dans la carte mais pas nommées), emplacement de l'aéroport et de la tour de l'échangeur de Limete (placés au mieux), contre-allées (positions approximatives), tarifs, habitudes des chauffeurs. Possibles ajouts : feux, ralentisseurs, marché de la Liberté, mode nuit, lien avec les Missions Boyekoli (`mis.evt('taxi')` déjà émis).

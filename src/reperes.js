@@ -189,6 +189,11 @@ export const MODELES={
     box(g,8.5,.05,4.4,M('#4b4d52'),0,.03,D/2+3.6);for(let i=-3;i<=3;i++)box(g,.1,.06,3.4,M('#f2f2f2'),i*1.15,.05,D/2+3.6);
     enseigneToit(g,H,'BOYEKOLI FARM','Agriculture · Élevage','#2e6a2a','🌾');
   },
+  taxi(g){
+    const H=4.6;box(g,W,H,D,M('#f2e6b8'),0,H/2,0);box(g,W+.6,.5,D+.6,M('#d4a017'),0,H+.25,0);porte(g,'#d4a017');
+    [-3,3].forEach(x=>{box(g,2.2,.9,4,M('#e8c020'),x,.6,D/2+3);box(g,1.9,.6,2,M('#e8c020'),x,1.3,D/2+3)});
+    box(g,8.5,.05,4.6,M('#4b4d52'),0,.03,D/2+3);enseigneToit(g,H,'BOYEKOLI TAXI','Moto · Taxi · Minibus','#d4a017','🚕');
+  },
   magasin(g,r){
     const H=5,col=(r&&r.coul)||'#1f7a4d';box(g,W,H,D,M('#f0ead8'),0,H/2,0);box(g,W+.6,.5,D+.6,M(col),0,H+.25,0);
     const vi=new THREE.Mesh(new THREE.PlaneGeometry(8,2.6),verre());vi.position.set(0,2.1,D/2+.06);g.add(vi);porte(g,col);
@@ -210,6 +215,7 @@ export const MODELES={
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
+  {id:'taxi',x:-47,z:64,ry:Math.PI/2,w:10,d:7,nom:'la Station de taxis',coul:'#d4a017',norot:true},
   {id:'ferme',x:-47,z:-72,ry:Math.PI/2,w:10,d:7,nom:'la Ferme école',coul:'#2e6a2a',norot:true},
   {id:'espace',x:-47,z:-48,ry:Math.PI/2,w:10,d:7,nom:'la Cité de l’espace',coul:'#1a1f5e',norot:true},
   {id:'labo',x:-47,z:-60,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
