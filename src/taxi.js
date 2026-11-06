@@ -2,6 +2,7 @@
 // (boulevard Lumumba, passerelles, sauts-de-mouton, ponts, ronds-points). Leçon centrale : respecter ses contrats.
 import * as THREE from 'three';
 import KIN from './taxi/kinshasa.json';
+import {creerVehicule} from './taxi/vehicules.js';
 import {VEHICULES,MISSIONS,LIEUX_EXTRA,EVENEMENTS,CONSEILS} from './taxi/data.js';
 
 const LARG={a:9,b:7,c:5.6,d:4.6},COUL={a:0x52565d,b:0x5a5e65,c:0x64686e,d:0x70737a},HP=4.6,CELL=40;
@@ -107,13 +108,8 @@ export function creerTaxi(D){
     const L=N.segs.filter(s=>N.roads[s.r].n==='Boulevard Lumumba'&&s.y0<1&&s.l>10),out=[];if(!L.length)return out;
     L.sort((a,b)=>a.x0-b.x0);for(let k=0;k<7;k++){const s=L[Math.floor((k+.5)/7*L.length)];out.push({x:(s.x0+s.x1)/2,z:(s.z0+s.z1)/2,fait:false})}return out}
 
-  // ---------- véhicules (modèles simples)
-  function modele(type,col){
-    const g=new THREE.Group(),M=c=>new THREE.MeshLambertMaterial({color:c}),B=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);g.add(m);return m};
-    if(type==='moto'){B(.5,.5,1.8,col,0,.75,0);B(.45,.3,.8,0x222222,0,1.05,-.2);[[.9],[-.9]].forEach(([z])=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.2,10),M(0x111111));w.rotation.z=Math.PI/2;w.position.set(0,.4,z);g.add(w)});B(.45,.5,.4,0x2a62b8,0,1.5,-.1);B(.34,.34,.34,0xf2c9a0,0,1.9,-.1)}
-    else if(type==='bus'){B(2.2,2.3,6.4,col,0,1.7,0);B(2.24,.5,6.44,0x222222,0,1.1,0);B(2,.9,.1,0x9fd3f5,0,2.3,3.22);[[-1.1],[1.1]].forEach(([x])=>[-2,2].forEach(z=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.3,10),M(0x111111));w.rotation.z=Math.PI/2;w.position.set(x,.45,z);g.add(w)}))}
-    else{B(1.9,.8,4.2,col,0,.8,0);B(1.7,.7,2.2,col,0,1.5,-.2);B(1.6,.5,.1,0x9fd3f5,0,1.55,.95);[[-.95],[.95]].forEach(([x])=>[-1.4,1.4].forEach(z=>{const w=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.25,10),M(0x111111));w.rotation.z=Math.PI/2;w.position.set(x,.4,z);g.add(w)}))}
-    return g}
+  // ---------- véhicules : modèles soignés dans src/taxi/vehicules.js
+  const modele=(type,col)=>creerVehicule(type==='car'?'berline':type==='taxi'?'berline':type,col,{taxi:true});
 
   // ---------- ouverture / fermeture
   function ouvrir(){
@@ -145,7 +141,7 @@ export function creerTaxi(D){
     if(!R){const W=$('tx3d'),rend=new THREE.WebGLRenderer({antialias:false,powerPreference:'high-performance'});let low=false;try{low=localStorage.getItem('kelas_quality')==='low'}catch(e){}
       rend.setPixelRatio(Math.min(window.devicePixelRatio||1,low?1:1.5));rend.setSize(W.clientWidth,W.clientHeight);W.appendChild(rend.domElement);rend.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%';
       const scene=new THREE.Scene();scene.background=new THREE.Color(0xa9cfe8);scene.fog=new THREE.Fog(0xa9cfe8,170,520);
-      scene.add(new THREE.HemisphereLight(0xffffff,0x6b7a4a,1.05));const sun=new THREE.DirectionalLight(0xfff4d6,.8);sun.position.set(80,140,60);scene.add(sun);
+      scene.add(new THREE.HemisphereLight(0xffffff,0x8a8a6a,1.7));const sun=new THREE.DirectionalLight(0xfff4d6,1.3);sun.position.set(80,140,60);scene.add(sun);
       const sol=new THREE.Mesh(new THREE.PlaneGeometry(9000,6000),new THREE.MeshLambertMaterial({color:0x8a9a58}));sol.rotation.x=-Math.PI/2;sol.position.y=-.02;scene.add(sol);
       bandes(N,scene);const pass=passerelles(N,scene);batiments(N,scene);decor(N,scene);const nids=nidsDePoule(N,scene);
       N.lieux.forEach(l=>{const s=etiquette(l.n,l.t==='pont'?'#7a4b2a':l.t==='aero'?'#1b6ca8':'#1f4e9e');s.position.set(l.x,l.t==='pont'?9:12,l.z);scene.add(s);
@@ -158,7 +154,7 @@ export function creerTaxi(D){
       g.strokeStyle='#cfd6dd';N.roads.forEach(r=>{g.lineWidth=r.c==='a'?2:r.c==='b'?1.3:.6;g.beginPath();for(let i=0;i<r.p.length;i+=2){const x=R.mx(r.p[i]),y=R.mz(r.p[i+1]);i?g.lineTo(x,y):g.moveTo(x,y)}g.stroke()});R.bg=bg}
     // éléments dynamiques
     R.dyn&&R.dyn.forEach(o=>R.scene.remove(o));R.dyn=[];
-    const coul=M?(M.mode==='moto'?0xd13b3b:M.mode==='bus'?0xe8c020:0xe8c020):0x2c7fb8,car=modele(M?M.mode:'taxi',coul);R.scene.add(car);R.dyn.push(car);
+    const coul=M?(M.mode==='moto'?'#d13b3b':M.mode==='bus'?'#f0c000':'#f0c000'):'#2c7fb8',car=modele(M?M.mode:'taxi',coul);R.scene.add(car);R.dyn.push(car);
     // position de départ : sur la route proche du lieu de prise en charge, un peu avant
     const l0=M?lieuDe(M.de):{x:0,z:0},p0=proche(l0.x,l0.z,300,0)||proche(0,0,3000,0),dx=(p0.s.x1-p0.s.x0)/p0.s.l,dz=(p0.s.z1-p0.s.z0)/p0.s.l;
     S={mode:M?M.mode:'taxi',V,M,x:p0.px-dx*(M?50:0),z:p0.pz-dz*(M?50:0),h:Math.atan2(dx,dz),v:0,y:p0.y,steer:0,deg:0,rep:T().rep,t0:performance.now(),car,ai:[],pi:[],bon:0,mau:0,evt:{},phase:0,pts:[],pass:0,gain:0,paus:false,stop:0,fait:false,msg:'',vit:0,pdone:{},texte:''};
@@ -171,7 +167,7 @@ export function creerTaxi(D){
     // circulation : voitures, taxis-bus (qui s'arrêtent n'importe où), motos, piétons
     const segs=N.segs.filter(s=>s.c!=='d'&&s.l>20&&s.y0<1);
     const place=(o)=>{for(let k=0;k<30;k++){const s=segs[Math.floor(Math.random()*segs.length)],t=Math.random(),x=s.x0+(s.x1-s.x0)*t,z=s.z0+(s.z1-s.z0)*t;const d=Math.hypot(x-S.x,z-S.z);if(d>110&&d<380){o.s=s;o.t=t;o.dir=Math.random()<.5?1:-1;o.stop=0;return}}o.s=segs[0];o.t=.5;o.dir=1};
-    ['car','car','car','car','car','car','car','car','bus','bus','bus','bus','moto','moto','moto','moto','moto','car','car','car','bus','moto'].forEach((ty,i)=>{const cols=[0xe8c020,0xc0392b,0x2c7fb8,0xdddddd,0x2e9e4a,0x8e44ad],m=modele(ty,cols[i%cols.length]);R.scene.add(m);R.dyn.push(m);const o={ty,m,v:ty==='moto'?rnd(14,22):ty==='bus'?rnd(8,13):rnd(10,17),pause:0};place(o);S.ai.push(o)});
+    ['car','car','car','car','car','car','jeep','jeep','bus','bus','bus','bus','moto','moto','moto','moto','moto','tvs','tvs','tvs','tvs','camion','camion','car','bus','moto'].forEach((ty,i)=>{const cols=[0xe8c020,0xc0392b,0x2c7fb8,0xdddddd,0x2e9e4a,0x8e44ad],m=modele(ty,cols[i%cols.length]);R.scene.add(m);R.dyn.push(m);const o={ty,m,v:ty==='moto'?rnd(14,22):ty==='tvs'?rnd(11,16):ty==='bus'?rnd(8,13):ty==='camion'?rnd(7,10):rnd(10,17),pause:0,fou:ty==='moto'||ty==='tvs'||ty==='bus'?rnd(.5,1):ty==='jeep'?.3:0,ph:Math.random()*6};place(o);S.ai.push(o)});
     for(let i=0;i<10;i++){const g=new THREE.Group(),b=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,1.6,6),new THREE.MeshLambertMaterial({color:[0xe74c3c,0x3498db,0xf1c40f,0x2ecc71][i%4]}));b.position.y=.9;g.add(b);const h=new THREE.Mesh(new THREE.SphereGeometry(.3,8,6),new THREE.MeshLambertMaterial({color:0x6b4a32}));h.position.y=1.9;g.add(h);R.scene.add(g);R.dyn.push(g);
       const o={m:g,ph:Math.random()*6,s:null};place(o);S.pi.push(o)}
     // commandes
@@ -200,7 +196,7 @@ export function creerTaxi(D){
 
   // ---------- boucle de jeu
   function tick(dt){
-    const V=S.V,N=reseau();
+    const V=S.V,N=reseau();const now2=performance.now()/1000;
     if(S.paus){rendre();return}
     // commandes
     const gas=S.gas||keys['arrowup']||keys['w']||keys['z'],brk=S.brk||keys['arrowdown']||keys['s']||keys[' '],kl=(keys['arrowleft']||keys['a']||keys['q'])?-1:(keys['arrowright']||keys['d'])?1:0;
@@ -217,19 +213,20 @@ export function creerTaxi(D){
     // circulation
     const dirOf=s=>[(s.x1-s.x0)/s.l,(s.z1-s.z0)/s.l];
     S.ai.forEach(o=>{if(o.pause>0){o.pause-=dt}else{
-        const s=o.s,[dx,dz]=dirOf(s),sp=o.v*(o.ty==='bus'&&Math.random()<.002?0:1);let bloque=false;const lx=-dz*s.w*.22*o.dir,lz=dx*s.w*.22*o.dir;
+        const s=o.s,[dx,dz]=dirOf(s),sp=o.v*(o.ty==='bus'&&Math.random()<.002?0:1);let bloque=false;const ow=(o.fou?Math.sin(now2*.9+o.ph)*o.fou*.2:0)+.22,lx=-dz*s.w*ow*o.dir,lz=dx*s.w*ow*o.dir;
         const ax=s.x0+(s.x1-s.x0)*o.t+lx,az=s.z0+(s.z1-s.z0)*o.t+lz,fx=dx*o.dir,fz=dz*o.dir;
         const rx=S.x-ax,rz=S.z-az,dd=rx*fx+rz*fz,lat=Math.abs(rx*-fz+rz*fx);if(dd>0&&dd<9&&lat<2.4)bloque=true;
         S.ai.forEach(q=>{if(q!==o&&!bloque){const qx=q.m.position.x-ax,qz=q.m.position.z-az,d2=qx*fx+qz*fz,l2=Math.abs(qx*-fz+qz*fx);if(d2>0&&d2<8&&l2<2.2)bloque=true}});
-        if(o.ty==='bus'&&!bloque&&Math.random()<dt*.08){o.pause=rnd(2.5,5)}   // le taxi-bus s'arrête n'importe où
+        if((o.ty==='bus'||o.ty==='tvs')&&!bloque&&Math.random()<dt*(o.ty==='bus'?.08:.04)){o.pause=rnd(2,4.5)}   // le taxi-bus s'arrête n'importe où
         if(!bloque){o.t+=o.dir*sp*dt/s.l;if(o.t>1||o.t<0){const nx=o.dir>0?s.x1:s.x0,nz=o.dir>0?s.z1:s.z0,q=proche(nx,nz,3,0);const cand=q&&reseau().segs.filter((c,i)=>false);
             // changement de tronçon : voisin partageant le même nœud, sinon demi-tour
             const g=reseau().grid.get(Math.floor(nx/CELL)+','+Math.floor(nz/CELL))||[];let nb=null;for(const id of g){const c=reseau().segs[id];if(c===s||c.c==='d'||c.y0>1)continue;if(Math.hypot(c.x0-nx,c.z0-nz)<.3){nb={c,t:0,dir:1};break}if(Math.hypot(c.x1-nx,c.z1-nz)<.3){nb={c,t:1,dir:-1};break}}
             if(nb){o.s=nb.c;o.t=nb.t;o.dir=nb.dir}else{o.dir*=-1;o.t=cl(o.t,0,1)}}}
       }
-      const s=o.s,[dx,dz]=dirOf(s),lx=-dz*s.w*.22*o.dir,lz=dx*s.w*.22*o.dir;o.m.position.set(s.x0+(s.x1-s.x0)*o.t+lx,s.y0+(s.y1-s.y0)*o.t,s.z0+(s.z1-s.z0)*o.t+lz);o.m.rotation.y=Math.atan2(dx*o.dir,dz*o.dir);
+      const s=o.s,[dx,dz]=dirOf(s),ow2=(o.fou?Math.sin(now2*.9+o.ph)*o.fou*.2:0)+.22,lx=-dz*s.w*ow2*o.dir,lz=dx*s.w*ow2*o.dir;o.m.position.set(s.x0+(s.x1-s.x0)*o.t+lx,s.y0+(s.y1-s.y0)*o.t,s.z0+(s.z1-s.z0)*o.t+lz);o.m.rotation.y=Math.atan2(dx*o.dir,dz*o.dir);
       const dp=Math.hypot(o.m.position.x-S.x,o.m.position.z-S.z);
       if(dp>520||dp<4&&false){const segs=N.segs.filter(c=>c.c!=='d'&&c.l>20&&c.y0<1);for(let k=0;k<30;k++){const c=segs[Math.floor(Math.random()*segs.length)],t=Math.random(),x=c.x0+(c.x1-c.x0)*t,z=c.z0+(c.z1-c.z0)*t,d=Math.hypot(x-S.x,z-S.z);if(d>150&&d<420){o.s=c;o.t=t;break}}}
+      if(o.fou>.6&&dp<9&&dp>3&&Math.abs(S.v)>8&&!o.cut){o.cut=1;if(!S.cutMsg||now2-S.cutMsg>18){S.cutMsg=now2;msg(o.ty==='tvs'?'🛺 Un TVS te coupe la route ! Garde tes distances et reste calme.':o.ty==='moto'?'🏍 Une moto te double par la droite et la gauche !':'🚌 Le minibus s’arrête sans prévenir ! Anticipe.',3200)}setTimeout(()=>o.cut=0,4000)}
       // choc
       if(dp<(S.mode==='bus'?3.6:2.8)&&Math.abs(S.y-o.m.position.y)<2.5&&!o.choc){o.choc=1;choc(Math.abs(S.v)*.5+4,'🚗 Accrochage !');S.v*=.25;setTimeout(()=>o.choc=0,1500)}});
     S.pi.forEach(o=>{ // piétons qui traversent
@@ -326,5 +323,5 @@ export function creerTaxi(D){
     taxiMission:id=>demarrer(id),taxiLibre:()=>demarrer(null),taxiSuite:()=>{cacherPanel();const f=S&&S._suite;S._suite=null;if(f)f()},taxiApres:()=>apres(),
     taxiChoix:(id,i)=>{const c=EVENEMENTS[id].choix[i];repondre(c[1],c[2])},
     taxiChoixMonnaie:i=>{const o=S._opts[i];repondre(o[1],o[1]?'Exact ! Rendre la bonne monnaie, c’est respecter le client : '+S.monnaie.bon+' FC.':'Ce n’est pas le bon compte. Prix payé − prix de la course = monnaie à rendre : il fallait rendre '+S.monnaie.bon+' FC. Une erreur de monnaie fait perdre la confiance du client.')}};
-  return {actions,fermer,__S:()=>S,__R:()=>R,__reseau:reseau,__proche:proche};
+  return {actions,fermer,__modele:modele,__S:()=>S,__R:()=>R,__reseau:reseau,__proche:proche};
 }
