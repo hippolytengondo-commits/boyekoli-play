@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import * as T from './textures.js';
 import {std,box,cyl} from './world.js';
 import {voiture,voitureJoueur,motoJoueur} from './trafic.js';
-import {routeVoies} from './routes.js';
+import {routeVoies,asphalte} from './routes.js';
 
 const W=10,D=7;
 const M=(c,r)=>std(c,r===undefined?.85:r);
@@ -212,10 +212,35 @@ export const MODELES={
   }
 };
 
+
+// BOULEVARD DES MÉTIERS : une vraie route bitumée (2 voies, trottoirs, lampadaires) qui longe tous les bâtiments de missions
+// (hôpital, agence, ferme, laboratoire, design, mode, espace…) et rejoint la route du village. La station de taxis est
+// de l'autre côté, avec son parking : on y entre en véhicule par le boulevard.
+function boulevardMetiers(g){
+  const asph=asphalte(),trot=new THREE.MeshStandardMaterial({color:0xb9b4a6,roughness:.95,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+  const blanc=new THREE.MeshBasicMaterial({color:0xf2f2f2,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5}),jaune=new THREE.MeshBasicMaterial({color:0xe8c547,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-5});
+  const flat=(w,d,x,z,m,y,ry)=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(w,d),m);p.rotation.x=-Math.PI/2;if(ry)p.rotation.z=ry;p.position.set(x,y||.034,z);p.receiveShadow=true;g.add(p);return p};
+  const X=-37,Z0=-92,Z1=84,L=Z1-Z0,ZC=(Z0+Z1)/2;
+  flat(8,L,X,ZC,asph);flat(1.8,L,X-4.9,ZC,trot,.04);flat(1.8,L,X+4.9,ZC,trot,.04);
+  for(let z=Z0+2;z<Z1-1;z+=4.2)flat(.18,1.9,X,z+.9,blanc,.04);
+  flat(.12,L,X-3.7,ZC,blanc,.04);flat(.12,L,X+3.7,ZC,blanc,.04);
+  // passages piétons devant chaque porte de mission
+  [-70,-58,-46,-34,-22,-10,6,28,40,52].forEach(z=>{for(let i=-3;i<=3;i++)flat(.7,2.6,X+i*1.05,z,blanc,.041)});
+  // lampadaires
+  const gris=std('#8a8f96',.6);for(let z=Z0+6;z<Z1;z+=16){[-1,1].forEach(s=>{const x=X+s*5.9;cyl(g,.09,.12,5.2,gris,x,2.6,z+(s>0?8:0),6);box(g,1.2,.12,.12,gris,x-s*.6,5.2,z+(s>0?8:0));box(g,.4,.14,.3,new THREE.MeshBasicMaterial({color:0xfff2b8}),x-s*1.2,5.1,z+(s>0?8:0))})}
+  // panneaux d'entrée du boulevard
+  [[Z0+4,'#1b6ca8'],[Z1-4,'#1b6ca8']].forEach(([z])=>{const b=new THREE.Mesh(new THREE.PlaneGeometry(5.2,1.2),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'BOULEVARD DES MÉTIERS',s:56}],1024,240,'#1b6ca8','#ffffff'),roughness:.6,side:THREE.DoubleSide}));b.position.set(X,5.6,z);b.rotation.y=Math.PI/2;g.add(b);[-1,1].forEach(s=>cyl(g,.1,.1,5.6,gris,X,2.8,z+s*2.7,6))});
+  // PARKING des taxis, face au boulevard
+  flat(10,19,-28.4,-50,asph,.05);
+  for(let z=-59;z<=-41;z+=3)flat(8.6,.12,-28.4,z,blanc,.052);flat(.14,19,-23.7,-50,blanc,.052);
+  [[-57,'#e8b800'],[-54,'#2e86de'],[-48,'#e8b800'],[-45,'#e8b800'],[-51,'#c0392b']].forEach(([z,c],i)=>{if(i===4)return;const v=voiture('auto',c);v.position.set(-27.4,0,z);v.rotation.y=Math.PI/2;g.add(v)});
+  const pk=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.6),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'P',s:120,y:.45},{t:'TAXIS',s:46,y:.85}],512,320,'#1b6ca8','#ffffff'),roughness:.6,side:THREE.DoubleSide}));pk.position.set(-32.3,2.8,-60.2);pk.rotation.y=Math.PI/2;g.add(pk);cyl(g,.08,.08,2.8,gris,-32.3,1.4,-60.2,6);
+}
+
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},
-  {id:'taxi',x:-47,z:64,ry:Math.PI/2,w:10,d:7,nom:'la Station de taxis',coul:'#d4a017',norot:true},
+  {id:'taxi',x:-19,z:-50,ry:-Math.PI/2,w:10,d:7,nom:'la Station de taxis',coul:'#d4a017',norot:true},
   {id:'ferme',x:-47,z:-72,ry:Math.PI/2,w:10,d:7,nom:'la Ferme école',coul:'#2e6a2a',norot:true},
   {id:'espace',x:-47,z:-48,ry:Math.PI/2,w:10,d:7,nom:'la Cité de l’espace',coul:'#1a1f5e',norot:true},
   {id:'labo',x:-47,z:-60,ry:Math.PI/2,w:10,d:7,nom:'le Science Lab',coul:'#1b9aa8',norot:true},
@@ -241,6 +266,7 @@ export function construireReperes(w,ov,extra){
     const dz=bd/2+1.4;
     portes.push(Object.assign({},r,{px:r.x+dz*sn,pz:r.z+dz*cs}));
   });
+  boulevardMetiers(g);
   return {portes};
 }
 

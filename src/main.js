@@ -1947,15 +1947,18 @@ function klaxonner(){
   const b=$('vh');b.classList.add('on');setTimeout(()=>b.classList.remove('on'),300);
 }
 {
-  const vl=$('vol');let cx=0,cy=0,prev=0,id=null,ang=0;
-  const a=e=>Math.atan2(e.clientY-cy,e.clientX-cx);
-  vl.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;vl.setPointerCapture(id);const r=vl.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;prev=a(e);ang=(G.wheel||0)*120*Math.PI/180;G.wheelHeld=true});
-  vl.addEventListener('pointermove',e=>{
-    if(e.pointerId!==id)return;e.preventDefault();
-    let d=a(e)-prev;if(d>Math.PI)d-=2*Math.PI;if(d<-Math.PI)d+=2*Math.PI;prev=a(e);
-    ang=Math.max(-120,Math.min(120,ang*180/Math.PI+d*180/Math.PI))*Math.PI/180;G.wheel=ang/(120*Math.PI/180);
-  });
-  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>vl.addEventListener(ev,e=>{if(e.pointerId===id){id=null;G.wheelHeld=false}}));
+  // Volant : on glisse le doigt vers la gauche ou la droite (comme tourner un volant), il revient au centre dès qu'on lâche.
+  const vl=$('vol');let x0=0,id=null;
+  const fin=()=>{id=null;G.wheelHeld=false};
+  vl.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;try{vl.setPointerCapture(id)}catch(x){}x0=e.clientX-(G.wheel||0)*55;G.wheelHeld=true});
+  vl.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;e.preventDefault();G.wheel=Math.max(-1,Math.min(1,(e.clientX-x0)/55))});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>vl.addEventListener(ev,e=>{if(e.pointerId===id)fin()}));
+  // sécurité : doigt relevé ailleurs, appel entrant, changement d'application… le volant et les pédales se relâchent toujours
+  const lacher=()=>{fin();G.ped=0;['pacc','pfrein'].forEach(i=>{const b=$(i);if(b)b.classList.remove('on')})};
+  window.addEventListener('pointerup',e=>{if(e.pointerId===id)fin()},true);window.addEventListener('pointercancel',lacher,true);
+  ['touchend','touchcancel'].forEach(ev=>window.addEventListener(ev,e=>{if(!e.touches||e.touches.length===0)lacher()},true));
+  window.addEventListener('blur',lacher);document.addEventListener('visibilitychange',lacher);
+  ['volant','vol','pedales'].forEach(i=>{const e=$(i);if(e)e.addEventListener('contextmenu',ev=>ev.preventDefault())});
   const ped=(bid,val)=>{
     const b=$(bid);
     b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);G.ped=val;b.classList.add('on')});
