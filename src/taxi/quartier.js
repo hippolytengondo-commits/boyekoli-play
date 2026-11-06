@@ -48,12 +48,17 @@ const PLAN=[ // t le long du boulevard, cote : +1 droite (nord), -1 gauche (sud)
   ['palais',.34,1,78,'Palais du Peuple',0],['gouvernement',.55,1,60,'Hôtel du Gouvernement',0],['musee',.72,1,56,'Musée National',0],['cathedrale',.88,1,54,'Cathédrale du Centenaire',0],
   ['stade',.12,-1,86,'Stade des Martyrs',0],['arena',.34,-1,64,'Kinshasa Arena',0],['institut',.55,-1,44,'BNMRS',0],['institut',.64,-1,44,'Inst. sup. des sciences infirmières',0],
   ['cck',.76,-1,46,'Centre culturel de Kinshasa',0],['immeuble',.86,-1,42,'',0],['immeuble',.93,-1,42,'',0]];
-export const EXCL=PLAN.map(p=>{const q=pt(p[1],p[2],p[3]);return [q.x,q.z,60]});
-
-export function quartier(scene,etiquette){
-  PLAN.forEach(([k,t,cote,off,nom])=>{const g=new THREE.Group();bat[k](g);const q=pt(t,cote,off);g.position.set(q.x,0,q.z);
-    g.rotation.y=Math.atan2(rx*-cote,rz*-cote);       // la façade regarde le boulevard
-    scene.add(g);if(nom){const e=etiquette(nom,'#7a3b1f');e.position.set(q.x,k==='stade'||k==='palais'?30:k==='cathedrale'?52:26,q.z);scene.add(e)}});
+export const EXCL=[];
+const RAYON={stade:44,palais:54,gouvernement:34,musee:28,cathedrale:24,arena:30,institut:22,cck:26,immeuble:15};
+// Les bâtiments cherchent, près de leur emplacement théorique, un terrain sans route (le quartier est dense) ; s'il n'y en a pas, ils sont réduits.
+export function quartier(scene,etiquette,rayonLibre){
+  EXCL.length=0;const posees=[];
+  PLAN.forEach(([k,t0,cote,off0,nom])=>{const R0=RAYON[k]||24;let best=null;
+    for(const dt of [0,.03,-.03,.06,-.06,.09,-.09,.12,-.12,.16,-.16])for(let d=0;d<=110;d+=12){const t=Math.max(.02,Math.min(.98,t0+dt)),o=off0+d,q=pt(t,cote,o),f=rayonLibre(q.x,q.z),lib=posees.every(p=>Math.hypot(p.x-q.x,p.z-q.z)>p.r+Math.min(R0,f)+2);
+      if(!lib)continue;const sc=f>=R0?1:Math.max(.4,f/R0),score=sc*100-Math.abs(dt)*60-d*.15;if(!best||score>best.score)best={score,t,o,sc,q};if(sc===1&&d<30)break}
+    if(!best)return;const {q,sc,t,o}=best,g=new THREE.Group();bat[k](g);g.scale.setScalar(sc);g.position.set(q.x,0,q.z);g.rotation.y=Math.atan2(rx*-cote,rz*-cote);scene.add(g);
+    posees.push({x:q.x,z:q.z,r:R0*sc});EXCL.push([q.x,q.z,R0*sc+4]);
+    if(nom){const e=etiquette(nom,'#7a3b1f');e.position.set(q.x,(k==='stade'||k==='palais'?30:k==='cathedrale'?52:26)*Math.max(.7,sc),q.z);scene.add(e)}});
   const av=etiquette('Avenue du 24 Novembre','#555'),q=pt(.45,-1,24);av.position.set(q.x,9,q.z);scene.add(av)}
 
 // ---- robots (feux) et passages piétons. Période 18 s : axe A vert 8 s, orange 1,5 s, puis axe B vert 8 s, orange 0,5 s.

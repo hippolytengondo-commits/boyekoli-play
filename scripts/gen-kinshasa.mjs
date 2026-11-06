@@ -13,7 +13,7 @@ for(const ft of feats.values()){const p=ft.properties,h=p.highway,g=ft.geometry.
  const pts=dp(g.map(c=>[X(c[0]),Z(c[1])]),.35).map(q=>[+q[0].toFixed(1),+q[1].toFixed(1)]);
  if(h==='footway'&&p.bridge){const m=pts[Math.floor(pts.length/2)];pass.push([m[0],m[1]]);continue}
  if(!CL[h])continue;
- roads.push({c:CL[h],n:p.name||'',b:p.bridge?1:0,o:p.oneway==='yes'?1:0,p:pts.flat()})}
+ roads.push({c:CL[h],n:p.name||'',b:p.bridge?1:0,o:p.oneway==='yes'?1:0,ln:parseInt(p.lanes)||0,p:pts.flat()})}
 // BOULEVARD LUMUMBA : 2 chaussées de 4 voies séparées par un terre-plein ; contre-allées (petits boulevards) au niveau de Limete.
 // Les 2 chaussées d'OpenStreetMap sont très proches : on les écarte l'une de l'autre pour qu'il reste la place d'un terre-plein.
 {const L=roads.filter(r=>r.n==='Boulevard Lumumba'&&r.c==='a'),ECART=17;       // distance entre les axes des 2 chaussées
