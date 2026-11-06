@@ -344,7 +344,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-
 .conf{position:fixed;top:-40px;z-index:12;pointer-events:none;animation-name:confTomb;animation-timing-function:linear;animation-fill-mode:forwards}
 @keyframes confTomb{to{transform:translateY(112vh) rotate(420deg)}}
 
-/* Aucune sélection de texte ni menu « copier-coller » sur les commandes, les boutons et les écrans de jeu (appui long sur téléphone) */
-button,[onclick],#joy,#joy *,#knob,#volant,#volant *,#pedales *,#vh,#vc,#pv,div[style*="z-index:9000"],div[style*="z-index:9000"] *,#dlg button,#dlg .row{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
-div[style*="z-index:9000"] input,div[style*="z-index:9000"] textarea{-webkit-user-select:text;user-select:text}
+/* Aucune sélection de texte ni menu « Copier / Chercher / Traduire » sur les commandes, les boutons et les écrans de jeu (appui long sur téléphone, iPhone compris) */
+button,[onclick],#joy,#joy *,#knob,#volant,#volant *,#pedales *,#vh,#vc,#pv,#dlg button,#dlg .row,
+#taxiov,#taxiov *,#medov,#medov *,#sciov,#sciov *,#detov,#detov *,#dsov,#dsov *,#fsov,#fsov *,#spov,#spov *,#vov,#vov *,#entov,#entov *,#agov,#agov *,#parole,#parole *,#accesfen,#accesfen *,
+div[style*="z-index:9000"],div[style*="z-index:9000"] *,div[style*="z-index: 9000"],div[style*="z-index: 9000"] *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable],div[style*="z-index: 9000"] input,div[style*="z-index: 9000"] textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}

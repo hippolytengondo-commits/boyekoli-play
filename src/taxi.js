@@ -68,7 +68,7 @@ export function creerTaxi(D){
     KIN.pass.forEach(([x,z],i)=>{const p=proche(x,z,60,0);if(!p||p.s.y0>1)return;const s=p.s,dx=(s.x1-s.x0)/s.l,dz=(s.z1-s.z0)/s.l,half=s.w/2+(s.c==='a'?9:3),g=new THREE.Group();
       const pts=[];for(let k=0;k<=16;k++){const a=Math.PI*k/16;pts.push(new THREE.Vector3(-Math.cos(a)*half,6+Math.sin(a)*8.5,0))}
       g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),24,.35,6),acier));
-      const toile=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(v.x*.96,v.y+.5,0))),24,1.5,8),new THREE.MeshLambertMaterial({color:0xf4f1ea}));toile.scale.z=.9;g.add(toile);
+      const toile=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(v.x*.97,v.y+.45,0))),24,1,8),new THREE.MeshLambertMaterial({color:0xf4f1ea}));toile.scale.z=.9;g.add(toile);
       const deck=new THREE.Mesh(new THREE.BoxGeometry(half*2,.4,2.4),sol);deck.position.y=5.8;g.add(deck);
       [-1,1].forEach(k=>{const r=new THREE.Mesh(new THREE.BoxGeometry(half*2,.9,.1),rail);r.position.set(0,6.5,k*1.15);g.add(r)});
       for(let k=-6;k<=6;k++){const xx=k*half/6.6,h=Math.sqrt(Math.max(0,1-(xx/half)**2))*8.5;if(h<1)continue;const c=new THREE.Mesh(new THREE.BoxGeometry(.08,h,.08),acier);c.position.set(xx,6+h/2,0);g.add(c)}
@@ -115,7 +115,7 @@ export function creerTaxi(D){
   // ---------- ouverture / fermeture
   function ouvrir(){
     fermer(true);
-    ov=document.createElement('div');ov.id='taxiov';ov.style.cssText='position:fixed;inset:0;z-index:9000;background:#0e1a22;color:#fff;font-family:system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden;touch-action:none';
+    ov=document.createElement('div');ov.id='taxiov';ov.style.cssText='position:fixed;inset:0;z-index:9000;background:#0e1a22;color:#fff;font-family:system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none';
     ov.innerHTML=`<div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:linear-gradient(90deg,#b8860b,#e8a23a);flex:0 0 auto"><b style="flex:1;font-size:14px;color:#222">🚕 BOYEKOLI TAXI · Kinshasa</b></div>
     <div id="tx3d" style="flex:1;position:relative;min-height:0"></div>
     <div id="txpan" style="position:absolute;inset:0;background:rgba(8,16,22,.97);display:flex;flex-direction:column;padding:12px;overflow:auto;z-index:5"></div>`;
