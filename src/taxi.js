@@ -28,8 +28,11 @@ export function creerTaxi(D){
     // et en redescend en rampe douce. Les routes qui passent dessous (non reliées au pont) restent au sol : le boulevard « reste au-dessus ».
     const nodes=new Map(),nd=(x,z)=>{const k=key(x,z);let n=nodes.get(k);if(!n){n={adj:[],d:1e9};nodes.set(k,n)}return n};
     const SURE=r=>r.b===1&&(r.c==='a'||r.c==='b');
-    let fr=[];roads.forEach(r=>{let pv=null;for(let i=0;i<r.p.length;i+=2){const n=nd(r.p[i],r.p[i+1]);if(SURE(r)&&n.d>0){n.d=0;fr.push(n)}if(pv){const l=Math.hypot(r.p[i]-pv.x,r.p[i+1]-pv.z);pv.n.adj.push([n,l]);n.adj.push([pv.n,l])}pv={n,x:r.p[i],z:r.p[i+1]}}});
-    while(fr.length){fr.sort((p,q)=>p.d-q.d);const n=fr.shift();for(const [m,l] of n.adj){if(n.d+l<m.d&&n.d+l<RAMPE){m.d=n.d+l;fr.push(m)}}}
+    // nom « canonique » : les ponts du boulevard font partie du même axe que le boulevard Lumumba
+    const canon=n=>/Lumumba|^Pont (Matete|N.djili|Kinkole)|^Saut/i.test(n)?'LUM':n;
+    let fr=[];roads.forEach(r=>{let pv=null;const cn=canon(r.n);for(let i=0;i<r.p.length;i+=2){const n=nd(r.p[i],r.p[i+1]);if(SURE(r)&&n.d>0){n.d=0;n.cn=cn;fr.push(n)}if(pv){const l=Math.hypot(r.p[i]-pv.x,r.p[i+1]-pv.z);pv.n.adj.push([n,l,cn]);n.adj.push([pv.n,l,cn])}pv={n,x:r.p[i],z:r.p[i+1]}}});
+    // la rampe ne se propage que le long du même axe : les routes qui croisent ou passent dessous ne montent pas
+    while(fr.length){fr.sort((p,q)=>p.d-q.d);const n=fr.shift();for(const [m,l,cn] of n.adj){if(cn!==n.cn||!n.cn)continue;if(n.d+l<m.d&&n.d+l<RAMPE){m.d=n.d+l;m.cn=n.cn;fr.push(m)}}}
     const alt=(x,z)=>{const n=nodes.get(key(x,z));return n&&n.d<RAMPE?HP*(.5-.5*Math.cos(Math.PI*(1-n.d/RAMPE))):0};
     roads.forEach((r,ri)=>{r.h=[];for(let i=0;i<r.p.length;i+=2)r.h.push(alt(r.p[i],r.p[i+1]));
       for(let i=0;i<r.p.length/2-1;i++){const s={x0:r.p[i*2],z0:r.p[i*2+1],x1:r.p[i*2+2],z1:r.p[i*2+3],y0:r.h[i],y1:r.h[i+1],w:r.l4?13:(r.ln>0?cl(Math.max(r.ln,r.o?1:2)*3.1,5,14):LARG[r.c]),r:ri,i,c:r.c,l4:r.l4?1:0};
@@ -114,7 +117,7 @@ export function creerTaxi(D){
     const bord=[];N.segs.forEach(sg=>{if(!sg.l4||sg.y0>1||sg.l<6)return;const dx=(sg.x1-sg.x0)/sg.l,dz=(sg.z1-sg.z0)/sg.l;for(let t=2;t<sg.l-2;t+=3.6)[-1,1].forEach(k=>bord.push([sg.x0+dx*t-dz*(sg.w/2+.25)*k,sg.z0+dz*t+dx*(sg.w/2+.25)*k,Math.atan2(dx,dz),bord.length%2]))});
     const bm=new THREE.InstancedMesh(new THREE.BoxGeometry(.5,.25,3.4),new THREE.MeshLambertMaterial({color:0xffffff}),Math.max(1,bord.length)),cc=new THREE.Color();
     bord.forEach((p,i)=>{q.setFromAxisAngle(new THREE.Vector3(0,1,0),p[2]);M4.compose(new THREE.Vector3(p[0],.15,p[1]),q,new THREE.Vector3(1,1,1));bm.setMatrixAt(i,M4);bm.setColorAt(i,cc.setHex(p[3]?0xd9372b:0xf2f2f2))});scene.add(bm);
-    const pa=[];N.segs.forEach(sg=>{if(sg.c==='d'||sg.y0>1||sg.l<10)return;const dx=(sg.x1-sg.x0)/sg.l,dz=(sg.z1-sg.z0)/sg.l;for(let t=5;t<sg.l;t+=70){const o=(sg.w/2+rnd(3,6))*(Math.random()<.5?-1:1);pa.push([sg.x0+dx*t-dz*o,sg.z0+dz*t+dx*o])}});
+    const pa=[];N.segs.forEach(sg=>{if(sg.c==='d'||sg.y0>1||sg.l<10)return;const dx=(sg.x1-sg.x0)/sg.l,dz=(sg.z1-sg.z0)/sg.l;for(let t=5;t<sg.l;t+=60){const k=Math.random()<.5?-1:1,o=(sg.w/2+1.3)*k,x=sg.x0+dx*t-dz*o,z=sg.z0+dz*t+dx*o;if(!surChaussee(x,z,1.1))pa.push([x,z])}});
     const um=new THREE.InstancedMesh(new THREE.ConeGeometry(1.5,.8,8),new THREE.MeshLambertMaterial({color:0xffffff}),Math.max(1,pa.length)),pc=[0xe74c3c,0xf1c40f,0x3498db,0x2ecc71,0xe67e22,0xffffff];
     pa.forEach((p,i)=>{M4.compose(new THREE.Vector3(p[0],2.3,p[1]),new THREE.Quaternion(),new THREE.Vector3(1,1,1));um.setMatrixAt(i,M4);um.setColorAt(i,cc.setHex(pc[i%pc.length]))});scene.add(um);
     // tour de l'échangeur de Limete (repère à vérifier avec les Kinois) : près du saut-de-mouton de Limete
@@ -181,7 +184,7 @@ export function creerTaxi(D){
       if(m){const f=rayonLibre(p.x,p.z);if(f>9){const g=m[0]==='tour'?tourRTNC():BAT[m[0]]&&(()=>{const o=new THREE.Group();BAT[m[0]](o);return o})();if(g){const sc=Math.min(m[1],Math.max(.25,f/(m[0]==='stade'?40:m[0]==='palais'?50:28)));g.scale.setScalar(sc);g.position.set(p.x,0,p.z);scene.add(g);EXCL.push([p.x,p.z,(m[0]==='stade'?40:30)*sc+3]);
         // façade tournée vers la route la plus proche
         const q=proche(p.x,p.z,60,0);if(q)g.rotation.y=Math.atan2(q.px-p.x,q.pz-p.z)}}}
-      if(p.t==='poi_marche'){for(let i=0;i<7;i++)arb.push([p.x+rnd(-9,9),p.z+rnd(-9,9)]);EXCL.push([p.x,p.z,12])}
+      if(p.t==='poi_marche'){for(let i=0;i<9;i++){const x=p.x+rnd(-10,10),z=p.z+rnd(-10,10);if(!surChaussee(x,z,1.6))arb.push([x,z])}EXCL.push([p.x,p.z,12])}
       const e=mini(p.n,p.t==='poi_marche'?'#b8581c':p.t==='poi_stade'?'#2e7d32':p.t==='poi_gare'?'#555':p.t==='poi_camp'?'#4a5a2a':'#7a3b1f');e.position.set(p.x,p.t==='poi_marche'?8:16,p.z);e.visible=false;scene.add(e);etiq.push(e)});
     // marchés : parasols colorés
     const pc=[0xe74c3c,0xf1c40f,0x3498db,0x2ecc71,0xe67e22,0xffffff],um=new THREE.InstancedMesh(new THREE.ConeGeometry(1.6,.9,8),new THREE.MeshLambertMaterial({color:0xffffff}),Math.max(1,arb.length)),M4=new THREE.Matrix4(),cc=new THREE.Color();
