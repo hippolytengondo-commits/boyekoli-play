@@ -22,11 +22,24 @@ function homme(g,x,y,z,coul,casque,tourne){const c=new THREE.Group();c.position.
   add(c,new THREE.CylinderGeometry(.2,.22,.6,8),M(coul||'#2a6fb8',.9),0,.35,0);add(c,new THREE.SphereGeometry(.17,10,8),M('#6b4a32',.8),0,.8,0);
   if(casque)add(c,new THREE.SphereGeometry(.2,10,8,0,6.3,0,1.6),M(casque,.4),0,.84,0);return c}
 
-// ---------------- voiture (taxi) et 4x4 : mêmes modèles que les véhicules achetés à la concession ----------------
+// ---------------- taxi / berline : caisse arrondie, habitacle vitré (chauffeur et clients visibles), lanterne « TAXI » ----------------
+const VITRE=()=>new THREE.MeshStandardMaterial({color:0x9cc4de,transparent:true,opacity:.34,roughness:.06,metalness:.35,side:THREE.DoubleSide,depthWrite:false});
+let _taxiTex=null;
+function lanterne(g){if(!_taxiTex){const c=document.createElement('canvas');c.width=128;c.height=48;const x=c.getContext('2d');x.fillStyle='#f2c400';x.fillRect(0,0,128,48);x.fillStyle='#111';x.font='bold 34px system-ui';x.textAlign='center';x.fillText('TAXI',64,37);_taxiTex=new THREE.CanvasTexture(c)}
+  const m=new THREE.MeshBasicMaterial({map:_taxiTex}),b=add(g,bx(.62,.22,.3),M('#f2c400',.4),0,1.7,-.1);[-1,1].forEach(s=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(.6,.21),m);p.position.set(s*.32,1.7,-.1);p.rotation.y=s*Math.PI/2;g.add(p)})}
 export function berline(col,taxi){
-  const g=voitureJoueur(col);g.scale.setScalar(1.12);
-  if(taxi){add(g,bx(.6,.22,.3),M('#f2c400',.4),0,2.0,-.9);add(g,bx(1.8,.05,.6),M('#111'),0,.72,0)}              // lanterne « TAXI » et bande
-  const w=new THREE.Group();w.add(g);w.userData.dim={l:2.3,w:1.0};return w}
+  const g=new THREE.Group(),c=M(col,.28,{metalness:.5});
+  add(g,profil([[-2.2,.34],[-2.22,.92],[-1.3,1.0],[-.95,1.02],[.95,1.02],[2.0,.92],[2.22,.62],[2.2,.34]],1.8,.1),c,0,0,0);                       // caisse
+  add(g,profil([[-.92,1.0],[-.56,1.5],[.5,1.5],[.96,1.02]],1.64,.03),VITRE(),0,0,0);                                                               // habitacle vitré
+  [[-.8,-.72],[.8,-.72],[-.8,.64],[.8,.64]].forEach(([x,z])=>add(g,bx(.07,.5,.07),c,x,1.27,z));                                                    // montants
+  add(g,profil([[-.6,1.5],[.52,1.5],[.52,1.58],[-.6,1.58]],1.58,.04),c,0,0,0);                                                                      // toit
+  [[-.42,.95,.3],[.42,.95,.3],[-.4,.95,-.62],[.4,.95,-.62]].forEach(([x,y,z])=>{add(g,bx(.5,.12,.5),M('#33302c',.9),x,y,z);add(g,bx(.5,.55,.1),M('#33302c',.9),x,1.22,z-.28)});   // sièges
+  [-1,1].forEach(s=>{add(g,new THREE.SphereGeometry(.17,12,8),PHARE(),s*.62,.78,2.2);add(g,bx(.36,.14,.06),FEU(),s*.7,.84,-2.24);add(g,bx(.12,.1,.1),CLIGN(),s*.84,.6,2.2);add(g,bx(.2,.1,.08),M('#222'),s*1.0,1.12,.95);   // phares, feux, clignotants, rétroviseurs
+    const ar=new THREE.Mesh(new THREE.TorusGeometry(.4,.06,6,14,Math.PI),M('#161616'));ar.position.set(s*.93,.5,1.38);ar.rotation.y=Math.PI/2;g.add(ar);const ar2=ar.clone();ar2.position.z=-1.35;g.add(ar2)});          // passages de roue
+  add(g,bx(1.7,.14,.18),CHROME(),0,.42,2.22);add(g,bx(1.7,.14,.18),CHROME(),0,.42,-2.24);add(g,bx(.9,.22,.04),M('#2a2a2a'),0,.66,2.24);plaque(g,-2.26,.55,-1);plaque(g,2.27,.45,1);
+  [[-.92,1.38],[.92,1.38],[-.92,-1.35],[.92,-1.35]].forEach(([x,z])=>roue(g,x,.38,z,.38,.26));
+  if(taxi){lanterne(g);add(g,bx(1.84,.07,.9),M('#111'),0,.74,.05);for(let i=0;i<6;i++)add(g,bx(.3,.075,.3),M('#f4f4f4'),-.75+i*.3,.745,.05)}       // bande à damier
+  const w=new THREE.Group();w.add(g);w.userData.dim={l:2.3,w:1.0};w.userData.type='berline';return w}
 export function quatre(col){const g=voitureJoueur(col);g.scale.setScalar(1.2);const w=new THREE.Group();w.add(g);w.userData.dim={l:2.4,w:1.05};return w}
 
 // ---------------- moto (taxi-moto) : même modèle que la moto achetée, avec conducteur (casque, gilet) ----------------
@@ -52,7 +65,7 @@ export function minibus(col){
   const g=new THREE.Group(),c=M(col||'#f0c000',.4,{metalness:.3});
   add(g,profil([[-3.0,.45],[-3.02,2.05],[1.7,2.1],[2.5,1.35],[3.0,1.0],[3.0,.45]],2.0,.12),c,0,.15,0);
   add(g,bx(2.06,.34,6.0),M('#1b1b1b',.7),0,.62,-.1);add(g,bx(2.08,.1,5.9),M('#2a6fd0',.5),0,.95,-.1);                      // bandes noire et bleue
-  for(let i=0;i<5;i++)[-1,1].forEach(s=>add(g,bx(.04,.62,.85),VERRE(),s*1.03,1.78,-2.2+i*1.05));                              // vitres latérales
+  for(let i=0;i<5;i++)[-1,1].forEach(s=>add(g,bx(.04,.62,.85),VITRE(),s*1.03,1.78,-2.2+i*1.05));                              // vitres latérales
   add(g,profil([[1.75,1.3],[2.45,1.45],[2.45,1.9],[1.75,2.02]],1.8,.04),VERRE(),0,.15,0);                                    // pare-brise
   [-1,1].forEach(s=>{add(g,new THREE.SphereGeometry(.18,10,8),PHARE(),s*.75,.95,3.04);add(g,bx(.3,.2,.06),FEU(),s*.8,1.3,-3.08)});
   add(g,bx(2.0,.2,.22),CHROME(),0,.55,3.04);add(g,bx(2.0,.22,.4),M('#222',.8),0,.52,-3.12);add(g,bx(1.7,.06,3.2),M('#2a2a2a',.9),0,2.32,-.8);   // pare-chocs, galerie de toit
@@ -78,3 +91,13 @@ export function camion(col){
 export function creerVehicule(type,col,opt){
   if(type==='moto')return moto(col,opt&&opt.passager);if(type==='tvs')return tricycle(col);if(type==='bus')return minibus(col);
   if(type==='camion')return camion(col);if(type==='jeep')return quatre(col);return berline(col,opt&&opt.taxi)}
+
+// personnage (client, chauffeur) : tête, buste, bras, jambes qui bougent quand il marche
+export function personne(coul,peau){
+  const g=new THREE.Group(),hab=M(coul||'#2a6fb8',.9),pe=M(peau||'#6b4a32',.8);
+  const jg=new THREE.Group(),jd=new THREE.Group();jg.position.set(-.13,.85,0);jd.position.set(.13,.85,0);
+  [jg,jd].forEach(j=>{const l=new THREE.Mesh(new THREE.CylinderGeometry(.09,.08,.85,8),M('#2b2b33',.9));l.position.y=-.42;j.add(l);g.add(j)});
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(.22,.2,.62,10),hab);t.position.y=1.15;g.add(t);
+  [-1,1].forEach(s=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(.065,.06,.6,6),hab);b.position.set(s*.29,1.12,0);g.add(b)});
+  const h=new THREE.Mesh(new THREE.SphereGeometry(.17,10,8),pe);h.position.y=1.6;g.add(h);
+  g.userData.jg=jg;g.userData.jd=jd;return g}
