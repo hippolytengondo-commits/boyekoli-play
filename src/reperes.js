@@ -243,6 +243,19 @@ function boulevardMetiers(g){
   const pk=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.6),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'P',s:120,y:.45},{t:'TAXIS',s:46,y:.85}],512,320,'#1b6ca8','#ffffff'),roughness:.6,side:THREE.DoubleSide}));pk.position.set(-32.3,2.8,-60.2);pk.rotation.y=Math.PI/2;g.add(pk);cyl(g,.08,.08,2.8,gris,-32.3,1.4,-60.2,6);
 }
 
+
+// GARAGE de la maison familiale : les véhicules achetés (moto, voiture) y reviennent chaque fois que le jeu recommence.
+export function construireGarage(parent,cols,bxs,x,z){
+  const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
+  const W=6.8,D=5.4,mur=M('#e7dfcf'),toit=M('#8a4b2a'),sol=M('#7b7d82',.95),pil=M('#cfc6b0');
+  box(g,W,.08,D,sol,0,.04,0);box(g,W,2.8,.3,mur,0,1.4,-D/2);box(g,.3,2.8,D,mur,-W/2,1.4,0);box(g,.3,2.8,D,mur,W/2,1.4,0);
+  [-W/2,W/2].forEach(px=>box(g,.5,2.9,.5,pil,px,1.45,D/2));box(g,W+.5,.7,.4,mur,0,2.55,D/2);
+  const t=box(g,W+1,.22,D+1.4,toit,0,3.0,.3);t.rotation.x=.06;
+  const sg=new THREE.Mesh(new THREE.PlaneGeometry(3.4,1),new THREE.MeshStandardMaterial({map:T.textBoard([{t:'GARAGE',s:84}],512,150,'#2f4a63','#ffffff'),roughness:.6,side:THREE.DoubleSide}));sg.position.set(0,2.55,D/2+.22);g.add(sg);
+  box(g,W-.6,.05,.1,M('#f1c40f'),0,.1,D/2-.2);                                   // ligne jaune au sol
+  bxs.push({x0:x-W/2-.15,x1:x-W/2+.15,z0:z-D/2,z1:z+D/2},{x0:x+W/2-.15,x1:x+W/2+.15,z0:z-D/2,z1:z+D/2},{x0:x-W/2,x1:x+W/2,z0:z-D/2-.15,z1:z-D/2+.15});
+  return g}
+
 // emplacements dans le village (portes tournées vers la grand-place) ; ry 0 : porte au sud (+z), ry π : porte au nord (-z)
 export const REPERES=[
   {id:'centre',x:3,z:-11.8,ry:0,w:16,d:7.5,interieur:'centre',nom:'le Centre commercial',coul:'#1f5f9e'},

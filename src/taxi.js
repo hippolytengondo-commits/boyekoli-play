@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import KIN from './taxi/kinshasa.json';
 import {creerVehicule} from './taxi/vehicules.js';
 import {BAT,EXCL,robots,majRobots,etatRobot} from './taxi/quartier.js';
+import {asphalte} from './routes.js';
 import {VEHICULES,MISSIONS,LIEUX_EXTRA,EVENEMENTS,CONSEILS} from './taxi/data.js';
 
 const GRANDS=new Set(['rond','pont','aero','poi_stade','poi_edifice','poi_gare','poi_echangeur']),RAMPE=70,LARG={a:9,b:7,c:5.6,d:4.6},COUL={a:0x52565d,b:0x5a5e65,c:0x64686e,d:0x70737a},HP=5.6,CELL=40;
@@ -55,12 +56,17 @@ export function creerTaxi(D){
     const groupes=new Map();
     N.segs.forEach(s=>{const k=s.c+':'+Math.floor((s.x0+s.x1)/2/420)+','+Math.floor((s.z0+s.z1)/2/420);if(!groupes.has(k))groupes.set(k,[]);groupes.get(k).push(s)});
     const line=[],blanc=[];
-    groupes.forEach((L,k)=>{const c=k[0],pos=[],idx=[];let v=0;
+    // même bitume que les routes du village (texture de gravier), avec trottoirs pour les grandes routes
+    const am=asphalte().clone();if(am.map){am.map=am.map.clone();am.map.wrapS=am.map.wrapT=THREE.RepeatWrapping;am.map.needsUpdate=true}am.side=THREE.DoubleSide;
+    const tm2=new THREE.MeshStandardMaterial({color:0xbdb8aa,roughness:.95,side:THREE.DoubleSide});
+    groupes.forEach((L,k)=>{const c=k[0],pos=[],idx=[],uv=[],tp=[],ti=[];let v=0,tv=0;
       L.forEach(s=>{const dx=(s.x1-s.x0)/s.l,dz=(s.z1-s.z0)/s.l,nx=-dz*s.w/2,nz=dx*s.w/2,off=c==='a'?.2:c==='b'?.14:c==='c'?.08:.03;
-        pos.push(s.x0+nx,s.y0+off,s.z0+nz, s.x0-nx,s.y0+off,s.z0-nz, s.x1+nx,s.y1+off,s.z1+nz, s.x1-nx,s.y1+off,s.z1-nz);idx.push(v,v+1,v+2,v+1,v+3,v+2,v,v+2,v+1,v+1,v+2,v+3);v+=4;
+        pos.push(s.x0+nx,s.y0+off,s.z0+nz, s.x0-nx,s.y0+off,s.z0-nz, s.x1+nx,s.y1+off,s.z1+nz, s.x1-nx,s.y1+off,s.z1-nz);idx.push(v,v+1,v+2,v+1,v+3,v+2,v,v+2,v+1,v+1,v+2,v+3);v+=4;uv.push(0,0,1,0,0,s.l/9,1,s.l/9);
+        if((c==='a'||c==='b')&&s.y0<1.5&&s.y1<1.5){const tw=2.4,sx=-dz,sz=dx;[-1,1].forEach(k2=>{const ix=sx*(s.w/2)*k2,iz=sz*(s.w/2)*k2,ox=sx*(s.w/2+tw)*k2,oz=sz*(s.w/2+tw)*k2,h=off+.12;tp.push(s.x0+ix,s.y0+h,s.z0+iz,s.x0+ox,s.y0+h,s.z0+oz,s.x1+ix,s.y1+h,s.z1+iz,s.x1+ox,s.y1+h,s.z1+oz);ti.push(tv,tv+1,tv+2,tv+1,tv+3,tv+2,tv,tv+2,tv+1,tv+1,tv+2,tv+3);tv+=4})}
         if(s.c==='a'&&s.l>2&&!s.l4){const e=.2;line.push([s,dx,dz,e])}if(s.l4)blanc.push([s,dx,dz])});
-      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
-      const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({color:COUL[c],side:THREE.DoubleSide}));m.matrixAutoUpdate=false;scene.add(m)});
+      const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
+      const m=new THREE.Mesh(g,am);m.matrixAutoUpdate=false;scene.add(m);
+      if(tp.length){const gt=new THREE.BufferGeometry();gt.setAttribute('position',new THREE.Float32BufferAttribute(tp,3));gt.setIndex(ti);gt.computeVertexNormals();scene.add(new THREE.Mesh(gt,tm2))}});
     // ligne centrale jaune du boulevard + piles sous les ponts
     const pos=[],idx=[];let v=0;line.forEach(([s,dx,dz,e])=>{const nx=-dz*e,nz=dx*e;pos.push(s.x0+nx,s.y0+.32,s.z0+nz,s.x0-nx,s.y0+.32,s.z0-nz,s.x1+nx,s.y1+.32,s.z1+nz,s.x1-nx,s.y1+.32,s.z1-nz);idx.push(v,v+1,v+2,v+1,v+3,v+2,v,v+2,v+1,v+1,v+2,v+3);v+=4});
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);scene.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xe8c547,side:THREE.DoubleSide})));

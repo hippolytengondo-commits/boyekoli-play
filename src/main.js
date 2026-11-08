@@ -55,7 +55,7 @@ import {creerAcces} from './acces.js';
 import {creerJeux as creerJeuxMusique} from './musique_jeux.js';
 import {creerAnimaux} from './animaux.js';
 import {AE,zArret,buildConduite,melanger,creerReponses,marquerReponse,disposerReponses} from './conduite.js';
-import {construireReperes,construireStation,construireGare,construireAeroport,construireStudioMusique} from './reperes.js';
+import {construireReperes,construireStation,construireGare,construireGarage,construireAeroport,construireStudioMusique} from './reperes.js';
 import {TERRITOIRES_LISTE,PROVS,slug as slugTr} from './territoires_gen.js';
 import {buildChambre,buildCuisine,buildEtage} from './maisonplus.js';
 
@@ -382,6 +382,7 @@ function construireVille(){
   if(spotAgence)SCENES.ville.spots.push(spotAgence);
   spotsExtra.forEach(sp=>SCENES.ville.spots.push(sp));
   // gare, contre le mur ouest, juste à côté de la maison du joueur (celle de la maman) : le train mène aux aventures
+  construireGarage(w.group,w.colliders,w.boxes,-13.5,-8.2);
   {const og=AMEN.AM().gare||{x:-30.8,z:0};const gp=construireGare(w.group,w.colliders,w.boxes,og.x,og.z);
    SCENES.ville.spots.push({x:gp.x,z:gp.z+.4,r:3.2,label:'🚂 Gare : partir à l’aventure',run:()=>AV.actions.avGare()})}
   {const ap=construireAeroport(w.group,w.colliders,w.boxes,130,0);
@@ -1904,10 +1905,12 @@ const niveauCarb=k=>{const v=vehs();v.carb=v.carb||{};return v.carb[k]===undefin
 const fixerCarb=(k,n)=>{const v=vehs();v.carb=v.carb||{};v.carb[k]=Math.max(0,Math.min(100,n))};
 const vehs=()=>{const a=G.adv;if(!a.veh)a.veh={};return a.veh};
 const permis=()=>!!(G.adv.done.ae1&&G.adv.done.ae2);   // le permis suppose l'inscription à l'auto-école
-const PARK={moto:{x:-15,z:2.6,ry:Math.PI/2},auto:{x:-15,z:5.4,ry:Math.PI/2}};
+// garage à côté de la maison familiale : à chaque nouvelle partie, les véhicules achetés y reviennent
+const PARK={moto:{x:-15.2,z:-8.4,ry:0},auto:{x:-12.2,z:-8.4,ry:0}};let vehReset=true;
 // véhicules garés dans le village : ils restent là où le joueur les a laissés
 function garerVehicules(){
   const v=vehs();v.pos=v.pos||{};
+  if(vehReset){vehReset=false;v.pos={}}      // au démarrage du jeu : retour au garage de la maison familiale
   ['moto','auto'].forEach(k=>{
     if(!v[k]||vehObjs[k])return;
     const o=k==='moto'?motoJoueur('#c0392b'):voitureJoueur('#2e86de'),p=v.pos[k]||PARK[k];
