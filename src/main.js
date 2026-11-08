@@ -1381,10 +1381,10 @@ function loop(now){
       let v=G.vv||0;
       const vol=commandeVolant(),cb=niveauCarb(G.monte);
       if(vol&&!G.wheelHeld)G.wheel=(G.wheel||0)*(1-Math.min(1,dt*7));
-      const sIn=Math.max(-1,Math.min(1,ix+(vol?(G.wheel||0):0)));
+      const sIn=Math.max(-1,Math.min(1,ix+(cmdFl?(G.arrow||0):(G.wheel||0))));
       let th=Math.max(-1,Math.min(1,iy+(vol?(G.ped||0):0)));
       if(cb<=0&&!(th<0&&v>.1))th=0;   // réservoir vide : plus d'accélération
-      if(vol){const vl=$('vol');if(vl)vl.style.transform='rotate('+((G.wheel||0)*120).toFixed(1)+'deg)'}
+      if(vol&&!cmdFl){const vl=$('vol');if(vl)vl.style.transform='rotate('+((G.wheel||0)*120).toFixed(1)+'deg)'}
       if(th>.05)v+=(v<0?14:6)*th*dt;
       else if(th<-.05)v-=(v>0?14:4)*(-th)*dt;
       else v-=Math.sign(v)*Math.min(Math.abs(v),4*dt);
@@ -1933,17 +1933,17 @@ function majVeh(){
   bar.classList.toggle('hide',!(visible&&any));
   const m=!!G.monte&&G.mode==='play'&&G.sc==='ville';
   $('vh').classList.toggle('hide',!m);$('vc').classList.toggle('hide',!m);
-  $('vc').textContent=cmdV?'🛞 Commande : volant':'🕹 Commande : flèches';
-  $('volant').classList.toggle('hide',!(m&&cmdV));
-  if(m&&cmdV){$('joy').classList.add('hide');$('actwrap').classList.add('hide');G.joyCache=true}else if(G.joyCache){G.joyCache=false;$('joy').classList.remove('hide');$('actwrap').classList.remove('hide')}
+  $('vc').textContent=cmdFl?'⬅➡ Commande : flèches (toucher pour le volant)':'🛞 Commande : volant (toucher pour les flèches)';
+  $('volant').classList.toggle('hide',!m);$('volant').classList.toggle('flechesOn',cmdFl);
+  if(m){$('joy').classList.add('hide');$('actwrap').classList.add('hide');G.joyCache=true}else if(G.joyCache){G.joyCache=false;$('joy').classList.remove('hide');$('actwrap').classList.remove('hide')}
   const cj=$('carb');cj.classList.toggle('hide',!m);
   if(m){const n=niveauCarb(G.monte);$('carbn').textContent=Math.round(n)+' %';$('carbj').style.width=n+'%';cj.classList.toggle('bas',n<=15&&n>0);cj.classList.toggle('vide',n<=0)}
 }
 // ---------- Commandes de conduite : vrai volant (glisser pour tourner) + pédales, ou touches de direction ----------
 const CMD_KEY='boyekoli_cmd';
-let cmdV=true;try{cmdV=localStorage.getItem(CMD_KEY)!=='fleches'}catch(e){}
+let cmdV=true,cmdFl=false;try{cmdFl=localStorage.getItem(CMD_KEY)==='fleches'}catch(e){}   // deux commandes : volant, ou flèches gauche/droite
 const commandeVolant=()=>cmdV&&!!G.monte;
-function basculerCommande(){cmdV=!cmdV;try{localStorage.setItem(CMD_KEY,cmdV?'volant':'fleches')}catch(e){}G.wheel=0;G.ped=0;majVeh()}
+function basculerCommande(){cmdFl=!cmdFl;try{localStorage.setItem(CMD_KEY,cmdFl?'fleches':'volant')}catch(e){}G.wheel=0;G.ped=0;G.arrow=0;majVeh()}
 function klaxonner(){
   if(!G.monte)return;SFX.klaxon();
   if(G.trafic&&G.trafic.klaxon)G.trafic.klaxon(G.x,G.z);
@@ -1957,7 +1957,7 @@ function klaxonner(){
   vl.addEventListener('pointermove',e=>{if(e.pointerId!==id)return;e.preventDefault();G.wheel=Math.max(-1,Math.min(1,(e.clientX-x0)/55))});
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>vl.addEventListener(ev,e=>{if(e.pointerId===id)fin()}));
   // sécurité : doigt relevé ailleurs, appel entrant, changement d'application… le volant et les pédales se relâchent toujours
-  const lacher=()=>{fin();G.ped=0;['pacc','pfrein'].forEach(i=>{const b=$(i);if(b)b.classList.remove('on')})};
+  const lacher=()=>{fin();G.ped=0;G.arrow=0;['fg','fd'].forEach(i=>{const b=$(i);if(b)b.classList.remove('on')});['pacc','pfrein'].forEach(i=>{const b=$(i);if(b)b.classList.remove('on')})};
   window.addEventListener('pointerup',e=>{if(e.pointerId===id)fin()},true);window.addEventListener('pointercancel',lacher,true);
   ['touchend','touchcancel'].forEach(ev=>window.addEventListener(ev,e=>{if(!e.touches||e.touches.length===0)lacher()},true));
   window.addEventListener('blur',lacher);document.addEventListener('visibilitychange',lacher);
@@ -1968,6 +1968,7 @@ function klaxonner(){
     ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>{if(G.ped===val)G.ped=0;b.classList.remove('on')}));
   };
   ped('pacc',1);ped('pfrein',-1);
+  const fl=(bid,val)=>{const b=$(bid);b.addEventListener('pointerdown',e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(x){}G.arrow=val;b.classList.add('on')});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>{if(G.arrow===val)G.arrow=0;b.classList.remove('on')}));b.addEventListener('contextmenu',ev=>ev.preventDefault())};fl('fg',-1);fl('fd',1);
 }
 $('vh').addEventListener('click',klaxonner);
 $('vc').addEventListener('click',basculerCommande);
@@ -1981,7 +1982,7 @@ function monter(k){
   const o=vehObjs[k];
   if(W&&o.userData.col){const i=W.colliders.indexOf(o.userData.col);if(i>=0)W.colliders.splice(i,1)}
   G.wheel=0;G.ped=0;G.monte=k;G.vv=0;G.steer=0;G.x=o.position.x;G.z=o.position.z;G.ry=o.rotation.y;
-  SFX.coin();toast(cmdV?'Tourne le volant et appuie sur ▲ pour avancer · 📯 pour klaxonner · ⛽ surveille le carburant':'Flèches : avancer, freiner, tourner · 📯 pour klaxonner · ⛽ surveille le carburant');majVeh();
+  SFX.coin();toast(cmdFl?'Appuie sur ◀ ▶ pour tourner et sur ▲ pour avancer · 📯 pour klaxonner · ⛽ surveille le carburant':'Tourne le volant et appuie sur ▲ pour avancer · 📯 pour klaxonner · ⛽ surveille le carburant');majVeh();
 }
 function descendre(){
   const k=G.monte;if(!k)return;

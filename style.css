@@ -349,3 +349,9 @@ button,[onclick],#joy,#joy *,#knob,#volant,#volant *,#pedales *,#vh,#vc,#pv,#dlg
 #taxiov,#taxiov *,#medov,#medov *,#sciov,#sciov *,#detov,#detov *,#dsov,#dsov *,#fsov,#fsov *,#spov,#spov *,#vov,#vov *,#entov,#entov *,#agov,#agov *,#parole,#parole *,#accesfen,#accesfen *,
 div[style*="z-index:9000"],div[style*="z-index:9000"] *,div[style*="z-index: 9000"],div[style*="z-index: 9000"] *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea,[contenteditable],div[style*="z-index: 9000"] input,div[style*="z-index: 9000"] textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+
+/* Commande par flèches gauche / droite (à la place du volant) */
+#fleches{display:none;gap:12px;align-items:flex-end}
+#volant.flechesOn #vol{display:none}#volant.flechesOn #fleches{display:flex}
+#fleches button{width:84px;height:104px;border:0;border-radius:18px;font-size:36px;font-weight:800;color:#fff;background:#2c7fb8;box-shadow:0 3px 8px rgba(0,0,0,.4);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;line-height:1}
+#fleches button.on{filter:brightness(1.3);transform:scale(.96)}
